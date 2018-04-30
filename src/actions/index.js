@@ -1,6 +1,7 @@
 export const actions = {
+  CREATE_LANGUAGE: 'CREATE_LANGUAGE',
   INCREMENT_COUNTER: 'INCREMENT_COUNTER',
-  FETCH_JOKE: 'FETCH_JOKE',
+  FETCH_LANGUAGES: 'FETCH_LANGUAGES',
 };
 
 export default actions;
@@ -12,9 +13,14 @@ export const incrementCounter = increment => {
   };
 };
 
-export const fetchJoke = increment => {
+export const newLanguage = () => {
   return {
-    type: actions.FETCH_JOKE,
-    increment,
+    type: actions.CREATE_LANGUAGE,
+  };
+};
+
+export const fetchLanguages = increment => {
+  return {
+    type: actions.FETCH_LANGUAGES,
   };
 };

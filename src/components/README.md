@@ -1,5 +1,12 @@
 Example:
 
 ```js
-<SimpleButton name="Yo, nigga!" bg="red" />
+<LanguagesMenuList languages={[
+  {
+    name: 'aaaa',
+  },
+  {
+    name: 'bbbaaaa',
+  },
+]}/>
 ```

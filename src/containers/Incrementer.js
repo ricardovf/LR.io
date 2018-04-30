@@ -1,15 +1,32 @@
 import React from 'react';
-import SimpleButton from '../components/SimpleButton';
+import PropTypes from 'prop-types';
 import { incrementCounter } from '../actions';
 import { connect } from 'react-redux';
+import { Button, CardActions, Typography } from 'material-ui';
+import { withStyles } from 'material-ui/styles';
+import Card, { CardContent } from 'material-ui/Card';
 
-const Incrementer = ({ value, onClick }) => {
+const Incrementer = ({ classes, theme, value, onClick }) => {
   return (
-    <div>
-      <h1>Valor atual: {value}</h1>
-      <SimpleButton bg={'green'} name={'INCREMENT'} onClick={onClick} />
-    </div>
+    <Card>
+      <CardContent>
+        <Typography gutterBottom variant="headline" component="h2">
+          Incrementador
+        </Typography>
+        <Typography component="p">Valor atual: {value}</Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small" onClick={onClick}>
+          Increment
+        </Button>
+      </CardActions>
+    </Card>
   );
+};
+
+Incrementer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  value: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -22,6 +39,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Incrementer);
-
-// export default Incrementer;
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withStyles({})(Incrementer)
+);

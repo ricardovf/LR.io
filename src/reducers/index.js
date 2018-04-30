@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import joker from './joker';
+import languages from './languages';
 import incrementer from './incrementer';
 
 export default combineReducers({
-  joker,
+  languages,
   incrementer,
 });
