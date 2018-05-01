@@ -10,9 +10,9 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
-import LanguagesMenuList from './LanguagesMenuList';
-import { Switch, Route } from 'react-router-dom';
-import Incrementer from '../containers/Incrementer';
+import LanguagesMenuListConnector from '../connectors/LanguagesMenuListConnector';
+import { Route, Switch } from 'react-router-dom';
+import GrammarCardConnector from '../connectors/GrammarCardConnector';
 
 const NotFound = () => 'Page not found';
 
@@ -92,11 +92,11 @@ class LayoutWithResponsiveDrawer extends React.Component {
       <div>
         <div className={classes.logoToolbar}>
           <a className={classes.logo} href="/">
-            <img src={LRLogo} style={{ height: '26px' }} />
+            <img alt="LR.io Logo" src={LRLogo} style={{ height: '26px' }} />
           </a>
         </div>
         <Divider />
-        <LanguagesMenuList languages={[]} />
+        <LanguagesMenuListConnector languages={[]} />
       </div>
     );
 
@@ -147,7 +147,7 @@ class LayoutWithResponsiveDrawer extends React.Component {
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
-            <Route exact path="/" component={Incrementer} />
+            <Route exact path="/" component={GrammarCardConnector} />
             <Route component={NotFound} />
           </Switch>
         </main>

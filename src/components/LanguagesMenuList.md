@@ -1,5 +1,3 @@
-Example:
-
 ```js
 <LanguagesMenuList languages={[
   {
@@ -8,5 +6,5 @@ Example:
   {
     name: 'bbbaaaa',
   },
-]}/>
+]} fetchLanguages={()=>{}} selectLanguageOnClick={()=>{}} />
 ```

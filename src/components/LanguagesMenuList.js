@@ -1,12 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
-import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
-import { withStyles } from 'material-ui/styles/index';
-import { connect } from 'react-redux';
-import { newLanguage, fetchLanguages } from '../actions';
 
 class LanguagesMenuList extends React.Component {
   componentWillMount() {
@@ -14,8 +10,14 @@ class LanguagesMenuList extends React.Component {
   }
 
   render() {
-    const listItems = this.props.languages.map(item => (
-      <ListItem button>
+    const listItems = this.props.languages.map((item, index) => (
+      <ListItem
+        button
+        key={item.name}
+        onClick={() => {
+          this.props.selectLanguageOnClick(index);
+        }}
+      >
         <ListItemText primary={item.name} />
       </ListItem>
     ));
@@ -29,7 +31,11 @@ class LanguagesMenuList extends React.Component {
         {listItems}
 
         <ListItem>
-          <Button variant="raised" color="primary" onClick={this.props.onClick}>
+          <Button
+            variant="raised"
+            color="primary"
+            onClick={this.props.newLanguageOnClick}
+          >
             Nova
           </Button>
         </ListItem>
@@ -39,20 +45,14 @@ class LanguagesMenuList extends React.Component {
 }
 
 LanguagesMenuList.propTypes = {
-  languages: PropTypes.array.isRequired,
+  languages: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+    })
+  ),
+  fetchLanguages: PropTypes.func.isRequired,
+  selectLanguageOnClick: PropTypes.func.isRequired,
+  newLanguageOnClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  languages: state.languages,
-});
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  onClick: () => {
-    dispatch(newLanguage());
-  },
-  fetchLanguages: () => {
-    dispatch(fetchLanguages());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(LanguagesMenuList);
+export default LanguagesMenuList;

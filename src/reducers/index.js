@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import languages from './languages';
-import incrementer from './incrementer';
+import selectedLanguage from './selectedLanguage';
 
 export default combineReducers({
   languages,
-  incrementer,
+  selectedLanguage,
 });
