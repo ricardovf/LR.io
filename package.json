@@ -5,6 +5,7 @@
   "dependencies": {
     "@rematch/core": "^0.6.0",
     "@rematch/persist": "^0.2.1",
+    "@rematch/updated": "^0.1.5",
     "lodash": "^4.17.10",
     "material-ui": "next",
     "prop-types": "^15.6.1",

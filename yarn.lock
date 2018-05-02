@@ -14,6 +14,10 @@
   dependencies:
     redux-persist "^5.4.0"
 
+"@rematch/updated@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@rematch/updated/-/updated-0.1.5.tgz#fbe4f8b67b6f61111ce488cd0d419c7a01f5a4f2"
+
 "@types/jss@^9.3.0":
   version "9.5.2"
   resolved "https://registry.yarnpkg.com/@types/jss/-/jss-9.5.2.tgz#85076b2c16606a6f996aa7e20c1ec7ed6a08075f"

@@ -1,6 +1,7 @@
 import uuidv4 from 'uuid/v4';
-import { reject } from 'ramda';
+import { find, propEq, reject } from 'ramda';
 import { dispatch } from '../store';
+import _ from 'lodash';
 
 export default {
   state: [],
@@ -25,15 +26,21 @@ export default {
       console.log('languages/remove');
       return reject(language => language.id === id, [...state]);
     },
-    editGrammar(state, { id, text }) {
-      // @todo make async, move logic to Grammar class
-      console.log(`editando a gramática ${id} para ${text}`);
-      return [...state].map(language => {
-        if (language.id === id) {
-          language.grammar = text;
-        }
+    // editGrammar(state, { id, text }) {
+    //   // @todo make async, move logic to Grammar class
+    //   console.log(`editando a gramática ${id} para ${text}`);
+    //   return [...state].map(language => {
+    //     if (language.id === id) {
+    //       language.grammar = text.toUpperCase();
+    //     }
 
-        return language;
+    //     return language;
+    //   });
+    // },
+    _updateLanguage(state, { id, language }) {
+      console.log('_updateLanguage called to update state');
+      return [...state].map(item => {
+        return item.id === id && language ? { ...language } : item;
       });
     },
   },
@@ -42,5 +49,22 @@ export default {
       console.log(`effects/remove ${id}`);
       dispatch.selectedLanguage.select({ id: null });
     },
+
+    editGrammar: _.debounce(
+      (payload, rootState) => {
+        const { id, text } = payload;
+
+        let language = find(propEq('id', rootState.selectedLanguage))(
+          rootState.languages
+        );
+
+        if (language) {
+          language = { ...language, grammar: text.toUpperCase() };
+        }
+        dispatch.languages._updateLanguage({ id, language });
+      },
+      1000,
+      { maxWait: 5000 }
+    ),
   },
 };
