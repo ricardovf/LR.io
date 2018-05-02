@@ -7,12 +7,22 @@ import TextField from 'material-ui/TextField';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 
 class GrammarCard extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isFocused: false,
+    };
+  }
+
   render() {
     const { language, grammar, valid = true, onGrammarChange } = this.props;
 
     const isEmpty =
       grammar === undefined ||
       (typeof grammar === 'string' && grammar.length === 0);
+
+    const isFocused = this.state.isFocused;
 
     const input = (
       <TextField
@@ -21,15 +31,19 @@ class GrammarCard extends React.Component {
         label=""
         multiline
         rowsMax="10"
-        defaultValue={isEmpty ? '' : grammar}
+        value={isFocused ? undefined : isEmpty ? '' : grammar}
         onChange={event => {
-          if (onGrammarChange)
-            onGrammarChange(
-              language ? language.id : undefined,
-              event.target.value
-            );
+          onGrammarChange(
+            language ? language.id : undefined,
+            event.target.value
+          );
         }}
-        onBlur={event => {}}
+        onBlur={event => {
+          this.setState({ isFocused: false });
+        }}
+        onFocus={event => {
+          this.setState({ isFocused: true });
+        }}
         placeholder="S -> a | aS"
         fullWidth
         margin="normal"

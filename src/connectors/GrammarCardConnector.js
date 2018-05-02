@@ -12,7 +12,6 @@ const mapState = state => {
   };
 };
 
-// @todo add debounce
 const mapDispatch = dispatch => ({
   onGrammarChange: (id, text) => dispatch.languages.editGrammar({ id, text }),
 });

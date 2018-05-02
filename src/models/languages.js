@@ -22,21 +22,9 @@ export default {
         },
       ];
     },
-    'languages/remove': (state, { id }) => {
-      console.log('languages/remove');
+    _removeLanguage(state, { id }) {
       return reject(language => language.id === id, [...state]);
     },
-    // editGrammar(state, { id, text }) {
-    //   // @todo make async, move logic to Grammar class
-    //   console.log(`editando a gramática ${id} para ${text}`);
-    //   return [...state].map(language => {
-    //     if (language.id === id) {
-    //       language.grammar = text.toUpperCase();
-    //     }
-
-    //     return language;
-    //   });
-    // },
     _updateLanguage(state, { id, language }) {
       console.log('_updateLanguage called to update state');
       return [...state].map(item => {
@@ -47,6 +35,7 @@ export default {
   effects: {
     async remove({ id }, rootState) {
       console.log(`effects/remove ${id}`);
+      dispatch.languages._removeLanguage({ id });
       dispatch.selectedLanguage.select({ id: null });
     },
 
@@ -63,8 +52,8 @@ export default {
         }
         dispatch.languages._updateLanguage({ id, language });
       },
-      1000,
-      { maxWait: 5000 }
+      250,
+      { maxWait: 1000 }
     ),
   },
 };
