@@ -1,11 +1,10 @@
 import React from 'react';
-import { editGrammar } from '../actions';
 import { connect } from 'react-redux';
 import GrammarCard from '../components/GrammarCard';
 import { find, propEq } from 'ramda';
 // import debounce from 'lodash/fp/debounce';
 
-const mapStateToProps = (state, ownProps) => {
+const mapState = state => {
   const language = find(propEq('id', state.selectedLanguage))(state.languages);
   return {
     language,
@@ -15,11 +14,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 // @todo add debounce
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  onGrammarChange: (id, text) => {
-    console.log(`editando a gramática ${id}: ${text} `);
-    dispatch(editGrammar(id, text));
-  },
+const mapDispatch = dispatch => ({
+  onGrammarChange: (id, text) => dispatch.languages.editGrammar({ id, text }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GrammarCard);
+export default connect(mapState, mapDispatch)(GrammarCard);

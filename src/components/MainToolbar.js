@@ -26,9 +26,7 @@ class MainToolbar extends React.Component {
         <IconButton
           color="inherit"
           size="small"
-          onClick={() => {
-            deleteOnClick(language.id);
-          }}
+          onClick={deleteOnClick.bind(this, language.id)}
         >
           <Icon>delete</Icon>
         </IconButton>

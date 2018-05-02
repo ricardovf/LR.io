@@ -22,9 +22,7 @@ class LanguagesMenuList extends React.Component {
       <ListItem
         button
         key={item.id}
-        onClick={() => {
-          selectLanguageOnClick(item.id);
-        }}
+        onClick={selectLanguageOnClick.bind(this, item.id)}
       >
         <ListItemText
           primary={(isSelected(item, language) ? '→ ' : '') + item.name}

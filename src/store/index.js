@@ -1,25 +1,16 @@
-import { createStore } from 'redux';
-import reducers from '../reducers';
-import storage from 'redux-persist/lib/storage';
-import { persistReducer, persistStore } from 'redux-persist';
+import { init } from '@rematch/core';
+import * as models from '../models';
+import createRematchPersist from '@rematch/persist';
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
+const persistPlugin = createRematchPersist({
+  // whitelist: ['languages', 'selectedLanguage'],
+  throttle: 500,
+  version: 1,
+});
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+export const store = init({
+  models,
+  plugins: [persistPlugin],
+});
 
-// import { composeWithDevTools } from 'redux-devtools-extension';
-
-// const composeEnhancers = composeWithDevTools();
-// const store = createStore(
-//   reducers,
-//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-// );
-
-export const store = createStore(
-  persistedReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
-export const persistor = persistStore(store);
+export const dispatch = store.dispatch;
