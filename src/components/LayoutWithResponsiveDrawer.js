@@ -1,18 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Icon from 'material-ui/Icon';
 import LRLogo from '../media/img/LR_logo.png';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
 import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
 import LanguagesMenuListConnector from '../connectors/LanguagesMenuListConnector';
 import { Route, Switch } from 'react-router-dom';
-import GrammarCardConnector from '../connectors/GrammarCardConnector';
+import MainToolbarConnector from '../connectors/MainToolbarConnector';
+import LayoutDashboardConnector from '../connectors/LayoutDashboardConnector';
 
 const NotFound = () => 'Page not found';
 
@@ -103,19 +100,7 @@ class LayoutWithResponsiveDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerToggle}
-              className={classes.navIconHide}
-            >
-              <Icon>menu</Icon>
-            </IconButton>
-            <Typography variant="title" color="inherit" noWrap>
-              Nova linguagem regular
-            </Typography>
-          </Toolbar>
+          <MainToolbarConnector handleDrawerToggle={this.handleDrawerToggle} />
         </AppBar>
         <Hidden mdUp>
           <Drawer
@@ -147,7 +132,7 @@ class LayoutWithResponsiveDrawer extends React.Component {
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
-            <Route exact path="/" component={GrammarCardConnector} />
+            <Route exact path="/" component={LayoutDashboardConnector} />
             <Route component={NotFound} />
           </Switch>
         </main>

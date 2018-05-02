@@ -8,11 +8,11 @@ import { FormControl, FormHelperText } from 'material-ui/Form';
 
 class GrammarCard extends React.Component {
   render() {
-    const { classes, grammarText, valid = true, onGrammarChange } = this.props;
+    const { language, grammar, valid = true, onGrammarChange } = this.props;
 
     const isEmpty =
-      grammarText === undefined ||
-      (typeof grammarText === 'string' && grammarText.length === 0);
+      grammar === undefined ||
+      (typeof grammar === 'string' && grammar.length === 0);
 
     const input = (
       <TextField
@@ -21,10 +21,13 @@ class GrammarCard extends React.Component {
         label=""
         multiline
         rowsMax="10"
-        className={classes.textField}
-        defaultValue={grammarText}
+        value={grammar}
         onChange={event => {
-          if (onGrammarChange) onGrammarChange(event.target.value);
+          if (onGrammarChange)
+            onGrammarChange(
+              language ? language.id : undefined,
+              event.target.value
+            );
         }}
         placeholder="S -> a | aS"
         fullWidth
@@ -61,7 +64,7 @@ class GrammarCard extends React.Component {
 
 GrammarCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  grammarText: PropTypes.string,
+  grammar: PropTypes.string,
   valid: PropTypes.bool,
   onGrammarChange: PropTypes.func,
 };

@@ -3,22 +3,32 @@ import PropTypes from 'prop-types';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
 import ListSubheader from 'material-ui/List/ListSubheader';
+import { Icon, withStyles } from 'material-ui';
+
+const isSelected = (item, language) =>
+  language !== undefined && language.id === item.id;
 
 class LanguagesMenuList extends React.Component {
-  componentWillMount() {
-    this.props.fetchLanguages();
-  }
-
   render() {
-    const listItems = this.props.languages.map((item, index) => (
+    const {
+      language,
+      languages,
+      classes,
+      selectLanguageOnClick,
+      newLanguageOnClick,
+    } = this.props;
+
+    const listItems = languages.map(item => (
       <ListItem
         button
-        key={item.name}
+        key={item.id}
         onClick={() => {
-          this.props.selectLanguageOnClick(index);
+          selectLanguageOnClick(item.id);
         }}
       >
-        <ListItemText primary={item.name} />
+        <ListItemText
+          primary={(isSelected(item, language) ? '→ ' : '') + item.name}
+        />
       </ListItem>
     ));
 
@@ -31,12 +41,8 @@ class LanguagesMenuList extends React.Component {
         {listItems}
 
         <ListItem>
-          <Button
-            variant="raised"
-            color="primary"
-            onClick={this.props.newLanguageOnClick}
-          >
-            Nova
+          <Button variant="raised" color="primary" onClick={newLanguageOnClick}>
+            Nova linguagem
           </Button>
         </ListItem>
       </List>
@@ -45,14 +51,12 @@ class LanguagesMenuList extends React.Component {
 }
 
 LanguagesMenuList.propTypes = {
-  languages: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-    })
-  ),
-  fetchLanguages: PropTypes.func.isRequired,
+  language: PropTypes.object,
+  languages: PropTypes.array.isRequired,
   selectLanguageOnClick: PropTypes.func.isRequired,
   newLanguageOnClick: PropTypes.func.isRequired,
 };
 
-export default LanguagesMenuList;
+const styles = theme => ({});
+
+export default withStyles(styles, { withTheme: true })(LanguagesMenuList);

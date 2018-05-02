@@ -6,5 +6,5 @@
   {
     name: 'bbbaaaa',
   },
-]} fetchLanguages={()=>{}} selectLanguageOnClick={()=>{}} />
+]} selectLanguageOnClick={()=>{}} />
 ```

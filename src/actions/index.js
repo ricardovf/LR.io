@@ -1,24 +1,32 @@
 export const actions = {
-  EDIT_GRAMMAR: 'INCREMENT_COUNTER',
   CREATE_LANGUAGE: 'CREATE_LANGUAGE',
-  FETCH_LANGUAGES: 'FETCH_LANGUAGES',
   SELECT_LANGUAGE: 'SELECT_LANGUAGE',
+  DELETE_LANGUAGE: 'DELETE_LANGUAGE',
+  EDIT_GRAMMAR: 'EDIT_GRAMMAR',
 };
 
 export default actions;
 
-export const editGrammar = (index, grammar) => {
+export const editGrammar = (id, text) => {
   return {
     type: actions.EDIT_GRAMMAR,
-    index,
-    grammar,
+    id,
+    text,
   };
 };
 
-export const selectLanguage = index => {
+export const selectLanguage = id => {
   return {
     type: actions.SELECT_LANGUAGE,
-    index: index,
+    id,
+  };
+};
+
+export const deleteLanguage = id => {
+  console.log('requested to delete ' + id);
+  return {
+    type: actions.DELETE_LANGUAGE,
+    id,
   };
 };
 
@@ -26,11 +34,5 @@ export const selectLanguage = index => {
 export const newLanguage = () => {
   return {
     type: actions.CREATE_LANGUAGE,
-  };
-};
-
-export const fetchLanguages = () => {
-  return {
-    type: actions.FETCH_LANGUAGES,
   };
 };
