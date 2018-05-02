@@ -21,7 +21,7 @@ class GrammarCard extends React.Component {
         label=""
         multiline
         rowsMax="10"
-        value={grammar}
+        value={isEmpty ? '' : grammar}
         onChange={event => {
           if (onGrammarChange)
             onGrammarChange(
