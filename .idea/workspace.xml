@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a7b1d44-0643-4870-81c1-effbf81576b5" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/logic/FSM.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/GrammarParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/GrammarParser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/SymbolValidator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/SymbolValidator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/languages.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/languages.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -30,13 +25,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Grammar.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Grammar.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/logic/Grammar.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="466">
               <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="languages.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/models/languages.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="423">
+              <caret line="59" column="68" selection-start-line="59" selection-start-column="68" selection-end-line="59" selection-end-column="68" />
+              <folding>
+                <element signature="e#0#29#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -189,7 +196,6 @@
         <option value="$PROJECT_DIR$/src/connectors/GrammarCardConnector.js" />
         <option value="$PROJECT_DIR$/src/components/GrammarCard.js" />
         <option value="$PROJECT_DIR$/src/models/selectedLanguage.js" />
-        <option value="$PROJECT_DIR$/src/models/languages.js" />
         <option value="$PROJECT_DIR$/src/logic/helpers.js" />
         <option value="$PROJECT_DIR$/src/logic/SymbolValidator.test.js" />
         <option value="$PROJECT_DIR$/src/logic/GrammarParser.test.js" />
@@ -198,6 +204,7 @@
         <option value="$PROJECT_DIR$/src/logic/FSM.js" />
         <option value="$PROJECT_DIR$/src/logic/Grammar.test.js" />
         <option value="$PROJECT_DIR$/src/logic/Grammar.js" />
+        <option value="$PROJECT_DIR$/src/models/languages.js" />
       </list>
     </option>
   </component>
@@ -343,12 +350,12 @@
       <workItem from="1524760603153" duration="12717000" />
       <workItem from="1524778639351" duration="255000" />
       <workItem from="1524778905665" duration="2516000" />
-      <workItem from="1525121214210" duration="61042000" />
+      <workItem from="1525121214210" duration="61116000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="76530000" />
+    <option name="totallyTimeSpent" value="76604000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="99" y="40" width="1699" height="935" extended-state="0" />
@@ -727,16 +734,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1196">
-          <caret line="52" column="39" lean-forward="true" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/connectors/GrammarCardConnector.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
@@ -804,6 +801,16 @@
           <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="59" column="68" selection-start-line="59" selection-start-column="68" selection-end-line="59" selection-end-column="68" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>

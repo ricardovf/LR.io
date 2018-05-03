@@ -57,7 +57,7 @@ export default {
             ...language,
             valid: valid,
             grammar: valid
-              ? grammar.getFormattedText()
+              ? grammar.getFormattedText() || multiTrim(text, false)
               : multiTrim(text, false),
           };
         }
