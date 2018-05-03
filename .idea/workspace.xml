@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a7b1d44-0643-4870-81c1-effbf81576b5" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/models/languages.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/languages.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.test.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Grammar.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Grammar.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/logic/Grammar.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="466">
-              <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+            <state relative-caret-position="605">
+              <caret line="56" column="62" selection-start-line="56" selection-start-column="62" selection-end-line="56" selection-end-column="62" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
@@ -37,10 +38,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="languages.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="languages.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models/languages.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
+            <state relative-caret-position="830">
               <caret line="59" column="68" selection-start-line="59" selection-start-column="68" selection-end-line="59" selection-end-column="68" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
@@ -61,8 +62,8 @@
       <file leaf-file-name="Grammar.test.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/logic/Grammar.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="35" column="6" selection-start-line="35" selection-start-column="6" selection-end-line="35" selection-end-column="6" />
+            <state relative-caret-position="602">
+              <caret line="46" column="26" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -202,9 +203,9 @@
         <option value="$PROJECT_DIR$/src/logic/SymbolValidator.js" />
         <option value="$PROJECT_DIR$/src/logic/GrammarParser.js" />
         <option value="$PROJECT_DIR$/src/logic/FSM.js" />
+        <option value="$PROJECT_DIR$/src/models/languages.js" />
         <option value="$PROJECT_DIR$/src/logic/Grammar.test.js" />
         <option value="$PROJECT_DIR$/src/logic/Grammar.js" />
-        <option value="$PROJECT_DIR$/src/models/languages.js" />
       </list>
     </option>
   </component>
@@ -350,12 +351,12 @@
       <workItem from="1524760603153" duration="12717000" />
       <workItem from="1524778639351" duration="255000" />
       <workItem from="1524778905665" duration="2516000" />
-      <workItem from="1525121214210" duration="61116000" />
+      <workItem from="1525121214210" duration="61525000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="76604000" />
+    <option name="totallyTimeSpent" value="77013000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="99" y="40" width="1699" height="935" extended-state="0" />
@@ -778,16 +779,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/logic/Grammar.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="35" column="6" selection-start-line="35" selection-start-column="6" selection-end-line="35" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/SymbolValidator.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="230">
@@ -795,22 +786,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/logic/Grammar.js">
+    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+        <state relative-caret-position="830">
+          <caret line="59" column="68" selection-start-line="59" selection-start-column="68" selection-end-line="59" selection-end-column="68" />
           <folding>
-            <element signature="e#0#44#0" expanded="true" />
+            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
+    <entry file="file://$PROJECT_DIR$/src/logic/Grammar.test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="59" column="68" selection-start-line="59" selection-start-column="68" selection-end-line="59" selection-end-column="68" />
+        <state relative-caret-position="602">
+          <caret line="46" column="26" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
           <folding>
-            <element signature="e#0#29#0" expanded="true" />
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/logic/Grammar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="605">
+          <caret line="56" column="62" selection-start-line="56" selection-start-column="62" selection-end-line="56" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
           </folding>
         </state>
       </provider>

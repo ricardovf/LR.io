@@ -52,6 +52,11 @@ export default class Grammar {
         if (producer !== this.S) {
           if (productions.includes(EPSILON))
             throw `There should not be a production of type ${producer} -> & (epsilon)`;
+        } else if (productions.includes(EPSILON)) {
+          R.forEach(production => {
+            if (production.length === 2 && production.charAt(1) === this.S)
+              throw `There should not be a production of type ${producer} -> x${producer} when there is & (epsilon)`;
+          }, productions);
         }
       }, this.P);
 

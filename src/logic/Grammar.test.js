@@ -43,6 +43,10 @@ describe('Grammar', () => {
       ).toBeFalsy();
     });
 
+    it('should return an invalid grammar S and epsilon exits on right side', () => {
+      expect(Grammar.fromText(`S -> a | aS | &`).isValid()).toBeFalsy();
+    });
+
     it('should return valid grammar on simple regular grammar without epsilon', () => {
       // expect(Grammar.fromText(`S -> a | aS`).isValid()).toBeTruthy();
       // expect(Grammar.fromText(`S -> a`).isValid()).toBeTruthy();
