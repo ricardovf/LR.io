@@ -52,7 +52,7 @@ export default {
 
         if (language) {
           const grammar = Grammar.fromText(text);
-          const valid = grammar.isValid();
+          const valid = grammar && grammar.isValid();
           const fsm = valid ? grammar.getFSM() : undefined;
 
           language = {

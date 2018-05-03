@@ -5,6 +5,8 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import GrammarCardConnector from '../connectors/GrammarCardConnector';
 import TransactionTableReadOnlyCardConnector from '../connectors/TransactionTableReadOnlyCardConnector';
+import FSMCardConnector from '../connectors/FSMCardConnector';
+import { Card, CardContent, Typography } from 'material-ui';
 
 const styles = theme => ({
   // root: {
@@ -39,7 +41,7 @@ function LayoutDashboard(props) {
     <React.Fragment>
       <div className={classes.root}>
         <Grid container spacing={24}>
-          <Grid item xs={12} sm={12} md={6}>
+          <Grid item xs={12} sm={12} md={9}>
             <Grid
               container
               spacing={24}
@@ -49,30 +51,40 @@ function LayoutDashboard(props) {
                 <GrammarCardConnector />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Paper elevation={1} className={classes.paper}>
-                  Expressão regular
-                </Paper>
+                <Card style={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography gutterBottom variant="headline" component="h2">
+                      Expressão regular
+                    </Typography>
+                  </CardContent>
+                </Card>
               </Grid>
               <Grid item xs={12}>
                 <TransactionTableReadOnlyCardConnector />
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={12} md={6}>
-            <Paper elevation={1} className={classes.paper}>
-              Autômato finito
-            </Paper>
+          <Grid item xs={12} sm={12} md={3}>
+            <FSMCardConnector />
           </Grid>
 
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={1} className={classes.paper}>
-              Reconhecimento
-            </Paper>
+            <Card style={{ height: '100%' }}>
+              <CardContent>
+                <Typography gutterBottom variant="headline" component="h2">
+                  Reconhecimento
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={1} className={classes.paper}>
-              Enumeração
-            </Paper>
+            <Card style={{ height: '100%' }}>
+              <CardContent>
+                <Typography gutterBottom variant="headline" component="h2">
+                  Enumeração
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       </div>

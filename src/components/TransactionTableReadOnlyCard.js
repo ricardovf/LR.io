@@ -9,22 +9,22 @@ import Table, {
   TableHead,
   TableRow,
 } from 'material-ui/Table';
+import Checkbox from 'material-ui/Checkbox';
 import * as R from 'ramda';
+import Radio from 'material-ui/Radio';
 
-const styles = theme => ({
+const styles = () => ({
+  card: {
+    height: '100%',
+  },
   container: {
     overflowX: 'auto',
   },
-  table: {
-    // minWidth: 700,
+  minimalCell: {
+    padding: 0,
+    'text-align': 'center',
   },
 });
-
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
 
 class TransactionTableReadOnlyCard extends React.Component {
   buildHeader(fsm) {
@@ -57,7 +57,7 @@ class TransactionTableReadOnlyCard extends React.Component {
 
             alphabet[symbol] =
               to.length === 0
-                ? '-'
+                ? '–'
                 : R.uniq(to)
                     .sort()
                     .join(', ');
@@ -84,31 +84,30 @@ class TransactionTableReadOnlyCard extends React.Component {
     const data = this.buildData(fsm);
     const header = this.buildHeader(fsm);
 
-    const debug = fsm && (
-      <Typography variant="caption">
-        <div>Initial: {JSON.stringify(fsm.initial)}</div>
-        <div>Finals: {JSON.stringify(fsm.finals)}</div>
-        <div>Alphabet: {JSON.stringify(fsm.alphabet)}</div>
-        <div>States: {JSON.stringify(fsm.states)}</div>
-        <div>Transactions: {JSON.stringify(fsm.transactions)}</div>
-      </Typography>
+    const checkIcon = (
+      <Icon style={{ fontSize: 18, color: 'green' }}>check</Icon>
     );
 
     return (
-      <Card>
+      <Card className={classes.card}>
         <CardContent>
           <Typography gutterBottom variant="headline" component="h2">
             Tabela de transições
           </Typography>
 
-          {debug}
-
           <div className={classes.container}>
-            <Table className={classes.table}>
+            <Table>
               <TableHead>
                 <TableRow>
-                  {header.map(h => {
-                    return <TableCell>{h}</TableCell>;
+                  {header.map((h, index) => {
+                    return (
+                      <TableCell
+                        className={index < 2 ? classes.minimalCell : ''}
+                        padding="dense"
+                      >
+                        {h}
+                      </TableCell>
+                    );
                   })}
                 </TableRow>
               </TableHead>
@@ -116,15 +115,21 @@ class TransactionTableReadOnlyCard extends React.Component {
                 {data.map((t, index) => {
                   return (
                     <TableRow key={index}>
-                      <TableCell>
-                        {t.initial ? <Icon>check</Icon> : '–'}
+                      <TableCell
+                        padding="checkbox"
+                        className={classes.minimalCell}
+                      >
+                        <Radio disabled checked={t.initial} />
                       </TableCell>
-                      <TableCell>
-                        {t.final ? <Icon>check</Icon> : '–'}
+                      <TableCell
+                        padding="checkbox"
+                        className={classes.minimalCell}
+                      >
+                        <Checkbox disabled checked={t.final} />
                       </TableCell>
-                      <TableCell>{t.state}</TableCell>
+                      <TableCell padding="dense">{t.state}</TableCell>
                       {header.slice(3).map(h => {
-                        return <TableCell>{t[h]}</TableCell>;
+                        return <TableCell padding="dense">{t[h]}</TableCell>;
                       })}
                     </TableRow>
                   );

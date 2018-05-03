@@ -6,6 +6,12 @@ import Card, { CardContent } from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 
+const styles = () => ({
+  card: {
+    height: '100%',
+  },
+});
+
 class GrammarCard extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +22,13 @@ class GrammarCard extends React.Component {
   }
 
   render() {
-    const { language, grammar, valid = true, onGrammarChange } = this.props;
+    const {
+      classes,
+      language,
+      grammar,
+      valid = true,
+      onGrammarChange,
+    } = this.props;
 
     const isEmpty =
       grammar === undefined ||
@@ -51,7 +63,7 @@ class GrammarCard extends React.Component {
     );
 
     return (
-      <Card>
+      <Card className={classes.card}>
         <CardContent>
           <Typography gutterBottom variant="headline" component="h2">
             Gramática regular
@@ -84,4 +96,4 @@ GrammarCard.propTypes = {
   onGrammarChange: PropTypes.func,
 };
 
-export default withStyles({})(GrammarCard);
+export default withStyles(styles)(GrammarCard);

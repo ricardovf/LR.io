@@ -1,7 +1,7 @@
 export const EPSILON = '&';
 export const SEPARATOR = '|';
 export const DERIVATION = '->';
-export const ACCEPT_STATE = '†';
+export const ACCEPT_STATE = '🆗';
 
 export default {
   isValidTerminal: terminal => {
