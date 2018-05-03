@@ -1,7 +1,7 @@
 import GrammarParser from './GrammarParser';
 import FSM from './FSM';
 import * as R from 'ramda';
-import SymbolValidator, { EPSILON, SPECIAL_STATE } from './SymbolValidator';
+import SymbolValidator, { EPSILON, ACCEPT_STATE } from './SymbolValidator';
 
 const parser = new GrammarParser();
 
@@ -18,20 +18,27 @@ export default class Grammar {
     this._convertToFSM();
   }
 
+  /**
+   * @todo refactor, most of the conversion logic can go to the FSM class
+   *
+   * @private
+   */
   _convertToFSM() {
     // try to convert to FSM
     try {
       if (
         !Array.isArray(this.Vn) ||
-        R.filter(SymbolValidator.isValidNonTerminal, this.Vn).length === 0
+        (this.Vn.length > 0 &&
+          R.filter(SymbolValidator.isValidNonTerminal, this.Vn).length === 0)
       )
         throw `Invalid non terminal detected: ${this.Vn.join(', ')}`;
 
       if (
         !Array.isArray(this.Vt) ||
-        R.filter(SymbolValidator.isValidTerminal, this.Vt).length === 0
+        (this.Vt.length > 0 &&
+          R.filter(SymbolValidator.isValidTerminal, this.Vt).length === 0)
       )
-        throw `Invalid terminal detected: ${this.Vn.join(', ')}`;
+        throw `Invalid terminal detected: ${this.Vt.join(', ')}`;
 
       if (
         !SymbolValidator.isValidNonTerminal(this.S) ||
@@ -48,25 +55,33 @@ export default class Grammar {
       if (!R.equals(R.keys(this.P), this.Vn))
         throw `Every non terminal symbol present in productions, should be defined in P`;
 
+      let hasEpsilonOnInitialNonTerminal = false;
+
       R.forEachObjIndexed((productions, producer) => {
         if (producer !== this.S) {
           if (productions.includes(EPSILON))
             throw `There should not be a production of type ${producer} -> & (epsilon)`;
         } else if (productions.includes(EPSILON)) {
+          hasEpsilonOnInitialNonTerminal = true;
+        }
+      }, this.P);
+
+      if (hasEpsilonOnInitialNonTerminal) {
+        R.forEachObjIndexed((productions, producer) => {
           R.forEach(production => {
             if (production.length === 2 && production.charAt(1) === this.S)
               throw `There should not be a production of type ${producer} -> x${producer} when there is & (epsilon)`;
           }, productions);
-        }
-      }, this.P);
+        }, this.P);
+      }
 
-      let states = [...this.Vn, SPECIAL_STATE];
+      let states = [...this.Vn, ACCEPT_STATE];
       let alphabet = [...this.Vt];
       let transactions = [];
       let initial = this.S;
       let finals = this.P[this.S].includes(EPSILON)
-        ? [this.S, SPECIAL_STATE]
-        : [SPECIAL_STATE];
+        ? [this.S, ACCEPT_STATE]
+        : [ACCEPT_STATE];
 
       R.forEachObjIndexed((productions, producer) => {
         R.forEach(production => {
@@ -77,7 +92,7 @@ export default class Grammar {
             // @todo review format
             transactions.push({
               from: producer,
-              to: SPECIAL_STATE,
+              to: ACCEPT_STATE,
               when: production,
             });
           } else if (production.length === 2) {
@@ -92,8 +107,8 @@ export default class Grammar {
               )} is not on non terminals list`;
 
             transactions.push({
-              to: production.charAt(1),
               from: producer,
+              to: production.charAt(1),
               when: production.charAt(0),
             });
           }
@@ -103,8 +118,16 @@ export default class Grammar {
       this.fsm = new FSM(states, alphabet, transactions, initial, finals);
     } catch (e) {
       // Invalid Grammar
-      // console.log(`erro converting to FSM: ${e}`);
+      // console.log(this);
+      // console.log(`Error converting to FSM: ${e}`);
     }
+  }
+
+  /**
+   * @returns {null|FSM}
+   */
+  getFSM() {
+    return this.fsm;
   }
 
   getFormattedText() {

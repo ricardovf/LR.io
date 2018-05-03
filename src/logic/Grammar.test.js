@@ -1,5 +1,5 @@
 import Grammar from './Grammar';
-import { EPSILON } from './SymbolValidator';
+import { EPSILON, ACCEPT_STATE } from './SymbolValidator';
 
 describe('Grammar', () => {
   describe('fromText', () => {
@@ -47,6 +47,18 @@ describe('Grammar', () => {
       expect(Grammar.fromText(`S -> a | aS | &`).isValid()).toBeFalsy();
     });
 
+    it('should return an valid grammar when there is terminal and non terminal recursive', () => {
+      expect(Grammar.fromText(`S -> aS`).isValid()).toBeTruthy();
+    });
+
+    it('should return an invalid grammar when there is terminal and non terminal recursive and epsilon', () => {
+      expect(Grammar.fromText(`S -> a | aS | &`).isValid()).toBeFalsy();
+    });
+
+    it('should return an valid grammar when there is terminal epsilon', () => {
+      expect(Grammar.fromText(`S -> a | &`).isValid()).toBeTruthy();
+    });
+
     it('should return valid grammar on simple regular grammar without epsilon', () => {
       // expect(Grammar.fromText(`S -> a | aS`).isValid()).toBeTruthy();
       // expect(Grammar.fromText(`S -> a`).isValid()).toBeTruthy();
@@ -90,6 +102,25 @@ describe('Grammar', () => {
           B -> b | c | ${EPSILON}`
         ).isValid()
       ).toBeFalsy();
+    });
+
+    describe('fsm', () => {
+      it('should return valid fsm on a pair language', () => {
+        const grammar = Grammar.fromText(`S -> aB\nB -> aS | a`);
+        const fsm = grammar.getFSM();
+
+        expect(grammar.isValid()).toBeTruthy();
+        expect(fsm).toBeDefined();
+        expect(fsm.states).toEqual(['S', 'B', ACCEPT_STATE]);
+        expect(fsm.alphabet).toEqual(['a']);
+        expect(fsm.initial).toEqual('S');
+        expect(fsm.finals).toEqual([ACCEPT_STATE]);
+        expect(fsm.transactions).toEqual([
+          { from: 'S', to: 'B', when: 'a' },
+          { from: 'B', to: 'S', when: 'a' },
+          { from: 'B', to: ACCEPT_STATE, when: 'a' },
+        ]);
+      });
     });
   });
 });

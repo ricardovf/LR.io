@@ -40,4 +40,14 @@ export default class FSM {
   generate(size = 1) {
     return [];
   }
+
+  toPlainObject() {
+    return {
+      states: [...this.states],
+      alphabet: [...this.alphabet],
+      initial: this.initial,
+      finals: [...this.finals],
+      transactions: [...this.transactions],
+    };
+  }
 }

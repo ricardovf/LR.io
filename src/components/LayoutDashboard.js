@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import GrammarCardConnector from '../connectors/GrammarCardConnector';
+import TransactionTableReadOnlyCardConnector from '../connectors/TransactionTableReadOnlyCardConnector';
 
 const styles = theme => ({
   // root: {
@@ -15,7 +16,7 @@ const styles = theme => ({
   },
   paper: {
     //padding: theme.spacing.unit * 2,
-    textAlign: 'center',
+    // textAlign: 'center',
     height: '100%',
     color: theme.palette.text.secondary,
   },
@@ -53,9 +54,7 @@ function LayoutDashboard(props) {
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Paper elevation={1} className={classes.paper}>
-                  Tabela de transições
-                </Paper>
+                <TransactionTableReadOnlyCardConnector />
               </Grid>
             </Grid>
           </Grid>

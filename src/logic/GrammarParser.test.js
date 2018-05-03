@@ -72,6 +72,12 @@ describe('GrammarParser', () => {
       expect(parser.terminals()).toEqual(['a', 'b', 'c', 'd', 'e']);
     });
 
+    it('should extract the terminals symbol correctly when there is only terminalNonTerminal form', () => {
+      parser.setInput('S->aS').run();
+
+      expect(parser.terminals()).toEqual(['a']);
+    });
+
     it('should extract the terminals symbol correctly ordered including epsilon', () => {
       parser.setInput('S->a|bS|aB|&|c|d|&|aF\nB->b|a').run();
 

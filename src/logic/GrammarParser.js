@@ -86,7 +86,7 @@ export default class GrammarParser {
   }
 
   _extractTerminals(rules) {
-    const symbols = R.uniq(R.flatten(R.values(rules)));
+    const symbols = R.uniq(R.map(s => s.charAt(0), R.flatten(R.values(rules))));
 
     return R.filter(production => {
       return SymbolValidator.isValidTerminal(production);

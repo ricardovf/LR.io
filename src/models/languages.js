@@ -20,7 +20,7 @@ export default {
           minimal: false,
           grammar: undefined,
           expression: undefined,
-          automata: undefined,
+          fsm: undefined,
         },
       ];
     },
@@ -41,6 +41,7 @@ export default {
       dispatch.selectedLanguage.select({ id: null });
     },
 
+    // @todo use promise to process the grammar
     editGrammar: _.debounce(
       (payload, rootState) => {
         const { id, text } = payload;
@@ -52,6 +53,7 @@ export default {
         if (language) {
           const grammar = Grammar.fromText(text);
           const valid = grammar.isValid();
+          const fsm = valid ? grammar.getFSM() : undefined;
 
           language = {
             ...language,
@@ -59,6 +61,7 @@ export default {
             grammar: valid
               ? grammar.getFormattedText() || multiTrim(text, false)
               : multiTrim(text, false),
+            fsm: fsm ? fsm.toPlainObject() : undefined,
           };
         }
         dispatch.languages._updateLanguage({ id, language });
