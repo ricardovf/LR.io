@@ -52,9 +52,6 @@ export default class Grammar {
       if (this.P[this.S] === undefined)
         throw `There should be an ${this.P} -> x | xY | & production`;
 
-      if (!R.equals(R.keys(this.P), this.Vn))
-        throw `Every non terminal symbol present in productions, should be defined in P`;
-
       let hasEpsilonOnInitialNonTerminal = false;
 
       R.forEachObjIndexed((productions, producer) => {

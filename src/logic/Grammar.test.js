@@ -33,14 +33,14 @@ describe('Grammar', () => {
       ).toBeFalsy();
     });
 
-    it('should return an invalid grammar when missing non terminals', () => {
+    it('should return an valid grammar when missing non terminals productions', () => {
       expect(Grammar.fromText(`S -> aSB`).isValid()).toBeFalsy();
       expect(
         Grammar.fromText(
           `S -> a | aB
           B->aC|aS`
         ).isValid()
-      ).toBeFalsy();
+      ).toBeTruthy();
     });
 
     it('should return an invalid grammar S and epsilon exits on right side', () => {
@@ -116,6 +116,25 @@ describe('Grammar', () => {
         expect(fsm.initial).toEqual('S');
         expect(fsm.finals).toEqual([ACCEPT_STATE]);
         expect(fsm.transactions).toEqual([
+          { from: 'S', to: 'B', when: 'a' },
+          { from: 'B', to: 'S', when: 'a' },
+          { from: 'B', to: ACCEPT_STATE, when: 'a' },
+        ]);
+      });
+
+      it('should return valid fsm on a pair language with epsilon', () => {
+        const grammar = Grammar.fromText(`M -> aB|&\nS -> aB\nB -> aS | a`);
+        const fsm = grammar.getFSM();
+
+        expect(grammar.isValid()).toBeTruthy();
+        expect(fsm).toBeDefined();
+        expect(fsm.states).toEqual(['M', 'B', 'S', ACCEPT_STATE]);
+        expect(fsm.alphabet).toEqual([EPSILON, 'a']);
+        expect(fsm.initial).toEqual('M');
+        expect(fsm.finals).toEqual(['M', ACCEPT_STATE]);
+        expect(fsm.transactions).toEqual([
+          { from: 'M', to: 'B', when: 'a' },
+          { from: 'M', to: ACCEPT_STATE, when: '&' },
           { from: 'S', to: 'B', when: 'a' },
           { from: 'B', to: 'S', when: 'a' },
           { from: 'B', to: ACCEPT_STATE, when: 'a' },
