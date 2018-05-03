@@ -2,6 +2,8 @@ import uuidv4 from 'uuid/v4';
 import { find, propEq, reject } from 'ramda';
 import { dispatch } from '../store';
 import _ from 'lodash';
+import Grammar from '../logic/Grammar';
+import { multiTrim } from '../logic/helpers';
 
 export default {
   state: [],
@@ -48,7 +50,16 @@ export default {
         );
 
         if (language) {
-          language = { ...language, grammar: text.toUpperCase() };
+          const grammar = Grammar.fromText(text);
+          const valid = grammar.isValid();
+
+          language = {
+            ...language,
+            valid: valid,
+            grammar: valid
+              ? grammar.getFormattedText()
+              : multiTrim(text, false),
+          };
         }
         dispatch.languages._updateLanguage({ id, language });
       },

@@ -1,9 +1,20 @@
+import GrammarParser from './GrammarParser';
+
+const parser = new GrammarParser();
+
+let fromTextcurrentGrammar = undefined;
+
 export default class Grammar {
   constructor(Vn, Vt, P, S) {
-    // @todo validate
+    this.Vn = Vn;
+    this.Vt = Vt;
+    this.P = P;
+    this.S = S;
   }
 
-  getFormattedText() {}
+  getFormattedText() {
+    return '';
+  }
 
   isValid() {
     // @todo
@@ -27,11 +38,16 @@ export default class Grammar {
   static fromAutomata(automata) {}
   static fromRegularExpression(expression) {}
   static fromText(text) {
-    return new Grammar(
-      ['S', 'A', 'B'],
-      ['a', 'b'],
-      [{ S: ['aB', 'a'] }, { A: ['a', 'bB'] }, { B: ['b', 'bS'] }],
-      'S'
-    );
+    if (parser.changed(text)) {
+      parser.run(text);
+      fromTextcurrentGrammar = new Grammar(
+        parser.nonTerminals(),
+        parser.terminals(),
+        parser.rules(),
+        parser.initialSymbol()
+      );
+    }
+
+    return fromTextcurrentGrammar;
   }
 }

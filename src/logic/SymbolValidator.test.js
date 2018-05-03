@@ -2,7 +2,8 @@ import SymbolValidator, { EPSILON } from './SymbolValidator';
 
 describe('SymbolValidator', () => {
   describe('Terminals', () => {
-    it('accepts valid terminals', () => {
+    it('should accept valid terminals', () => {
+      expect(SymbolValidator.isValidTerminal(EPSILON)).toBeTruthy();
       expect(SymbolValidator.isValidTerminal('a')).toBeTruthy();
       expect(SymbolValidator.isValidTerminal('b')).toBeTruthy();
       expect(SymbolValidator.isValidTerminal('c')).toBeTruthy();
@@ -13,7 +14,7 @@ describe('SymbolValidator', () => {
       expect(SymbolValidator.isValidTerminal('9')).toBeTruthy();
     });
 
-    it('rejects invalid terminals', () => {
+    it('should reject invalid terminals', () => {
       expect(SymbolValidator.isValidTerminal('A')).toBeFalsy();
       expect(SymbolValidator.isValidTerminal('B')).toBeFalsy();
       expect(SymbolValidator.isValidTerminal('C')).toBeFalsy();
@@ -32,7 +33,7 @@ describe('SymbolValidator', () => {
   });
 
   describe('Non terminals', () => {
-    it('accepts valid non terminals', () => {
+    it('should accept valid non terminals', () => {
       expect(SymbolValidator.isValidNonTerminal('A')).toBeTruthy();
       expect(SymbolValidator.isValidNonTerminal('B')).toBeTruthy();
       expect(SymbolValidator.isValidNonTerminal('C')).toBeTruthy();
@@ -41,7 +42,7 @@ describe('SymbolValidator', () => {
       expect(SymbolValidator.isValidNonTerminal('Z')).toBeTruthy();
     });
 
-    it('rejects invalid non terminals', () => {
+    it('should reject invalid non terminals', () => {
       expect(SymbolValidator.isValidNonTerminal('a')).toBeFalsy();
       expect(SymbolValidator.isValidNonTerminal('b')).toBeFalsy();
       expect(SymbolValidator.isValidNonTerminal('c')).toBeFalsy();
@@ -61,11 +62,11 @@ describe('SymbolValidator', () => {
   });
 
   describe('Epsilon', () => {
-    it('accepts valid epsilon', () => {
+    it('should accept valid epsilon', () => {
       expect(SymbolValidator.isEpsilon(EPSILON)).toBeTruthy();
     });
 
-    it('rejects invalid epsilon', () => {
+    it('should reject invalid epsilon', () => {
       expect(SymbolValidator.isEpsilon('a')).toBeFalsy();
       expect(SymbolValidator.isEpsilon('b')).toBeFalsy();
       expect(SymbolValidator.isEpsilon('c')).toBeFalsy();
