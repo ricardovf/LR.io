@@ -41,7 +41,7 @@ export default class GrammarParser {
   _resetElements() {
     this.Vn = [];
     this.Vt = [];
-    this.P = [];
+    this.P = {};
     this.S = null;
   }
 
@@ -81,9 +81,6 @@ export default class GrammarParser {
       this.P[match.left] = R.uniq(this.P[match.left]);
     }
 
-    // console.log(this.P);
-
-    // @todo get terminals and non terminals from rules
     this.Vt = this._extractTerminals(this.P);
     this.Vn = this._extractNonTerminals(this.P);
   }
