@@ -4,6 +4,8 @@ import { dispatch } from '../store';
 import _ from 'lodash';
 import Grammar from '../logic/Grammar';
 import { multiTrim } from '../logic/helpers';
+import * as R from 'ramda';
+import FSM from '../logic/FSM';
 
 export default {
   state: [],
@@ -21,6 +23,9 @@ export default {
           grammar: undefined,
           expression: undefined,
           fsm: undefined,
+          userSentences: [],
+          userSentencesAccepted: [],
+          enumeration: [],
         },
       ];
     },
@@ -36,9 +41,72 @@ export default {
   },
   effects: {
     async remove({ id }, rootState) {
-      console.log(`effects/remove ${id}`);
       dispatch.languages._removeLanguage({ id });
       dispatch.selectedLanguage.select({ id: null });
+    },
+
+    async addUserSentence({ id, sentence }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      sentence = typeof sentence === 'string' ? sentence.trim() : '';
+
+      if (language && sentence) {
+        let userSentences = Array.isArray(language.userSentences)
+          ? [...language.userSentences]
+          : [];
+
+        if (!userSentences.includes(sentence)) {
+          // updates the accepted languages
+          let userSentencesAccepted = Array.isArray(
+            language.userSentencesAccepted
+          )
+            ? [...language.userSentencesAccepted]
+            : [];
+
+          const fsm = FSM.fromPlainObject(language.fsm);
+
+          if (fsm && (await fsm.recognize(sentence))) {
+            userSentencesAccepted.push(sentence);
+          }
+
+          language = {
+            ...language,
+            userSentences: [...userSentences, sentence].sort(),
+            userSentencesAccepted,
+          };
+
+          dispatch.languages._updateLanguage({ id, language });
+        }
+      }
+    },
+
+    async deleteUserSentence({ id, sentence }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && sentence) {
+        let userSentences = Array.isArray(language.userSentences)
+          ? [...language.userSentences]
+          : [];
+        let userSentencesAccepted = Array.isArray(
+          language.userSentencesAccepted
+        )
+          ? [...language.userSentencesAccepted]
+          : [];
+
+        userSentences = R.reject(item => item === sentence, userSentences);
+        userSentencesAccepted = R.reject(
+          item => item === sentence,
+          userSentencesAccepted
+        );
+
+        language = {
+          ...language,
+          userSentences,
+          userSentencesAccepted,
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
     },
 
     // @todo use promise to process the grammar
@@ -46,9 +114,7 @@ export default {
       (payload, rootState) => {
         const { id, text } = payload;
 
-        let language = find(propEq('id', rootState.selectedLanguage))(
-          rootState.languages
-        );
+        let language = find(propEq('id', id))(rootState.languages);
 
         if (language) {
           const grammar = Grammar.fromText(text);
@@ -63,8 +129,9 @@ export default {
               : multiTrim(text, false),
             fsm: fsm ? fsm.toPlainObject() : undefined,
           };
+
+          dispatch.languages._updateLanguage({ id, language });
         }
-        dispatch.languages._updateLanguage({ id, language });
       },
       250,
       { maxWait: 1000 }

@@ -103,4 +103,18 @@ export default class FSM {
       transactions: [...this.transactions],
     };
   }
+
+  static fromPlainObject(object) {
+    try {
+      return new this(
+        object.states,
+        object.alphabet,
+        object.transactions,
+        object.initial,
+        object.finals
+      );
+    } catch (e) {
+      return null;
+    }
+  }
 }

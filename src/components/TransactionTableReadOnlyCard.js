@@ -102,6 +102,7 @@ class TransactionTableReadOnlyCard extends React.Component {
                   {header.map((h, index) => {
                     return (
                       <TableCell
+                        key={index}
                         className={index < 2 ? classes.minimalCell : ''}
                         padding="dense"
                       >
@@ -128,8 +129,12 @@ class TransactionTableReadOnlyCard extends React.Component {
                         <Checkbox checked={t.final} />
                       </TableCell>
                       <TableCell padding="dense">{t.state}</TableCell>
-                      {header.slice(3).map(h => {
-                        return <TableCell padding="dense">{t[h]}</TableCell>;
+                      {header.slice(3).map((h, index) => {
+                        return (
+                          <TableCell key={index} padding="dense">
+                            {t[h]}
+                          </TableCell>
+                        );
                       })}
                     </TableRow>
                   );
@@ -145,7 +150,7 @@ class TransactionTableReadOnlyCard extends React.Component {
 
 TransactionTableReadOnlyCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  fsm: PropTypes.string,
+  fsm: PropTypes.object,
   valid: PropTypes.bool,
 };
 

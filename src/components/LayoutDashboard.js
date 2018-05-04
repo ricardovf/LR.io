@@ -7,6 +7,7 @@ import GrammarCardConnector from '../connectors/GrammarCardConnector';
 import TransactionTableReadOnlyCardConnector from '../connectors/TransactionTableReadOnlyCardConnector';
 import FSMCardConnector from '../connectors/FSMCardConnector';
 import { Card, CardContent, Typography } from 'material-ui';
+import RecognizeCardConnector from '../connectors/RecognizeCardConnector';
 
 const styles = theme => ({
   // root: {
@@ -69,13 +70,7 @@ function LayoutDashboard(props) {
           </Grid>
 
           <Grid item xs={12} sm={6} md={6}>
-            <Card style={{ height: '100%' }}>
-              <CardContent>
-                <Typography gutterBottom variant="headline" component="h2">
-                  Reconhecimento
-                </Typography>
-              </CardContent>
-            </Card>
+            <RecognizeCardConnector />
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
             <Card style={{ height: '100%' }}>

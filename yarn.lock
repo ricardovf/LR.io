@@ -4887,6 +4887,13 @@ markdown-to-jsx@^6.4.1:
     prop-types "^15.5.10"
     unquote "^1.1.0"
 
+material-ui-chip-input@^1.0.0-beta.4:
+  version "1.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/material-ui-chip-input/-/material-ui-chip-input-1.0.0-beta.4.tgz#48581e25ee56b878029fae745fb89c0734825190"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.5.7"
+
 material-ui@next:
   version "1.0.0-beta.43"
   resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.43.tgz#21074fd0ef5f1735a54060dbfd060e6d46fd5ef5"
@@ -6103,7 +6110,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1:
+prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:

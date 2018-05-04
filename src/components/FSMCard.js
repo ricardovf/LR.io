@@ -78,7 +78,7 @@ class FSMCard extends React.Component {
 
 FSMCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  fsm: PropTypes.string,
+  fsm: PropTypes.object,
   valid: PropTypes.bool,
 };
 
