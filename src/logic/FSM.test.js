@@ -30,12 +30,24 @@ describe('FSM', () => {
       expect(await fsm.recognize('aaaaaa')).toBeTruthy();
     });
 
+    it('should recognize aa pairs on an aa pairs language with multiples ways', async () => {
+      const fsm = Grammar.fromText(
+        `S -> aC | aB \nB -> aS | a\nC -> aC`
+      ).getFSM();
+
+      expect(fsm).toBeDefined();
+      expect(await fsm.recognize('aa')).toBeTruthy();
+      expect(await fsm.recognize('aaaa')).toBeTruthy();
+      expect(await fsm.recognize('aaaaaa')).toBeTruthy();
+    });
+
     it('should recognize aa pairs on an aa pairs language that has epsilon', async () => {
       const fsm = Grammar.fromText(
         `Z -> aB | ${EPSILON}\nS -> aB\nB -> aS | a`
       ).getFSM();
 
       expect(fsm).toBeDefined();
+      expect(await fsm.recognize(EPSILON)).toBeFalsy();
       expect(await fsm.recognize('')).toBeTruthy();
       expect(await fsm.recognize('aa')).toBeTruthy();
       expect(await fsm.recognize('aaaa')).toBeTruthy();

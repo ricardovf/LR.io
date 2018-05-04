@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a7b1d44-0643-4870-81c1-effbf81576b5" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/FSM.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logic/FSM.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.test.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -22,8 +19,8 @@
       <file leaf-file-name="FSM.test.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="58" column="32" lean-forward="true" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
+            <state relative-caret-position="377">
+              <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -44,7 +41,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>selectLanguageOnClick</find>
       <find>actions'</find>
       <find>selectLanguage</find>
       <find>newLanguageOnClick</find>
@@ -74,6 +70,7 @@
       <find>true</find>
       <find>sentence</find>
       <find>awaitfs</find>
+      <find>only</find>
     </findStrings>
     <replaceStrings>
       <replace>${EPSILON}</replace>
@@ -314,7 +311,7 @@
       <workItem from="1524760603153" duration="12717000" />
       <workItem from="1524778639351" duration="255000" />
       <workItem from="1524778905665" duration="2516000" />
-      <workItem from="1525121214210" duration="81010000" />
+      <workItem from="1525121214210" duration="81307000" />
     </task>
     <servers />
   </component>
@@ -351,7 +348,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="96498000" />
+    <option name="totallyTimeSpent" value="96795000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="130" y="40" width="1771" height="935" extended-state="0" />
@@ -361,7 +358,7 @@
       <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="4" />
       <window_info id="npm" order="0" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="7" visible="true" weight="0.3263647" />
+      <window_info anchor="bottom" id="Run" order="7" weight="0.3263647" />
       <window_info anchor="bottom" id="Terminal" order="2" />
       <window_info anchor="bottom" id="TypeScript" order="0" />
       <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.14850368" />
@@ -823,8 +820,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="58" column="32" lean-forward="true" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
+        <state relative-caret-position="377">
+          <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
         </state>
       </provider>
     </entry>
