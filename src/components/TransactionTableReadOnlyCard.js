@@ -119,13 +119,13 @@ class TransactionTableReadOnlyCard extends React.Component {
                         padding="checkbox"
                         className={classes.minimalCell}
                       >
-                        <Radio disabled checked={t.initial} />
+                        <Radio checked={t.initial} />
                       </TableCell>
                       <TableCell
                         padding="checkbox"
                         className={classes.minimalCell}
                       >
-                        <Checkbox disabled checked={t.final} />
+                        <Checkbox checked={t.final} />
                       </TableCell>
                       <TableCell padding="dense">{t.state}</TableCell>
                       {header.slice(3).map(h => {
