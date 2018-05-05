@@ -1,11 +1,13 @@
 import { EPSILON } from './SymbolValidator';
 import * as R from 'ramda';
 
+export const GENERATE_MAX_SIZE = 100;
+
 export default class FSM {
-  constructor(states, alphabet, transactions, initial, finals) {
+  constructor(states, alphabet, transitions, initial, finals) {
     this.states = states;
     this.alphabet = alphabet;
-    this.transactions = transactions;
+    this.transitions = transitions;
     this.initial = initial;
     this.finals = finals;
   }
@@ -16,11 +18,14 @@ export default class FSM {
       for (let symbol of this.alphabet) {
         let paths = [
           ...R.filter(R.whereEq({ from: state, when: symbol }))(
-            this.transactions
-          )
+            this.transitions
+          ),
         ];
         // If so, is not deterministic
-        if (paths.length > 1 || this.stateHasEpsilonAndNonEpsilonTransactions(state, symbol))
+        if (
+          paths.length > 1 ||
+          this.stateHasEpsilonAndNonEpsilonTransitions(state, symbol)
+        )
           return false;
       }
     }
@@ -36,19 +41,26 @@ export default class FSM {
     return true;
   }
 
-  // Check if a state has other transactions than epsilon
-  stateHasEpsilonAndNonEpsilonTransactions(state, symbol) {
+  // Check if a state has other transitions than epsilon
+  stateHasEpsilonAndNonEpsilonTransitions(state, symbol) {
     let nonEpsilonPaths = [
-      ...R.filter(R.whereEq({ from: state, when: symbol }))(
-        this.transactions
-      )
+      ...R.filter(R.whereEq({ from: state, when: symbol }))(this.transitions),
     ];
     let epsilonPaths = [
-      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(
-        this.transactions
-      )
+      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(this.transitions),
     ];
-    return (nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1);
+    return nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1;
+  }
+
+  hasEpsilonTransitions() {
+    return (
+      Array.isArray(this.transitions) &&
+      R.filter(R.whereEq({ when: EPSILON }))(this.transitions).length > 0
+    );
+  }
+
+  eliminateEpsilonTransitions() {
+    // @todo
   }
 
   acceptsEmptySentence() {
@@ -92,13 +104,13 @@ export default class FSM {
     // Get the current symbol
     const symbol = sentence.charAt(0);
 
-    // Find all transactions going from current state with the current symbol or EPSILON
+    // Find all transitions going from current state with the current symbol or EPSILON
     let paths = [
       ...R.filter(R.whereEq({ from: currentState, when: symbol }))(
-        this.transactions
+        this.transitions
       ),
       ...R.filter(R.whereEq({ from: currentState, when: EPSILON }))(
-        this.transactions
+        this.transitions
       ),
     ];
 
@@ -119,8 +131,68 @@ export default class FSM {
     return false;
   }
 
-  generate(size = 1) {
-    return [];
+  /**
+   * Generates all sentences less or equal the length passed
+   *
+   * @param maxLength
+   * @param currentState
+   * @param currentSentence
+   * @returns {Array}
+   */
+  generate(maxLength, currentState = this.initial, currentSentence = '') {
+    if (
+      typeof maxLength !== 'number' ||
+      maxLength < 1 ||
+      maxLength > GENERATE_MAX_SIZE
+    )
+      throw new RangeError(
+        `Size must be an integer between 1 and ${GENERATE_MAX_SIZE}. The value passed was: ${maxLength}`
+      );
+
+    if (this.hasEpsilonTransitions()) {
+      // create a new FSM without epsilon transitions and run the generate there, so we prevent infinite loops
+      const fsmWithoutEpsilon = new FSM(
+        this.states,
+        this.alphabet,
+        this.transitions,
+        this.initial,
+        this.finals
+      );
+      fsmWithoutEpsilon.eliminateEpsilonTransitions();
+      return fsmWithoutEpsilon.generate(
+        maxLength,
+        currentState,
+        currentSentence
+      );
+    }
+
+    let sentences = [];
+
+    if (this.finals.includes(currentState)) {
+      // console.log(
+      //   `estado atual ${currentState} é final, colocando a sentença atual ${currentSentence} na lista`
+      // );
+      sentences.push(currentSentence);
+    }
+
+    if (currentSentence.length < maxLength) {
+      // Find all transitions going from current state
+      let paths = R.filter(R.whereEq({ from: currentState }))(this.transitions);
+
+      for (let pathIndex = 0; pathIndex < paths.length; pathIndex++) {
+        const path = paths[pathIndex];
+        const innerCurrentSentence =
+          currentSentence + (path.when === EPSILON ? '' : path.when);
+
+        sentences = [
+          ...sentences,
+          ...this.generate(maxLength, path.to, innerCurrentSentence),
+        ];
+      }
+    }
+
+    // Only sort if not on recursion
+    return currentState === this.initial ? R.uniq(sentences).sort() : sentences;
   }
 
   toPlainObject() {
@@ -129,7 +201,7 @@ export default class FSM {
       alphabet: [...this.alphabet],
       initial: this.initial,
       finals: [...this.finals],
-      transactions: [...this.transactions],
+      transitions: [...this.transitions],
     };
   }
 
@@ -138,7 +210,7 @@ export default class FSM {
       return new this(
         object.states,
         object.alphabet,
-        object.transactions,
+        object.transitions,
         object.initial,
         object.finals
       );

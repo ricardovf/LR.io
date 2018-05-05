@@ -47,12 +47,12 @@ class TransactionTableReadOnlyCard extends React.Component {
         if (Array.isArray(fsm.alphabet)) {
           fsm.alphabet.map(symbol => {
             let to = [];
-            const transactions = R.filter(
+            const transitions = R.filter(
               R.whereEq({ from: state, when: symbol })
-            )(fsm.transactions);
+            )(fsm.transitions);
 
-            if (transactions.length) {
-              to = [...to, ...R.pluck('to')(transactions)];
+            if (transitions.length) {
+              to = [...to, ...R.pluck('to')(transitions)];
             }
 
             alphabet[symbol] =

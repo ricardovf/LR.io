@@ -21,6 +21,7 @@ class FSMCard extends React.Component {
 
     const yesIcon = <Icon style={{ fontSize: 24, color: 'green' }}>check</Icon>;
     const noIcon = <Icon style={{ fontSize: 24, color: 'red' }}>close</Icon>;
+    const dontKnow = <Icon style={{ fontSize: 24, color: 'gray' }}>help</Icon>;
 
     const info = fsm && (
       <React.Fragment>
@@ -47,16 +48,20 @@ class FSMCard extends React.Component {
         <Divider />
         <List dense className={classes.lastList}>
           <ListItem disableGutters>
-            <ListItemIcon>{yesIcon}</ListItemIcon>
+            <ListItemIcon>{dontKnow}</ListItemIcon>
             <ListItemText primary="Determinístico" />
           </ListItem>
           <ListItem disableGutters>
-            <ListItemIcon>{yesIcon}</ListItemIcon>
+            <ListItemIcon>{dontKnow}</ListItemIcon>
             <ListItemText primary="Transições por epsilon" />
           </ListItem>
           <ListItem disableGutters>
-            <ListItemIcon>{noIcon}</ListItemIcon>
+            <ListItemIcon>{dontKnow}</ListItemIcon>
             <ListItemText primary="Mínimo" />
+          </ListItem>
+          <ListItem disableGutters>
+            <ListItemIcon>{dontKnow}</ListItemIcon>
+            <ListItemText primary="Aceita sentença vazia" />
           </ListItem>
         </List>
       </React.Fragment>
