@@ -6,6 +6,7 @@ import Card, { CardContent } from 'material-ui/Card';
 import FSM from '../logic/FSM';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
+import * as R from 'ramda';
 
 const styles = () => ({
   card: {
@@ -37,7 +38,7 @@ class EnumerationCard extends React.Component {
         const fsm = FSM.fromPlainObject(language.fsm);
 
         if (fsm) {
-          sentences = fsm.generate(length);
+          sentences = R.sortBy(s => s.length, fsm.generate(length));
         }
       }
 
@@ -67,10 +68,7 @@ class EnumerationCard extends React.Component {
               }
               value={length}
             >
-              <option value={1}>1</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
+              {R.range(1, 101).map(n => <option value={n}>{n}</option>)}
             </Select>
           </FormControl>
           <Typography gutterBottom variant="headline" component="h2">

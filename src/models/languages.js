@@ -24,7 +24,6 @@ export default {
           expression: undefined,
           fsm: undefined,
           userSentences: [],
-          userSentencesAccepted: [],
           enumerationLength: 10,
         },
       ];
@@ -33,7 +32,6 @@ export default {
       return reject(language => language.id === id, [...state]);
     },
     _updateLanguage(state, { id, language }) {
-      console.log('_updateLanguage called to update state');
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;
       });

@@ -13,12 +13,6 @@ const mapState = state => {
           ? language.userSentences
           : []
         : [],
-    acceptedSentences:
-      language !== undefined
-        ? Array.isArray(language.userSentencesAccepted)
-          ? language.userSentencesAccepted
-          : []
-        : [],
   };
 };
 
