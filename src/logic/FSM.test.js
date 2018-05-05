@@ -81,6 +81,61 @@ describe('FSM', () => {
     });
   });
 
+  describe('determination', () => {
+    it('should recognize epsilon and non epsilon transactions', async () => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(
+        fsm.stateHasEpsilonAndNonEpsilonTransactions('S', 'a')
+      ).toBeTruthy();
+    });
+
+    it('should recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aB\nB -> aS | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic).toBeTruthy();
+    });
+
+    it('should NOT recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aA\nA -> aS | aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+
+    it('should NOT recognize automata as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+
+    it('should recognize loop in automata', async () => {
+      const fsm = Grammar.fromText(`S -> aS`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.hasCycle(fsm.initial)).toBeTruthy();
+    });
+
+    it('should recognize cycle in automata', async () => {
+      // -> q0 -> q1 -> q2 -> q3
+      //    ^           |
+      //    |___________|
+      const fsm = Grammar.fromText(`S -> aA | b\nA -> aB \nC -> aS | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.hasCycle(fsm.initial)).toBeTruthy();
+    });
+
+    // it('should NOT recognize cycle in automata', async () => {
+    //   const fsm = Grammar.fromText(`S -> a | b`).getFSM();
+    //   expect(fsm).toBeDefined();
+    //   expect(fsm.hasCycle()).toBeFalsy();
+    // });
+
+    it('should NOT recognize cycle in automata', async () => {
+      const fsm = Grammar.fromText(`S -> a | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.hasCycle()).toBeFalsy();
+    });
+  });
+
   describe('generate', () => {
     it('should accept only integers bigger then 0 and less or equal 100 as max size', async () => {
       const fsm = Grammar.fromText(`S -> aS | a`).getFSM();

@@ -13,15 +13,55 @@ export default class FSM {
   }
 
   isDeterministic() {
-    // check every mapping to see if there is more then one way with same symbol
+    for (let state of this.states) {
+      for (let symbol of this.alphabet) {
+        let paths = [
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            this.transitions
+          ),
+        ];
+
+        if (
+          paths.length > 1 ||
+          this.stateHasEpsilonAndNonEpsilonTransactions(state, symbol)
+        )
+          return false;
+      }
+    }
+    return true;
+  }
+
+  stateHasEpsilonAndNonEpsilonTransactions(state, symbol) {
+    let nonEpsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: symbol }))(this.transitions),
+    ];
+    let epsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(this.transitions),
+    ];
+    return nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1;
   }
 
   isMinimal() {
     return false;
   }
 
-  hasCycle() {
-    return true;
+  hasCycle(state, visitedStates = new Set()) {
+    if (visitedStates.has(state)) {
+      return true;
+    } else {
+      visitedStates.add(state);
+      let paths = R.filter(R.whereEq({ from: state }))(this.transitions);
+      let neighbours = R.pluck('to')(paths);
+      for (let neighbour of neighbours) {
+        if (neighbours != state) {
+          return this.hasCycle(state, visitedStates)
+        } else {
+          return true;
+        }
+      }
+    }
+    visitedStates.delete(state);
+    return false;
   }
 
   hasEpsilonTransitions() {
