@@ -131,9 +131,11 @@ describe('FSM', () => {
       expect(fsm.generate(100)).toEqual(['a', 'aa']);
     });
 
-    it('should generate the empty sentence when it have epsilon on the first production', async () => {
+    it.only('should generate the empty sentence when it have epsilon on the first production', async () => {
       const fsm = Grammar.fromText(
-        `S -> aB | a | ${EPSILON}\nB -> aB | a`
+        `Z -> aB | ${EPSILON}
+        S -> aB
+        B -> aS | a`
       ).getFSM();
 
       expect(fsm).toBeDefined();

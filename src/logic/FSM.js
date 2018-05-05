@@ -191,8 +191,7 @@ export default class FSM {
       }
     }
 
-    // Only sort if not on recursion
-    return currentState === this.initial ? R.uniq(sentences).sort() : sentences;
+    return currentState === this.initial ? R.uniq(sentences) : sentences;
   }
 
   toPlainObject() {

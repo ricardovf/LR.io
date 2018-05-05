@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a7b1d44-0643-4870-81c1-effbf81576b5" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/components/EnumerationCard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/connectors/EnumerationCardConnector.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/FSMCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/FSMCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LayoutDashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LayoutDashboard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logic/FSM.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logic/FSM.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/languages.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/languages.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -22,13 +22,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FSM.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
+      <file leaf-file-name="EnumerationCard.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/EnumerationCard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="24" column="12" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+            <state relative-caret-position="477">
+              <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
               <folding>
-                <element signature="e#0#44#0" expanded="true" />
+                <element signature="e#0#26#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -37,8 +37,56 @@
       <file leaf-file-name="FSM.test.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="187" column="51" selection-start-line="187" selection-start-column="12" selection-end-line="187" selection-end-column="51" />
+            <state relative-caret-position="501">
+              <caret line="137" column="19" selection-start-line="135" selection-start-column="9" selection-end-line="137" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LayoutDashboard.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/LayoutDashboard.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1702">
+              <caret line="74" column="17" lean-forward="true" selection-start-line="74" selection-start-column="17" selection-end-line="74" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EnumerationCardConnector.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/connectors/EnumerationCardConnector.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="9" column="11" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSM.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="441">
+              <caret line="193" column="24" selection-start-line="193" selection-start-column="24" selection-end-line="193" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#44#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="languages.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/languages.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="600">
+              <caret line="118" column="10" lean-forward="true" selection-start-line="118" selection-start-column="10" selection-end-line="118" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#29#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -51,7 +99,6 @@
       <find>default</find>
       <find>flatten</find>
       <find>R</find>
-      <find>console</find>
       <find>this.P</find>
       <find>should return invalid Grammar when empty text</find>
       <find>should return valid grammar on simple regular grammar without epsilon</find>
@@ -77,11 +124,12 @@
       <find>throw</find>
       <find>transactions</find>
       <find>stateHasEpsilonAndNonEpsilontransitions</find>
+      <find>console</find>
     </findStrings>
     <replaceStrings>
       <replace>${EPSILON}</replace>
-      <replace>transitions</replace>
       <replace>stateHasEpsilonAndNonEpsilonTransitions</replace>
+      <replace>transitions</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/src</dir>
@@ -93,9 +141,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/App.js" />
-        <option value="$PROJECT_DIR$/src/containers/Incrementer.js" />
-        <option value="$PROJECT_DIR$/src/connectors/Incrementer.js" />
         <option value="$PROJECT_DIR$/src/connectors/LanguagesMenuList.js" />
         <option value="$PROJECT_DIR$/styleguide.config.js" />
         <option value="$PROJECT_DIR$/src/components/README.md" />
@@ -137,12 +182,15 @@
         <option value="$PROJECT_DIR$/src/components/GrammarCard.js" />
         <option value="$PROJECT_DIR$/src/logic/SymbolValidator.js" />
         <option value="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" />
-        <option value="$PROJECT_DIR$/src/components/LayoutDashboard.js" />
         <option value="$PROJECT_DIR$/src/components/RecognizeCard.js" />
         <option value="$PROJECT_DIR$/src/connectors/RecognizeCardConnector.js" />
-        <option value="$PROJECT_DIR$/src/models/languages.js" />
         <option value="$PROJECT_DIR$/src/components/FSMCard.js" />
+        <option value="$PROJECT_DIR$/src/models/languages.js" />
+        <option value="$PROJECT_DIR$/src/connectors/TransactionTableReadOnlyCardConnector.js" />
+        <option value="$PROJECT_DIR$/src/components/LayoutDashboard.js" />
         <option value="$PROJECT_DIR$/src/logic/FSM.test.js" />
+        <option value="$PROJECT_DIR$/src/connectors/EnumerationCardConnector.js" />
+        <option value="$PROJECT_DIR$/src/components/EnumerationCard.js" />
         <option value="$PROJECT_DIR$/src/logic/FSM.js" />
       </list>
     </option>
@@ -234,12 +282,6 @@
               <item name="LR.io" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LR.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LR.io" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="store" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -366,7 +408,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109904000" />
+    <option name="totallyTimeSpent" value="114075000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="185" y="54" width="1462" height="935" extended-state="0" />
@@ -379,18 +421,31 @@
       <window_info anchor="bottom" id="Run" order="7" weight="0.3263647" />
       <window_info anchor="bottom" id="Terminal" order="2" />
       <window_info anchor="bottom" id="TypeScript" order="0" />
-      <window_info content_ui="combo" id="Project" order="3" visible="true" weight="0.2134063" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.11559507" />
       <window_info anchor="bottom" id="Docker" order="1" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Find" order="6" visible="true" weight="0.329849" />
+      <window_info anchor="bottom" id="Find" order="6" weight="0.3809524" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="8" weight="0.31707317" />
+      <window_info anchor="bottom" id="TypeScript" order="0" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="1" show_stripe_button="false" />
+      <window_info id="npm" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
+      <window_info content_ui="combo" id="Project" order="3" visible="true" weight="0.2134063" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="11" />
+      <window_info anchor="bottom" id="Version Control" order="4" />
+      <window_info anchor="bottom" id="Run" order="7" weight="0.3263647" />
+      <window_info active="true" anchor="bottom" id="Find" order="6" visible="true" weight="0.329849" />
+      <window_info anchor="bottom" id="Debug" order="8" weight="0.31707317" />
       <window_info anchor="bottom" id="Message" order="5" />
+      <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="2" />
+      <window_info id="Favorites" order="1" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -404,34 +459,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/connectors/LanguagesMenuListConnector.js</url>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/logic/FSM.js</url>
-          <line>112</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
       <option name="time" value="9" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/node_modules/material-ui/List/ListItem.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="32" column="14" selection-start-line="32" selection-start-column="14" selection-end-line="32" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config-overrides.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/material-ui/List/ListItemText.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -490,23 +524,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reducers/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="8" lean-forward="true" selection-end-line="8" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/count.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="16" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reducers/index.js" />
+    <entry file="file://$PROJECT_DIR$/src/models/count.js" />
     <entry file="file://$PROJECT_DIR$/node_modules/@rematch/core/typings/rematch/index.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
@@ -514,13 +533,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/actions/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/actions/index.js" />
     <entry file="file://$PROJECT_DIR$/src/models/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="23">
@@ -599,9 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/xregexp/lib/index.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/ramda/src/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -630,16 +640,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
           <caret line="13" column="2" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/connectors/TransactionTableReadOnlyCardConnector.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="18" column="74" selection-start-line="18" selection-start-column="46" selection-end-line="18" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -732,20 +732,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/LayoutDashboard.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1497">
-          <caret line="72" column="35" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="661">
-          <caret line="132" column="32" selection-start-line="132" selection-start-column="32" selection-end-line="132" selection-end-column="32" />
+        <state relative-caret-position="195">
+          <caret line="22" column="16" lean-forward="true" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -809,16 +799,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="59" column="27" selection-start-line="59" selection-start-column="27" selection-end-line="59" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.prettierrc">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
@@ -826,17 +806,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/connectors/TransactionTableReadOnlyCardConnector.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-column="26" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/LayoutDashboard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1702">
+          <caret line="74" column="17" lean-forward="true" selection-start-line="74" selection-start-column="17" selection-end-line="74" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/languages.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="118" column="10" lean-forward="true" selection-start-line="118" selection-start-column="10" selection-end-line="118" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="187" column="51" selection-start-line="187" selection-start-column="12" selection-end-line="187" selection-end-column="51" />
+        <state relative-caret-position="501">
+          <caret line="137" column="19" selection-start-line="135" selection-start-column="9" selection-end-line="137" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/connectors/EnumerationCardConnector.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="11" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/material-ui/Typography/Typography.js.flow">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="143" column="2" selection-start-line="143" selection-start-column="2" selection-end-line="143" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/EnumerationCard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="477">
+          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="24" column="12" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+        <state relative-caret-position="441">
+          <caret line="193" column="24" selection-start-line="193" selection-start-column="24" selection-end-line="193" selection-end-column="24" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>

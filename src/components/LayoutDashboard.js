@@ -8,6 +8,7 @@ import TransactionTableReadOnlyCardConnector from '../connectors/TransactionTabl
 import FSMCardConnector from '../connectors/FSMCardConnector';
 import { Card, CardContent, Typography } from 'material-ui';
 import RecognizeCardConnector from '../connectors/RecognizeCardConnector';
+import EnumerationCardConnector from '../connectors/EnumerationCardConnector';
 
 const styles = theme => ({
   // root: {
@@ -73,13 +74,7 @@ function LayoutDashboard(props) {
             <RecognizeCardConnector />
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Card style={{ height: '100%' }}>
-              <CardContent>
-                <Typography gutterBottom variant="headline" component="h2">
-                  Enumeração
-                </Typography>
-              </CardContent>
-            </Card>
+            <EnumerationCardConnector />
           </Grid>
         </Grid>
       </div>

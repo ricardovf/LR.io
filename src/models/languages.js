@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Grammar from '../logic/Grammar';
 import { multiTrim } from '../logic/helpers';
 import * as R from 'ramda';
-import FSM from '../logic/FSM';
+import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
 
 export default {
   state: [],
@@ -25,7 +25,7 @@ export default {
           fsm: undefined,
           userSentences: [],
           userSentencesAccepted: [],
-          enumeration: [],
+          enumerationLength: 10,
         },
       ];
     },
@@ -103,6 +103,19 @@ export default {
           ...language,
           userSentences,
           userSentencesAccepted,
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    changeEnumerationLength({ id, length }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && length >= 1 && length <= GENERATE_MAX_SIZE) {
+        language = {
+          ...language,
+          enumerationLength: length,
         };
 
         dispatch.languages._updateLanguage({ id, language });
