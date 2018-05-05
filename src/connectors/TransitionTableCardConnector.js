@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { find, propEq } from 'ramda';
-import TransactionTableReadOnlyCard from '../components/TransactionTableReadOnlyCard';
+import TransitionTableCard from '../components/TransitionTableCard';
 
 const mapState = state => {
   const language = find(propEq('id', state.selectedLanguage))(state.languages);
@@ -16,4 +16,4 @@ const mapDispatch = dispatch => ({
   onGrammarChange: (id, text) => dispatch.languages.editGrammar({ id, text }),
 });
 
-export default connect(mapState, mapDispatch)(TransactionTableReadOnlyCard);
+export default connect(mapState, mapDispatch)(TransitionTableCard);

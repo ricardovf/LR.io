@@ -26,7 +26,7 @@ const styles = () => ({
   },
 });
 
-class TransactionTableReadOnlyCard extends React.Component {
+class TransitionTableCard extends React.Component {
   buildHeader(fsm) {
     let data = ['*', 'F', 'Estado'];
 
@@ -148,10 +148,10 @@ class TransactionTableReadOnlyCard extends React.Component {
   }
 }
 
-TransactionTableReadOnlyCard.propTypes = {
+TransitionTableCard.propTypes = {
   classes: PropTypes.object.isRequired,
   fsm: PropTypes.object,
   valid: PropTypes.bool,
 };
 
-export default withStyles(styles)(TransactionTableReadOnlyCard);
+export default withStyles(styles)(TransitionTableCard);
