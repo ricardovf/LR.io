@@ -54,7 +54,7 @@ export default class FSM {
       let neighbours = R.pluck('to')(paths);
       for (let neighbour of neighbours) {
         if (neighbours != state) {
-          return this.hasCycle(state, visitedStates)
+          return this.hasCycle(state, visitedStates);
         } else {
           return true;
         }
@@ -72,7 +72,64 @@ export default class FSM {
   }
 
   eliminateEpsilonTransitions() {
-    // @todo
+    if (this.hasEpsilonTransitions) {
+      let newTransitions = new Set();
+      for (let state of this.states) {
+        let reachbaleStatesByEpsilon = this.findReachbableStatesbyEpsilon(
+          state
+        );
+        this.createUnionForStates(
+          reachbaleStatesByEpsilon,
+          newTransitions,
+          state
+        );
+      }
+      this.transitions = Array.from(newTransitions);
+      // Removing epsilon from alphabet
+      this.alphabet.splice(this.alphabet.indexOf(EPSILON), 1);
+    }
+  }
+
+  findReachbableStatesbyEpsilon(state, reachbaleStatesByEpsilon = new Set()) {
+    if (reachbaleStatesByEpsilon.has(state)) {
+      return reachbaleStatesByEpsilon;
+    } else {
+      reachbaleStatesByEpsilon.add(state);
+      let paths = [
+        ...R.filter(R.whereEq({ from: state, when: EPSILON }))(
+          this.transitions
+        ),
+      ];
+      let epsilonNeighbours = R.pluck('to')(paths);
+      for (let neighbour of epsilonNeighbours) {
+        this.findReachbableStatesbyEpsilon(neighbour, reachbaleStatesByEpsilon);
+      }
+      return reachbaleStatesByEpsilon;
+    }
+  }
+
+  createUnionForStates(states, newTransitions, state) {
+    for (let symbol of this.alphabet) {
+      if (symbol != EPSILON) {
+        for (let state_ of states) {
+          let transitions = [
+            ...R.filter(R.whereEq({ from: state_, when: symbol }))(
+              this.transitions
+            ),
+          ];
+          for (let transition of transitions) {
+            if (!newTransitions.has(transition)) {
+              if (transition.from != state) {
+                let transition_ = Object.assign({}, transition);
+                transition_.from = state;
+                newTransitions.add(transition_);
+              }
+              newTransitions.add(transition);
+            }
+          }
+        }
+      }
+    }
   }
 
   acceptsEmptySentence() {

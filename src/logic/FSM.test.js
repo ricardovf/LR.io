@@ -118,21 +118,40 @@ describe('FSM', () => {
       // -> q0 -> q1 -> q2 -> q3
       //    ^           |
       //    |___________|
-      const fsm = Grammar.fromText(`S -> aA | b\nA -> aB \nC -> aS | b`).getFSM();
+      const fsm = Grammar.fromText(
+        `S -> aA | b\nA -> aB \nC -> aS | b`
+      ).getFSM();
       expect(fsm).toBeDefined();
       expect(fsm.hasCycle(fsm.initial)).toBeTruthy();
     });
-
-    // it('should NOT recognize cycle in automata', async () => {
-    //   const fsm = Grammar.fromText(`S -> a | b`).getFSM();
-    //   expect(fsm).toBeDefined();
-    //   expect(fsm.hasCycle()).toBeFalsy();
-    // });
 
     it('should NOT recognize cycle in automata', async () => {
       const fsm = Grammar.fromText(`S -> a | b`).getFSM();
       expect(fsm).toBeDefined();
       expect(fsm.hasCycle()).toBeFalsy();
+    });
+
+    it('should NOT recognize cycle in automata', async () => {
+      const fsm = Grammar.fromText(`S -> a | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.hasCycle()).toBeFalsy();
+    });
+
+    it('should remove epsilon transitions', async() => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = [EPSILON, 'a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'A', when: 'a' },
+        { from: 'A', to: 'B', when: EPSILON },
+        { from: 'B', to: 'B', when: 'b' },
+        { from: 'B', to: 'C', when: EPSILON },
+        { from: 'C', to: 'C', when: 'c' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      fsm.eliminateEpsilonTransitions();
+      expect(fsm.hasEpsilonTransitions()).toBeFalsy();
     });
   });
 
