@@ -11,7 +11,21 @@ export default class FSM {
   }
 
   isDeterministic() {
-    // check every mapping to see if there is more then one way with same symbol
+    // For each state, will check if there is more than one transaction with same symbol
+    for (let state of this.states) {
+      for (let symbol of this.alphabet) {
+        let paths = [
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            this.transactions
+          )
+        ];
+        // If so, is not deterministic
+        if (paths.length > 1 || this.stateHasEpsilonAndNonEpsilonTransactions(state, symbol))
+          return false;
+      }
+    }
+    // Otherwise, is deterministic
+    return true;
   }
 
   isMinimal() {
@@ -20,6 +34,21 @@ export default class FSM {
 
   hasCycle() {
     return true;
+  }
+
+  // Check if a state has other transactions than epsilon
+  stateHasEpsilonAndNonEpsilonTransactions(state, symbol) {
+    let nonEpsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: symbol }))(
+        this.transactions
+      )
+    ];
+    let epsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(
+        this.transactions
+      )
+    ];
+    return (nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1);
   }
 
   acceptsEmptySentence() {

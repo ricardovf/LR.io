@@ -78,4 +78,30 @@ describe('FSM', () => {
       expect(await fsm.recognize('aaaaa')).toBeFalsy();
     });
   });
+
+  describe('determination', () => {
+    it('should recognize epsilon and non epsilon transactions', async() => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.stateHasEpsilonAndNonEpsilonTransactions('S', 'a')).toBeTruthy();
+    });
+
+    it('should recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aB\nB -> aS | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic).toBeTruthy();
+    });
+
+    it('should NOT recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aA\nA -> aS | aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+
+    it('should NOT recognize automata as deterministic', async() => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+  });
 });
