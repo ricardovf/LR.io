@@ -74,7 +74,7 @@ export default class Grammar {
 
       let states = [...this.Vn, ACCEPT_STATE];
       let alphabet = [...this.Vt];
-      let transactions = [];
+      let transitions = [];
       let initial = this.S;
       let finals = this.P[this.S].includes(EPSILON)
         ? [this.S, ACCEPT_STATE]
@@ -87,7 +87,7 @@ export default class Grammar {
               throw `The production ${producer} -> ${production} is invalid because ${production} is not on terminals/alphabet list`;
 
             // @todo review format
-            transactions.push({
+            transitions.push({
               from: producer,
               to: ACCEPT_STATE,
               when: production,
@@ -103,7 +103,7 @@ export default class Grammar {
                 1
               )} is not on non terminals list`;
 
-            transactions.push({
+            transitions.push({
               from: producer,
               to: production.charAt(1),
               when: production.charAt(0),
@@ -112,7 +112,7 @@ export default class Grammar {
         })(productions);
       }, this.P);
 
-      this.fsm = new FSM(states, alphabet, transactions, initial, finals);
+      this.fsm = new FSM(states, alphabet, transitions, initial, finals);
     } catch (e) {
       // Invalid Grammar
       // console.log(this);

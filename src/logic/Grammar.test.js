@@ -115,7 +115,7 @@ describe('Grammar', () => {
         expect(fsm.alphabet).toEqual(['a']);
         expect(fsm.initial).toEqual('S');
         expect(fsm.finals).toEqual([ACCEPT_STATE]);
-        expect(fsm.transactions).toEqual([
+        expect(fsm.transitions).toEqual([
           { from: 'S', to: 'B', when: 'a' },
           { from: 'B', to: 'S', when: 'a' },
           { from: 'B', to: ACCEPT_STATE, when: 'a' },
@@ -132,7 +132,7 @@ describe('Grammar', () => {
         expect(fsm.alphabet).toEqual([EPSILON, 'a']);
         expect(fsm.initial).toEqual('M');
         expect(fsm.finals).toEqual(['M', ACCEPT_STATE]);
-        expect(fsm.transactions).toEqual([
+        expect(fsm.transitions).toEqual([
           { from: 'M', to: 'B', when: 'a' },
           { from: 'M', to: ACCEPT_STATE, when: '&' },
           { from: 'S', to: 'B', when: 'a' },

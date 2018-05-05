@@ -2,16 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a7b1d44-0643-4870-81c1-effbf81576b5" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/RecognizeCard.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/connectors/RecognizeCardConnector.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/FSMCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/FSMCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/LayoutDashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LayoutDashboard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logic/FSM.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/languages.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/languages.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logic/FSM.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/FSM.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logic/Grammar.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Grammar.test.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -40,8 +37,20 @@
       <file leaf-file-name="FSMCard.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/FSMCard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1299">
-              <caret line="64" column="12" lean-forward="true" selection-start-line="64" selection-start-column="12" selection-end-line="64" selection-end-column="12" />
+            <state relative-caret-position="-865">
+              <caret line="23" column="62" selection-start-line="23" selection-start-column="62" selection-end-line="23" selection-end-column="62" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSMCardConnector.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/connectors/FSMCardConnector.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="115">
+              <caret line="5" column="14" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="14" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -61,7 +70,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="languages.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="languages.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models/languages.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="340">
@@ -76,11 +85,20 @@
       <file leaf-file-name="FSM.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="107" column="9" lean-forward="true" selection-start-line="107" selection-start-column="9" selection-end-line="107" selection-end-column="9" />
+            <state relative-caret-position="552">
+              <caret line="132" column="51" selection-start-line="132" selection-start-column="24" selection-end-line="132" selection-end-column="51" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSM.test.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="69">
+              <caret line="6" column="2" selection-start-line="6" selection-start-column="2" selection-end-line="82" />
             </state>
           </provider>
         </entry>
@@ -89,14 +107,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>onGrammarChange</find>
       <find>&amp;</find>
       <find>.R</find>
       <find>default</find>
       <find>flatten</find>
       <find>R</find>
       <find>console</find>
-      <find>throw</find>
       <find>this.P</find>
       <find>should return invalid Grammar when empty text</find>
       <find>should return valid grammar on simple regular grammar without epsilon</find>
@@ -119,9 +135,12 @@
       <find>epsilon</find>
       <find>TransactionTableReadOnlyCard</find>
       <find>selected</find>
+      <find>throw</find>
+      <find>transactions</find>
     </findStrings>
     <replaceStrings>
       <replace>${EPSILON}</replace>
+      <replace>transitions</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/src</dir>
@@ -176,14 +195,14 @@
         <option value="$PROJECT_DIR$/src/connectors/FSMCardConnector.js" />
         <option value="$PROJECT_DIR$/src/components/GrammarCard.js" />
         <option value="$PROJECT_DIR$/src/logic/SymbolValidator.js" />
-        <option value="$PROJECT_DIR$/src/logic/FSM.test.js" />
-        <option value="$PROJECT_DIR$/src/components/FSMCard.js" />
         <option value="$PROJECT_DIR$/src/components/TransactionTableReadOnlyCard.js" />
         <option value="$PROJECT_DIR$/src/components/LayoutDashboard.js" />
-        <option value="$PROJECT_DIR$/src/logic/FSM.js" />
         <option value="$PROJECT_DIR$/src/components/RecognizeCard.js" />
         <option value="$PROJECT_DIR$/src/connectors/RecognizeCardConnector.js" />
         <option value="$PROJECT_DIR$/src/models/languages.js" />
+        <option value="$PROJECT_DIR$/src/components/FSMCard.js" />
+        <option value="$PROJECT_DIR$/src/logic/FSM.js" />
+        <option value="$PROJECT_DIR$/src/logic/FSM.test.js" />
       </list>
     </option>
   </component>
@@ -215,9 +234,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="130" />
+    <option name="x" value="439" />
     <option name="y" value="40" />
-    <option name="width" value="1771" />
+    <option name="width" value="1462" />
     <option name="height" value="935" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -296,7 +315,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_package_manager_path" value="yarn" />
     <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
-    <property name="settings.editor.selected.configurable" value="JavaScript.Libraries" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -359,20 +378,11 @@
       <workItem from="1524760603153" duration="12717000" />
       <workItem from="1524778639351" duration="255000" />
       <workItem from="1524778905665" duration="2516000" />
-      <workItem from="1525121214210" duration="87167000" />
+      <workItem from="1525121214210" duration="93640000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="FSM_test_js - 2018.05.04 at 16h 08m 49s.xml">
-      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
-    </history-entry>
-    <history-entry file="FSM_test_js - 2018.05.04 at 16h 15m 31s.xml">
-      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
-    </history-entry>
-    <history-entry file="FSM_test_js - 2018.05.04 at 16h 23m 41s.xml">
-      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
-    </history-entry>
     <history-entry file="FSM_test_js - 2018.05.04 at 16h 26m 08s.xml">
       <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
@@ -394,12 +404,21 @@
     <history-entry file="FSM_test_js - 2018.05.04 at 16h 26m 41s.xml">
       <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
+    <history-entry file="FSM_test_js - 2018.05.05 at 11h 59m 26s.xml">
+      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
+    <history-entry file="FSM_test_js - 2018.05.05 at 12h 01m 10s.xml">
+      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
+    <history-entry file="FSM_test_js - 2018.05.05 at 12h 57m 32s.xml">
+      <configuration name="FSM.test.js" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102655000" />
+    <option name="totallyTimeSpent" value="109128000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="130" y="40" width="1771" height="935" extended-state="0" />
+    <frame x="439" y="40" width="1462" height="935" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="11" />
@@ -409,7 +428,7 @@
       <window_info anchor="bottom" id="Run" order="7" weight="0.3263647" />
       <window_info anchor="bottom" id="Terminal" order="2" />
       <window_info anchor="bottom" id="TypeScript" order="0" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.27498588" />
+      <window_info content_ui="combo" id="Project" order="3" weight="0.21343873" />
       <window_info anchor="bottom" id="Docker" order="1" show_stripe_button="false" />
       <window_info anchor="bottom" id="Find" order="6" weight="0.329849" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
@@ -439,18 +458,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/logic/FSM.js</url>
-          <line>89</line>
+          <line>142</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/logic/FSM.js</url>
-          <line>59</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="6" />
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="7" />
+      <option name="time" value="9" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -755,13 +768,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="1184" column="4" selection-start-line="1184" selection-start-column="4" selection-end-line="1184" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/Grammar.test.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
@@ -779,13 +785,6 @@
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1081">
-          <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -819,36 +818,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/connectors/FSMCardConnector.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="11" column="4" lean-forward="true" selection-start-line="6" selection-start-column="2" selection-end-line="11" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/FSMCard.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1299">
-          <caret line="64" column="12" lean-forward="true" selection-start-line="64" selection-start-column="12" selection-end-line="64" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="107" column="9" lean-forward="true" selection-start-line="107" selection-start-column="9" selection-end-line="107" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#44#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/RecognizeCard.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="561">
@@ -869,6 +838,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/FSMCard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-865">
+          <caret line="23" column="62" selection-start-line="23" selection-start-column="62" selection-end-line="23" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/connectors/FSMCardConnector.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="14" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="912" column="4" selection-start-line="912" selection-start-column="4" selection-end-line="912" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/languages.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -876,6 +872,23 @@
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/logic/FSM.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="552">
+          <caret line="132" column="51" selection-start-line="132" selection-start-column="24" selection-end-line="132" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/logic/FSM.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="6" column="2" selection-start-line="6" selection-start-column="2" selection-end-line="82" />
         </state>
       </provider>
     </entry>
