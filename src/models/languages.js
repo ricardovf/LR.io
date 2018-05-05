@@ -32,6 +32,9 @@ export default {
       return reject(language => language.id === id, [...state]);
     },
     _updateLanguage(state, { id, language }) {
+      // @todo we must recalcute some fields of the language if it changes
+      // so this gotta be an effect and
+
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;
       });
@@ -114,6 +117,56 @@ export default {
         language = {
           ...language,
           enumerationLength: length,
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    changeInitialState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            initial: state,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addToFinalStates({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            finals: [...language.fsm.finals, state],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    deleteFromFinalStates({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        const newFinals = R.reject(item => item === state, language.fsm.finals);
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            finals: newFinals,
+          },
         };
 
         dispatch.languages._updateLanguage({ id, language });

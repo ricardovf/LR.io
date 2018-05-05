@@ -68,7 +68,11 @@ class EnumerationCard extends React.Component {
               }
               value={length}
             >
-              {R.range(1, 101).map(n => <option value={n}>{n}</option>)}
+              {R.range(1, 101).map(n => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
             </Select>
           </FormControl>
           <Typography gutterBottom variant="headline" component="h2">

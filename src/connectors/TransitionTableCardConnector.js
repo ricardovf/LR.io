@@ -13,7 +13,12 @@ const mapState = state => {
 };
 
 const mapDispatch = dispatch => ({
-  onGrammarChange: (id, text) => dispatch.languages.editGrammar({ id, text }),
+  changeInitialState: (id, state) =>
+    dispatch.languages.changeInitialState({ id, state }),
+  addToFinalStates: (id, state) =>
+    dispatch.languages.addToFinalStates({ id, state }),
+  deleteFromFinalStates: (id, state) =>
+    dispatch.languages.deleteFromFinalStates({ id, state }),
 });
 
 export default connect(mapState, mapDispatch)(TransitionTableCard);

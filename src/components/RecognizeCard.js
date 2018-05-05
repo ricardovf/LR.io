@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Icon } from 'material-ui';
+import { Icon, Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import ChipInput from 'material-ui-chip-input';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
 import FSM from '../logic/FSM';
-import * as R from 'ramda';
 
 const styles = () => ({
   card: {

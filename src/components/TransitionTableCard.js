@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Typography } from 'material-ui';
+import { Input, Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import Table, {
@@ -12,6 +12,9 @@ import Table, {
 import Checkbox from 'material-ui/Checkbox';
 import * as R from 'ramda';
 import Radio from 'material-ui/Radio';
+import TextField from 'material-ui/TextField';
+const NEW_SYMBOL = 'Novo símbolo';
+const NEW_STATE = 'Novo estado';
 
 const styles = () => ({
   card: {
@@ -24,6 +27,14 @@ const styles = () => ({
     padding: 0,
     'text-align': 'center',
   },
+  newRow: {
+    background: '#ffffe5',
+  },
+  tableInput: {
+    padding: '0',
+    marginBottom: '-4px',
+    fontWeight: 'normal',
+  },
 });
 
 class TransitionTableCard extends React.Component {
@@ -34,18 +45,28 @@ class TransitionTableCard extends React.Component {
       data = [...data, ...fsm.alphabet];
     }
 
+    // new symbol
+    data.push(NEW_SYMBOL);
+
     return data;
   }
 
   buildData(fsm) {
     const data = [];
+    let newAlphabet = [];
 
     if (fsm && Array.isArray(fsm.states)) {
+      if (Array.isArray(fsm.alphabet)) {
+        fsm.alphabet.forEach(symbol => {
+          newAlphabet[symbol] = '';
+        });
+      }
+
       for (const state of fsm.states) {
         const alphabet = {};
 
         if (Array.isArray(fsm.alphabet)) {
-          fsm.alphabet.map(symbol => {
+          fsm.alphabet.forEach(symbol => {
             let to = [];
             const transitions = R.filter(
               R.whereEq({ from: state, when: symbol })
@@ -69,23 +90,59 @@ class TransitionTableCard extends React.Component {
           initial: fsm.initial === state,
           final: Array.isArray(fsm.finals) && fsm.finals.includes(state),
           ...alphabet,
+          [NEW_SYMBOL]: '',
         };
 
         data.push(line);
       }
     }
 
+    // new
+    newAlphabet[NEW_SYMBOL] = '';
+
+    const line = {
+      state: NEW_STATE,
+      initial: false,
+      final: false,
+      ...newAlphabet,
+    };
+
+    data.push(line);
+
     return data;
   }
 
   render() {
-    const { classes, language, fsm, valid = true } = this.props;
+    const {
+      classes,
+      language,
+      fsm,
+      changeInitialState,
+      addToFinalStates,
+      deleteFromFinalStates,
+    } = this.props;
 
     const data = this.buildData(fsm);
     const header = this.buildHeader(fsm);
 
-    const checkIcon = (
-      <Icon style={{ fontSize: 18, color: 'green' }}>check</Icon>
+    let newStateInput = (
+      <Input
+        disableUnderline
+        fullWidth
+        placeholder="Novo estado"
+        margin="none"
+        className={classes.tableInput}
+      />
+    );
+
+    let newSymbolInput = (
+      <Input
+        disableUnderline
+        fullWidth
+        placeholder="Novo símbolo"
+        margin="none"
+        className={classes.tableInput}
+      />
     );
 
     return (
@@ -106,7 +163,7 @@ class TransitionTableCard extends React.Component {
                         className={index < 2 ? classes.minimalCell : ''}
                         padding="dense"
                       >
-                        {h}
+                        {h === NEW_SYMBOL ? newSymbolInput : h}
                       </TableCell>
                     );
                   })}
@@ -115,20 +172,46 @@ class TransitionTableCard extends React.Component {
               <TableBody>
                 {data.map((t, index) => {
                   return (
-                    <TableRow key={index}>
+                    <TableRow
+                      hover
+                      key={index}
+                      className={
+                        t.state === NEW_STATE ? classes.newRow : undefined
+                      }
+                    >
                       <TableCell
                         padding="checkbox"
                         className={classes.minimalCell}
                       >
-                        <Radio checked={t.initial} />
+                        {t.state !== NEW_STATE && (
+                          <Radio
+                            checked={t.initial}
+                            onChange={event => {
+                              changeInitialState(language.id, t.state);
+                            }}
+                          />
+                        )}
                       </TableCell>
                       <TableCell
                         padding="checkbox"
                         className={classes.minimalCell}
                       >
-                        <Checkbox checked={t.final} />
+                        {t.state !== NEW_STATE && (
+                          <Checkbox
+                            checked={t.final}
+                            onChange={event => {
+                              if (event.target.checked) {
+                                addToFinalStates(language.id, t.state);
+                              } else {
+                                deleteFromFinalStates(language.id, t.state);
+                              }
+                            }}
+                          />
+                        )}
                       </TableCell>
-                      <TableCell padding="dense">{t.state}</TableCell>
+                      <TableCell padding="dense">
+                        {t.state === NEW_STATE ? newStateInput : t.state}
+                      </TableCell>
                       {header.slice(3).map((h, index) => {
                         return (
                           <TableCell key={index} padding="dense">
@@ -152,6 +235,9 @@ TransitionTableCard.propTypes = {
   classes: PropTypes.object.isRequired,
   fsm: PropTypes.object,
   valid: PropTypes.bool,
+  changeInitialState: PropTypes.func,
+  addToFinalStates: PropTypes.func,
+  deleteFromFinalStates: PropTypes.func,
 };
 
 export default withStyles(styles)(TransitionTableCard);
