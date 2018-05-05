@@ -64,6 +64,17 @@ export default class FSM {
     return false;
   }
 
+  // Check if a state has other transitions than epsilon
+  stateHasEpsilonAndNonEpsilonTransitions(state, symbol) {
+    let nonEpsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: symbol }))(this.transitions),
+    ];
+    let epsilonPaths = [
+      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(this.transitions),
+    ];
+    return nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1;
+  }
+
   hasEpsilonTransitions() {
     return (
       Array.isArray(this.transitions) &&
@@ -260,8 +271,7 @@ export default class FSM {
       }
     }
 
-    // Only sort if not on recursion
-    return currentState === this.initial ? R.uniq(sentences).sort() : sentences;
+    return currentState === this.initial ? R.uniq(sentences) : sentences;
   }
 
   toPlainObject() {

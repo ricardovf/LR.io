@@ -6,6 +6,8 @@ import Card, { CardContent } from 'material-ui/Card';
 import ChipInput from 'material-ui-chip-input';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import FSM from '../logic/FSM';
+import * as R from 'ramda';
 
 const styles = () => ({
   card: {
@@ -25,12 +27,58 @@ const styles = () => ({
 });
 
 class RecognizeCard extends React.Component {
+  constructor(props) {
+    super(props);
+
+    // We keep the accepted sentences local cause we do not want to full our store with it and its always up to date
+    this.state = {
+      acceptedSentences: [],
+    };
+  }
+
+  componentDidMount() {
+    // noinspection JSIgnoredPromiseFromCall
+    this.fetchAcceptedSentences();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevProps.language !== this.props.language ||
+      prevProps.sentences !== this.props.sentences
+    ) {
+      // noinspection JSIgnoredPromiseFromCall
+      this.fetchAcceptedSentences();
+    }
+  }
+
+  async fetchAcceptedSentences() {
+    const { language } = this.props;
+
+    let acceptedSentences = [];
+
+    // try to generate the sentences and update sentences in state
+    if (language) {
+      if (language && language.fsm) {
+        const fsm = FSM.fromPlainObject(language.fsm);
+
+        if (fsm) {
+          for (const sentence of this.props.sentences) {
+            if (await fsm.recognize(sentence)) acceptedSentences.push(sentence);
+          }
+        }
+      }
+    }
+
+    this.setState({
+      acceptedSentences,
+    });
+  }
+
   render() {
     const {
       classes,
       language,
       sentences,
-      acceptedSentences = [],
       onSentenceAdd,
       onSentenceDelete,
     } = this.props;
@@ -55,13 +103,15 @@ class RecognizeCard extends React.Component {
         avatar={
           <Avatar
             className={
-              acceptedSentences.includes(value)
+              this.state.acceptedSentences.includes(value)
                 ? classes.greenAvatar
                 : classes.redAvatar
             }
           >
             <Icon className={classes.avatarIcon}>
-              {acceptedSentences.includes(value) ? 'check' : 'warning'}
+              {this.state.acceptedSentences.includes(value)
+                ? 'check'
+                : 'warning'}
             </Icon>
           </Avatar>
         }
@@ -98,7 +148,6 @@ class RecognizeCard extends React.Component {
 RecognizeCard.propTypes = {
   language: PropTypes.object,
   sentences: PropTypes.array,
-  acceptedSentences: PropTypes.array,
   onSentenceAdd: PropTypes.func,
   onSentenceDelete: PropTypes.func,
 };

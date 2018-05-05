@@ -205,9 +205,11 @@ describe('FSM', () => {
       expect(fsm.generate(100)).toEqual(['a', 'aa']);
     });
 
-    it('should generate the empty sentence when it have epsilon on the first production', async () => {
+    it.only('should generate the empty sentence when it have epsilon on the first production', async () => {
       const fsm = Grammar.fromText(
-        `S -> aB | a | ${EPSILON}\nB -> aB | a`
+        `Z -> aB | ${EPSILON}
+        S -> aB
+        B -> aS | a`
       ).getFSM();
 
       expect(fsm).toBeDefined();
@@ -251,6 +253,34 @@ describe('FSM', () => {
       expect(fsm.generate(5)).toEqual([]);
       expect(fsm.generate(50)).toEqual([]);
       expect(fsm.generate(100)).toEqual([]);
+    });
+  });
+
+  describe('determination', () => {
+    it('should recognize epsilon and non epsilon transitions', async () => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(
+        fsm.stateHasEpsilonAndNonEpsilonTransitions('S', 'a')
+      ).toBeTruthy();
+    });
+
+    it('should recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aB\nB -> aS | b`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic).toBeTruthy();
+    });
+
+    it('should NOT recognize FSM as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aA\nA -> aS | aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+
+    it('should NOT recognize automata as deterministic', async () => {
+      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
+      expect(fsm).toBeDefined();
+      expect(fsm.isDeterministic()).toBeFalsy();
     });
   });
 });
