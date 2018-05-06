@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Input, Typography } from 'material-ui';
+import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import Table, {
@@ -13,7 +14,7 @@ import Checkbox from 'material-ui/Checkbox';
 import * as R from 'ramda';
 import Radio from 'material-ui/Radio';
 import SymbolValidator from '../logic/SymbolValidator';
-import Tooltip from 'material-ui/Tooltip';
+
 import IconButton from 'material-ui/IconButton';
 
 const NEW_SYMBOL = 'Novo símbolo';

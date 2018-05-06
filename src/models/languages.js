@@ -175,6 +175,19 @@ export default {
       }
     },
 
+    renameLanguage({ id, name }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && typeof name === 'string' && name.trim().length > 0) {
+        language = {
+          ...language,
+          name: name.trim(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
     addNewState({ id, state }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 

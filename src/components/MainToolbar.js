@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
-import { Icon, IconButton, Toolbar, Typography } from 'material-ui';
+import { Icon, IconButton, Input, Toolbar, Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
+import SymbolValidator from '../logic/SymbolValidator';
+import Tooltip from 'material-ui/Tooltip';
+import RenameLanguage from './RenameLanguage';
 
 const styles = theme => ({
   navIconHide: {
@@ -14,11 +17,20 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
     display: 'flex',
   },
+  nameInput: {
+    color: 'white',
+  },
 });
 
 class MainToolbar extends React.Component {
   render() {
-    const { classes, language, handleDrawerToggle, deleteOnClick } = this.props;
+    const {
+      classes,
+      language,
+      handleDrawerToggle,
+      deleteOnClick,
+      renameLanguage,
+    } = this.props;
 
     const buttons = language && (
       <React.Fragment>
@@ -49,7 +61,12 @@ class MainToolbar extends React.Component {
           color="inherit"
           noWrap
         >
-          {language && language.name}
+          {language && (
+            <RenameLanguage
+              language={language}
+              renameLanguage={renameLanguage}
+            />
+          )}
         </Typography>
         {buttons}
       </Toolbar>
@@ -61,7 +78,7 @@ MainToolbar.propTypes = {
   language: PropTypes.object,
   handleDrawerToggle: PropTypes.func.isRequired,
   deleteOnClick: PropTypes.func.isRequired,
-  // onRename: PropTypes.func.isRequired,
+  renameLanguage: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(MainToolbar);
