@@ -12,6 +12,11 @@ export default class FSM {
     this.finals = finals;
   }
 
+  /**
+   * For each state, will check if has more than one transition with the same symbol
+   *
+   * @returns {boolean}
+   */
   isDeterministic() {
     for (let state of this.states) {
       for (let symbol of this.alphabet) {
@@ -21,6 +26,7 @@ export default class FSM {
           ),
         ];
 
+        // If exists a state with epsilon and other transition, so is ND
         if (
           paths.length > 1 ||
           this.stateHasEpsilonAndNonEpsilonTransactions(state, symbol)
@@ -28,9 +34,17 @@ export default class FSM {
           return false;
       }
     }
+    // Otherwise, is D
     return true;
   }
 
+  /**
+   * Check if the state has other than epsilon transitions
+   *
+   * @param state
+   * @param symbol
+   * @returns {boolean}
+   */
   stateHasEpsilonAndNonEpsilonTransactions(state, symbol) {
     let nonEpsilonPaths = [
       ...R.filter(R.whereEq({ from: state, when: symbol }))(this.transitions),
@@ -45,6 +59,13 @@ export default class FSM {
     return false;
   }
 
+  /**
+   * Check if the automata has cycle in the graph
+   *
+   * @param state
+   * @param visitedStates
+   * @returns {boolean}
+   */
   hasCycle(state, visitedStates = new Set()) {
     if (visitedStates.has(state)) {
       return true;
@@ -52,6 +73,7 @@ export default class FSM {
       visitedStates.add(state);
       let paths = R.filter(R.whereEq({ from: state }))(this.transitions);
       let neighbours = R.pluck('to')(paths);
+      // Will iterate through all neighbours from the current state searching for cycle
       for (let neighbour of neighbours) {
         if (neighbours != state) {
           return this.hasCycle(state, visitedStates);
@@ -64,17 +86,11 @@ export default class FSM {
     return false;
   }
 
-  // Check if a state has other transitions than epsilon
-  stateHasEpsilonAndNonEpsilonTransitions(state, symbol) {
-    let nonEpsilonPaths = [
-      ...R.filter(R.whereEq({ from: state, when: symbol }))(this.transitions),
-    ];
-    let epsilonPaths = [
-      ...R.filter(R.whereEq({ from: state, when: EPSILON }))(this.transitions),
-    ];
-    return nonEpsilonPaths.length >= 1 && epsilonPaths.length >= 1;
-  }
-
+  /**
+   * Check if the automata has any epsilon transitions
+   *
+   * @returns {boolean}
+   */
   hasEpsilonTransitions() {
     return (
       Array.isArray(this.transitions) &&
@@ -82,36 +98,57 @@ export default class FSM {
     );
   }
 
+  /**
+   * Eliminate all epsilon transitions from the automata
+   *
+   * @returns {void}
+   */
   eliminateEpsilonTransitions() {
+    // If the automata have no epsilon transitions, nothing is done
     if (this.hasEpsilonTransitions) {
       let newTransitions = new Set();
+      // Otherwise, will iterate through each state
       for (let state of this.states) {
+        // Find all states reachable using only & symbol, using 1 or more steps
         let reachbaleStatesByEpsilon = this.findReachbableStatesbyEpsilon(
           state
         );
+        // Will create the union of transitions for the states were reached by &
         this.createUnionForStates(
           reachbaleStatesByEpsilon,
           newTransitions,
           state
         );
       }
+      // Update the transitions for the automata
       this.transitions = Array.from(newTransitions);
       // Removing epsilon from alphabet
       this.alphabet.splice(this.alphabet.indexOf(EPSILON), 1);
     }
   }
 
+  /**
+   * Find states reachable by & in 1 or more steps for the state passed as param
+   *
+   * @param state
+   * @param reachableStatesByEpsilon
+   * @returns {Array}
+   */
   findReachbableStatesbyEpsilon(state, reachbaleStatesByEpsilon = new Set()) {
+    // The condition is only atended if every state was checked
     if (reachbaleStatesByEpsilon.has(state)) {
       return reachbaleStatesByEpsilon;
     } else {
+      // Every state reachs itself through &
       reachbaleStatesByEpsilon.add(state);
       let paths = [
         ...R.filter(R.whereEq({ from: state, when: EPSILON }))(
           this.transitions
         ),
       ];
+      // Find all neighbours reachable by &
       let epsilonNeighbours = R.pluck('to')(paths);
+      // For each neighbour, will call this method
       for (let neighbour of epsilonNeighbours) {
         this.findReachbableStatesbyEpsilon(neighbour, reachbaleStatesByEpsilon);
       }
@@ -119,8 +156,17 @@ export default class FSM {
     }
   }
 
+   /**
+   * For the current state that
+   *
+   * @param states
+   * @param newTransitions
+   * @param state
+   * @returns {void}
+   */
   createUnionForStates(states, newTransitions, state) {
     for (let symbol of this.alphabet) {
+      // & is not considered since will be eliminate it
       if (symbol != EPSILON) {
         for (let state_ of states) {
           let transitions = [
@@ -128,9 +174,13 @@ export default class FSM {
               this.transitions
             ),
           ];
+          // For each transition for a state reachable by the current state
           for (let transition of transitions) {
+            // Will check if the transition is already considered
             if (!newTransitions.has(transition)) {
+              // Will check if the From for the query is from the current state
               if (transition.from != state) {
+                // If not, will change the From for the current state
                 let transition_ = Object.assign({}, transition);
                 transition_.from = state;
                 newTransitions.add(transition_);
@@ -147,14 +197,14 @@ export default class FSM {
     return this.finals.includes(this.initial);
   }
 
-  /**
-   * It is always true because for now a FSM can only be created using an conversion from Grammar, that only converts if
-   * the Grammar is valid.
-   *
-   * @returns {boolean}
-   */
   isValid() {
-    return true;
+    return (
+      this.states.length > 0 &&
+      this.alphabet.length > 0 &&
+      this.finals.length > 0 &&
+      this.initial != undefined &&
+      this.transitions.length > 0
+    );
   }
 
   /**

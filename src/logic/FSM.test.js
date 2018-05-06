@@ -153,6 +153,20 @@ describe('FSM', () => {
       fsm.eliminateEpsilonTransitions();
       expect(fsm.hasEpsilonTransitions()).toBeFalsy();
     });
+
+    it('should not remove any transitions', async() => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = [EPSILON, 'a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'b' },
+        { from: 'B', to: 'C', when: 'c' }
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      fsm.eliminateEpsilonTransitions();
+      expect((fsm.transitions.length == 2)).toBeTruthy();
+    });
   });
 
   describe('generate', () => {
