@@ -19,6 +19,8 @@ const mapDispatch = dispatch => ({
     dispatch.languages.addToFinalStates({ id, state }),
   deleteFromFinalStates: (id, state) =>
     dispatch.languages.deleteFromFinalStates({ id, state }),
+  addNewState: (id, state) => dispatch.languages.addNewState({ id, state }),
+  addNewSymbol: (id, symbol) => dispatch.languages.addNewSymbol({ id, symbol }),
 });
 
 export default connect(mapState, mapDispatch)(TransitionTableCard);

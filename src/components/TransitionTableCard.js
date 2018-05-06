@@ -12,7 +12,9 @@ import Table, {
 import Checkbox from 'material-ui/Checkbox';
 import * as R from 'ramda';
 import Radio from 'material-ui/Radio';
-import TextField from 'material-ui/TextField';
+import SymbolValidator from '../logic/SymbolValidator';
+import Tooltip from 'material-ui/Tooltip';
+
 const NEW_SYMBOL = 'Novo símbolo';
 const NEW_STATE = 'Novo estado';
 
@@ -30,10 +32,14 @@ const styles = () => ({
   newRow: {
     background: '#ffffe5',
   },
+  noPaddingRight: {
+    paddingRight: '0',
+  },
   tableInput: {
     padding: '0',
     marginBottom: '-4px',
     fontWeight: 'normal',
+    width: '100px',
   },
 });
 
@@ -120,29 +126,75 @@ class TransitionTableCard extends React.Component {
       changeInitialState,
       addToFinalStates,
       deleteFromFinalStates,
+      addNewState,
+      addNewSymbol,
     } = this.props;
 
     const data = this.buildData(fsm);
     const header = this.buildHeader(fsm);
 
+    const currentStates = fsm && Array.isArray(fsm.states) ? fsm.states : [];
+
     let newStateInput = (
-      <Input
-        disableUnderline
-        fullWidth
-        placeholder="Novo estado"
-        margin="none"
-        className={classes.tableInput}
-      />
+      <Tooltip
+        title="Digite uma letra e pressione a tecla ↵ ENTER"
+        placement="right"
+      >
+        <Input
+          disableUnderline
+          // fullWidth
+          placeholder="Novo estado"
+          margin="none"
+          className={classes.tableInput}
+          onChange={event => {
+            event.target.value = event.target.value
+              .toUpperCase()
+              .charAt(event.target.value.length - 1);
+          }}
+          onKeyPress={event => {
+            if (event.key === 'Enter') {
+              if (
+                SymbolValidator.isValidNonTerminal(event.target.value) &&
+                !currentStates.includes(event.target.value)
+              ) {
+                addNewState(language.id, event.target.value);
+                event.target.value = '';
+              }
+            }
+          }}
+        />
+      </Tooltip>
     );
 
     let newSymbolInput = (
-      <Input
-        disableUnderline
-        fullWidth
-        placeholder="Novo símbolo"
-        margin="none"
-        className={classes.tableInput}
-      />
+      <Tooltip
+        title="Digite uma letra ou número e pressione a tecla ↵ ENTER"
+        placement="left"
+      >
+        <Input
+          disableUnderline
+          // fullWidth
+          placeholder="Novo símbolo"
+          margin="none"
+          className={classes.tableInput}
+          onChange={event => {
+            event.target.value = event.target.value
+              .toLowerCase()
+              .charAt(event.target.value.length - 1);
+          }}
+          onKeyPress={event => {
+            if (event.key === 'Enter') {
+              if (
+                SymbolValidator.isValidTerminal(event.target.value) &&
+                !currentStates.includes(event.target.value)
+              ) {
+                addNewSymbol(language.id, event.target.value);
+                event.target.value = '';
+              }
+            }
+          }}
+        />
+      </Tooltip>
     );
 
     return (
@@ -173,7 +225,7 @@ class TransitionTableCard extends React.Component {
                 {data.map((t, index) => {
                   return (
                     <TableRow
-                      hover
+                      hover={t.state === NEW_STATE ? undefined : true}
                       key={index}
                       className={
                         t.state === NEW_STATE ? classes.newRow : undefined
@@ -238,6 +290,8 @@ TransitionTableCard.propTypes = {
   changeInitialState: PropTypes.func,
   addToFinalStates: PropTypes.func,
   deleteFromFinalStates: PropTypes.func,
+  addNewState: PropTypes.func,
+  addNewSymbol: PropTypes.func,
 };
 
 export default withStyles(styles)(TransitionTableCard);

@@ -49,6 +49,9 @@ function LayoutDashboard(props) {
               spacing={24}
               style={{ height: 'calc(100% + 24px)' }}
             >
+              <Grid item xs={12}>
+                <TransitionTableCardConnector />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <GrammarCardConnector />
               </Grid>
@@ -60,9 +63,6 @@ function LayoutDashboard(props) {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12}>
-                <TransitionTableCardConnector />
               </Grid>
             </Grid>
           </Grid>

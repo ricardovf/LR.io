@@ -6,6 +6,7 @@ import Grammar from '../logic/Grammar';
 import { multiTrim } from '../logic/helpers';
 import * as R from 'ramda';
 import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
+import SymbolValidator from '../logic/SymbolValidator';
 
 export default {
   state: [],
@@ -18,8 +19,6 @@ export default {
           name: `Nova linguagem #${state.length}`,
           empty: true,
           valid: true,
-          deterministic: false,
-          minimal: false,
           grammar: undefined,
           expression: undefined,
           fsm: undefined,
@@ -32,7 +31,7 @@ export default {
       return reject(language => language.id === id, [...state]);
     },
     _updateLanguage(state, { id, language }) {
-      // @todo we must recalcute some fields of the language if it changes
+      // @todo we must recalcute some fields of the language if it changes, like if its valid, deterministic, and others
       // so this gotta be an effect and
 
       return [...state].map(item => {
@@ -166,6 +165,48 @@ export default {
           fsm: {
             ...language.fsm,
             finals: newFinals,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addNewState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (
+        language &&
+        language.fsm &&
+        SymbolValidator.isValidNonTerminal(state) &&
+        !language.fsm.states.includes(state)
+      ) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: [...language.fsm.states, state],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addNewSymbol({ id, symbol }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (
+        language &&
+        language.fsm &&
+        SymbolValidator.isValidTerminal(symbol) &&
+        !language.fsm.alphabet.includes(symbol)
+      ) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            alphabet: [...language.fsm.alphabet, symbol],
           },
         };
 
