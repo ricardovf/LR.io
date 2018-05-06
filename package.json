@@ -33,7 +33,7 @@
     "styleguide:build": "styleguidist build",
     "analyze": "source-map-explorer gh-pages/static/js/main.*",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build gh-pages",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "coverage": "react-app-rewired test --env=jsdom --coverage",
     "eject": "react-app-rewired eject"
