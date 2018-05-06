@@ -8,6 +8,9 @@ import * as R from 'ramda';
 import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
 import SymbolValidator from '../logic/SymbolValidator';
 
+/**
+ * @todo transfer the logic to manipulate the FSM to inside the FSM class, like remove/add symbols/states, etc
+ */
 export default {
   state: [],
   reducers: {
@@ -193,6 +196,40 @@ export default {
       }
     },
 
+    deleteState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        const newStates = R.reject(item => item === state, language.fsm.states);
+
+        // Delete all transactions going to or from the deleted state
+        let newTransitions = R.reject(R.whereEq({ from: state }))(
+          language.fsm.transitions
+        );
+        newTransitions = R.reject(R.whereEq({ to: state }))(newTransitions);
+
+        // Change the initial state if its the deleted state
+        const newInitial =
+          language.fsm.initial === state ? null : language.fsm.initial;
+
+        // Delete from finals if state is in it
+        const newFinals = R.reject(item => item === state, language.fsm.finals);
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: newStates,
+            transitions: newTransitions,
+            initial: newInitial,
+            finals: newFinals,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
     addNewSymbol({ id, symbol }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
@@ -207,6 +244,33 @@ export default {
           fsm: {
             ...language.fsm,
             alphabet: [...language.fsm.alphabet, symbol],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    deleteSymbol({ id, symbol }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.alphabet.includes(symbol)) {
+        const newAlphabet = R.reject(
+          item => item === symbol,
+          language.fsm.alphabet
+        );
+
+        // Delete all transactions using the symbol
+        let newTransitions = R.reject(R.whereEq({ when: symbol }))(
+          language.fsm.transitions
+        );
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            alphabet: newAlphabet,
+            transitions: newTransitions,
           },
         };
 

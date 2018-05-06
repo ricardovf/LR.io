@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Input, Typography } from 'material-ui';
+import { Icon, Input, Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import Table, {
@@ -14,6 +14,7 @@ import * as R from 'ramda';
 import Radio from 'material-ui/Radio';
 import SymbolValidator from '../logic/SymbolValidator';
 import Tooltip from 'material-ui/Tooltip';
+import IconButton from 'material-ui/IconButton';
 
 const NEW_SYMBOL = 'Novo símbolo';
 const NEW_STATE = 'Novo estado';
@@ -40,6 +41,29 @@ const styles = () => ({
     marginBottom: '-4px',
     fontWeight: 'normal',
     width: '100px',
+  },
+  deleteIconHider: {
+    '& $rowDeleteIcon': {
+      opacity: '0',
+    },
+    '&:hover': {
+      '& $rowDeleteIcon': {
+        opacity: '1',
+      },
+    },
+  },
+  deleteIconHiderContent: {
+    position: 'relative',
+  },
+  rowDeleteIcon: {
+    position: 'absolute',
+    left: '20px',
+    top: '-3px',
+    width: '24px',
+    height: '24px',
+    '& > span > span': {
+      fontSize: '16px',
+    },
   },
 });
 
@@ -127,7 +151,9 @@ class TransitionTableCard extends React.Component {
       addToFinalStates,
       deleteFromFinalStates,
       addNewState,
+      deleteState,
       addNewSymbol,
+      deleteSymbol,
     } = this.props;
 
     const data = this.buildData(fsm);
@@ -212,10 +238,30 @@ class TransitionTableCard extends React.Component {
                     return (
                       <TableCell
                         key={index}
-                        className={index < 2 ? classes.minimalCell : ''}
+                        className={
+                          index < 2
+                            ? classes.minimalCell
+                            : language.fsm && language.fsm.alphabet.includes(h)
+                              ? classes.deleteIconHider
+                              : ''
+                        }
                         padding="dense"
                       >
-                        {h === NEW_SYMBOL ? newSymbolInput : h}
+                        <div className={classes.deleteIconHiderContent}>
+                          {h === NEW_SYMBOL ? newSymbolInput : h}
+                          {language.fsm &&
+                            language.fsm.alphabet.includes(h) && (
+                              <IconButton
+                                className={classes.rowDeleteIcon}
+                                aria-label="delete"
+                                onClick={() => {
+                                  deleteSymbol(language.id, h);
+                                }}
+                              >
+                                <Icon>delete</Icon>
+                              </IconButton>
+                            )}
+                        </div>
                       </TableCell>
                     );
                   })}
@@ -228,7 +274,9 @@ class TransitionTableCard extends React.Component {
                       hover={t.state === NEW_STATE ? undefined : true}
                       key={index}
                       className={
-                        t.state === NEW_STATE ? classes.newRow : undefined
+                        t.state === NEW_STATE
+                          ? classes.newRow
+                          : classes.deleteIconHider
                       }
                     >
                       <TableCell
@@ -262,7 +310,20 @@ class TransitionTableCard extends React.Component {
                         )}
                       </TableCell>
                       <TableCell padding="dense">
-                        {t.state === NEW_STATE ? newStateInput : t.state}
+                        <div className={classes.deleteIconHiderContent}>
+                          {t.state === NEW_STATE ? newStateInput : t.state}
+                          {t.state !== NEW_STATE && (
+                            <IconButton
+                              className={classes.rowDeleteIcon}
+                              aria-label="delete"
+                              onClick={() => {
+                                deleteState(language.id, t.state);
+                              }}
+                            >
+                              <Icon>delete</Icon>
+                            </IconButton>
+                          )}
+                        </div>
                       </TableCell>
                       {header.slice(3).map((h, index) => {
                         return (
@@ -291,7 +352,9 @@ TransitionTableCard.propTypes = {
   addToFinalStates: PropTypes.func,
   deleteFromFinalStates: PropTypes.func,
   addNewState: PropTypes.func,
+  deleteState: PropTypes.func,
   addNewSymbol: PropTypes.func,
+  deleteSymbol: PropTypes.func,
 };
 
 export default withStyles(styles)(TransitionTableCard);
