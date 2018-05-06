@@ -23,6 +23,8 @@ const mapDispatch = dispatch => ({
   deleteState: (id, state) => dispatch.languages.deleteState({ id, state }),
   addNewSymbol: (id, symbol) => dispatch.languages.addNewSymbol({ id, symbol }),
   deleteSymbol: (id, symbol) => dispatch.languages.deleteSymbol({ id, symbol }),
+  changeTransition: (id, symbol, fromState, toStates) =>
+    dispatch.languages.changeTransition({ id, symbol, fromState, toStates }),
 });
 
 export default connect(mapState, mapDispatch)(TransitionTableCard);

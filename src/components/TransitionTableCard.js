@@ -16,6 +16,7 @@ import Radio from 'material-ui/Radio';
 import SymbolValidator from '../logic/SymbolValidator';
 
 import IconButton from 'material-ui/IconButton';
+import TransitionEdit from './TransitionEdit';
 
 const NEW_SYMBOL = 'Novo símbolo';
 const NEW_STATE = 'Novo estado';
@@ -107,12 +108,7 @@ class TransitionTableCard extends React.Component {
               to = [...to, ...R.pluck('to')(transitions)];
             }
 
-            alphabet[symbol] =
-              to.length === 0
-                ? '–'
-                : R.uniq(to)
-                    .sort()
-                    .join(', ');
+            alphabet[symbol] = R.uniq(to).sort();
           });
         }
 
@@ -155,6 +151,7 @@ class TransitionTableCard extends React.Component {
       deleteState,
       addNewSymbol,
       deleteSymbol,
+      changeTransition,
     } = this.props;
 
     const data = this.buildData(fsm);
@@ -329,7 +326,17 @@ class TransitionTableCard extends React.Component {
                       {header.slice(3).map((h, index) => {
                         return (
                           <TableCell key={index} padding="dense">
-                            {t[h]}
+                            {t.state !== NEW_STATE &&
+                              language.fsm &&
+                              language.fsm.alphabet.includes(h) && (
+                                <TransitionEdit
+                                  symbol={h}
+                                  fromState={t.state}
+                                  toStates={t[h]}
+                                  language={language}
+                                  changeTransition={changeTransition}
+                                />
+                              )}
                           </TableCell>
                         );
                       })}
@@ -356,6 +363,7 @@ TransitionTableCard.propTypes = {
   deleteState: PropTypes.func,
   addNewSymbol: PropTypes.func,
   deleteSymbol: PropTypes.func,
+  changeTransition: PropTypes.func,
 };
 
 export default withStyles(styles)(TransitionTableCard);

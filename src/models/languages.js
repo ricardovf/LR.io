@@ -191,6 +191,11 @@ export default {
     addNewState({ id, state }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
+      // make new FSM if there is none
+      if (language && !language.fsm) {
+        language.fsm = FSM.makeEmptyFSM();
+      }
+
       if (
         language &&
         language.fsm &&
@@ -246,6 +251,11 @@ export default {
     addNewSymbol({ id, symbol }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
+      // make new FSM if there is none
+      if (language && !language.fsm) {
+        language.fsm = FSM.makeEmptyFSM();
+      }
+
       if (
         language &&
         language.fsm &&
@@ -284,6 +294,52 @@ export default {
             ...language.fsm,
             alphabet: newAlphabet,
             transitions: newTransitions,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    changeTransition({ id, symbol, fromState, toStates }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (
+        language &&
+        language.fsm &&
+        language.fsm.states.includes(fromState) &&
+        language.fsm.alphabet.includes(symbol)
+      ) {
+        let newTransitions = R.reject(
+          R.whereEq({ from: fromState, when: symbol })
+        )(language.fsm.transitions);
+
+        let newStates = [...language.fsm.states];
+
+        // If it is a new valid state, lets add it
+        for (let toState of toStates) {
+          if (
+            SymbolValidator.isValidNonTerminal(toState) &&
+            !newStates.includes(toState)
+          ) {
+            newStates.push(toState);
+          }
+
+          if (newStates.includes(toState)) {
+            newTransitions.push({
+              from: fromState,
+              to: toState,
+              when: symbol,
+            });
+          }
+        }
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: newStates,
+            transitions: R.uniq(newTransitions),
           },
         };
 
