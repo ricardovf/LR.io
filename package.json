@@ -2,7 +2,7 @@
   "name": "LR.io",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ricardovf.github.io/LR.io",
+  "homepage": "https://lrio.netlify.com",
   "dependencies": {
     "@rematch/core": "^0.6.0",
     "@rematch/persist": "^0.2.1",
