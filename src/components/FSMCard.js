@@ -5,6 +5,8 @@ import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
+import * as R from 'ramda';
+import FSM from '../logic/FSM';
 
 const styles = () => ({
   card: {
@@ -17,11 +19,23 @@ const styles = () => ({
 
 class FSMCard extends React.Component {
   render() {
-    const { classes, language, fsm, valid = true } = this.props;
+    const { classes, language } = this.props;
 
     const yesIcon = <Icon style={{ fontSize: 24, color: 'green' }}>check</Icon>;
     const noIcon = <Icon style={{ fontSize: 24, color: 'red' }}>close</Icon>;
-    const dontKnow = <Icon style={{ fontSize: 24, color: 'gray' }}>help</Icon>;
+    const dontKnowIcon = (
+      <Icon style={{ fontSize: 24, color: 'gray' }}>help</Icon>
+    );
+
+    /** @type {FSM} */
+    let fsm = null;
+
+    if (language && language.fsm) {
+      fsm = FSM.fromPlainObject(language.fsm);
+
+      if (fsm) {
+      }
+    }
 
     const info = fsm && (
       <React.Fragment>
@@ -48,19 +62,35 @@ class FSMCard extends React.Component {
         <Divider />
         <List dense className={classes.lastList}>
           <ListItem disableGutters>
-            <ListItemIcon>{dontKnow}</ListItemIcon>
+            <ListItemIcon>
+              {fsm ? (fsm.isDeterministic() ? yesIcon : noIcon) : dontKnowIcon}
+            </ListItemIcon>
             <ListItemText primary="Determinístico" />
           </ListItem>
           <ListItem disableGutters>
-            <ListItemIcon>{dontKnow}</ListItemIcon>
+            <ListItemIcon>
+              {fsm
+                ? fsm.hasEpsilonTransitions()
+                  ? yesIcon
+                  : noIcon
+                : dontKnowIcon}
+            </ListItemIcon>
             <ListItemText primary="Transições por epsilon" />
           </ListItem>
           <ListItem disableGutters>
-            <ListItemIcon>{dontKnow}</ListItemIcon>
+            <ListItemIcon>
+              {fsm ? (fsm.isMinimal() ? yesIcon : noIcon) : dontKnowIcon}
+            </ListItemIcon>
             <ListItemText primary="Mínimo" />
           </ListItem>
           <ListItem disableGutters>
-            <ListItemIcon>{dontKnow}</ListItemIcon>
+            <ListItemIcon>
+              {fsm
+                ? fsm.acceptsEmptySentence()
+                  ? yesIcon
+                  : noIcon
+                : dontKnowIcon}
+            </ListItemIcon>
             <ListItemText primary="Aceita sentença vazia" />
           </ListItem>
         </List>
@@ -83,8 +113,7 @@ class FSMCard extends React.Component {
 
 FSMCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  fsm: PropTypes.object,
-  valid: PropTypes.bool,
+  language: PropTypes.object,
 };
 
 export default withStyles(styles)(FSMCard);

@@ -19,24 +19,21 @@ export default class FSM {
    * @returns {boolean}
    */
   isDeterministic() {
-    for (let state of this.states) {
-      for (let symbol of this.alphabet) {
-        let paths = [
-          ...R.filter(R.whereEq({ from: state, when: symbol }))(
-            this.transitions
-          ),
-        ];
+    if (Array.isArray(this.transitions)) {
+      let groupByFromAndWhen = R.groupBy(transition => {
+        return transition.from + transition.when;
+      })(this.transitions);
 
-        // If exists a state with epsilon and other transition, so is ND
-        if (
-          paths.length > 1 ||
-          this.stateHasEpsilonAndNonEpsilonTransactions(state, symbol)
-        )
-          return false;
-      }
+      return (
+        R.values(
+          R.filter(group => {
+            return group.length > 1;
+          }, groupByFromAndWhen)
+        ).length === 0
+      );
     }
-    // Otherwise, is D
-    return true;
+
+    return false;
   }
 
   /**
@@ -333,6 +330,10 @@ export default class FSM {
     }
   }
 
+  acceptsEmptySentence() {
+    return this.generate(1).includes('');
+  }
+
   /**
    * For the current state that
    *
@@ -465,6 +466,7 @@ export default class FSM {
         this.initial,
         this.finals
       );
+
       fsmWithoutEpsilon.eliminateEpsilonTransitions();
       return fsmWithoutEpsilon.generate(
         maxLength,
