@@ -460,11 +460,11 @@ export default class FSM {
     if (this.hasEpsilonTransitions()) {
       // create a new FSM without epsilon transitions and run the generate there, so we prevent infinite loops
       const fsmWithoutEpsilon = new FSM(
-        this.states,
-        this.alphabet,
-        this.transitions,
+        [...this.states],
+        [...this.alphabet],
+        [...this.transitions],
         this.initial,
-        this.finals
+        [...this.finals]
       );
 
       fsmWithoutEpsilon.eliminateEpsilonTransitions();

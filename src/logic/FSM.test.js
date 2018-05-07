@@ -168,7 +168,7 @@ describe('FSM', () => {
       expect(fsm.transitions.length == 2).toBeTruthy();
     });
 
-    it('should determinate', async() => {
+    it('should determinate', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['a', 'b'];
       const transitions = [
@@ -185,7 +185,7 @@ describe('FSM', () => {
       expect(fsm.isDeterministic()).toBeTruthy();
     });
 
-    it('should NOT determinate', async() => {
+    it('should NOT determinate', async () => {
       const states = ['A', 'B', 'C'];
       const alphabet = ['a', 'b'];
       const transitions = [
@@ -302,12 +302,11 @@ describe('FSM', () => {
       ).getFSM();
 
       expect(fsm).toBeDefined();
-      expect(fsm.generate(1)).toEqual(['', 'a']);
-      expect(fsm.generate(1)).toEqual(['', 'a']);
-      expect(fsm.generate(2)).toEqual(['', 'a', 'aa']);
-      expect(fsm.generate(3)).toEqual(['', 'a', 'aa', 'aaa']);
-      expect(fsm.generate(4)).toEqual(['', 'a', 'aa', 'aaa', 'aaaa']);
-      expect(fsm.generate(5)).toEqual(['', 'a', 'aa', 'aaa', 'aaaa', 'aaaaa']);
+      expect(fsm.generate(1)).toEqual(['']);
+      expect(fsm.generate(2)).toEqual(['', 'aa']);
+      expect(fsm.generate(3)).toEqual(['', 'aa']);
+      expect(fsm.generate(4)).toEqual(['', 'aaaa', 'aa']);
+      expect(fsm.generate(5)).toEqual(['', 'aaaa', 'aa']);
       expect(fsm.generate(50).includes('')).toBeTruthy();
     });
 
