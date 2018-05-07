@@ -39,13 +39,20 @@ export default class FSM {
     return true;
   }
 
+  /**
+   * Determinate automate, if not already determinated
+   *
+   * @returns {void}
+   */
   determinate() {
     if (!this.isDeterministic()) {
+      // Eliminate epsilon transitions to garante the determinism
       if (this.hasEpsilonTransitions()) this.eliminateEpsilonTransitions();
       let newStates = new Set();
       let newTransitions = new Set();
       let newInitial = [this.initial];
       newStates.add(newInitial);
+      // Will store the neighbours states of the initial state in a set
       for (let symbol of this.alphabet) {
         let paths = [
           ...R.filter(R.whereEq({ from: this.initial, when: symbol }))(
@@ -59,22 +66,29 @@ export default class FSM {
           newTransitions.add(transition);
         }
       }
-
-      this.createNewTransitionsAndStates(newInitial, newStates, newTransitions);
+      this.createNewTransitionsAndStates(newStates, newTransitions);
       this.removeRepeatedState(newStates);
       this.removeRepeatedTransitions(newTransitions);
+      this.initial = newInitial;
       this.states = Array.from(newStates);
       this.transitions = Array.from(newTransitions);
-      this.initial = newInitial;
       this.finals = this.createNewFinalStates(newStates);
     }
   }
 
+  /**
+   * Remove repeated array of states from the set.
+   *
+   * @param setStates
+   * @returns {void}
+   */
   removeRepeatedState(setStates) {
+    // Set class cannot garante uniqueness for arrays, because it stores refs
     let arrayStates = Array.from(setStates);
     let statesToRemove = new Set();
     for (let i = 0; i < arrayStates.length; ++i) {
       for (let j = i; j < arrayStates.length; ++j) {
+        // Check if is not the same element on same position
         if (i != j) {
           let i_ = arrayStates[i]
             .slice()
@@ -84,19 +98,28 @@ export default class FSM {
             .slice()
             .sort()
             .join(',');
+          // It this condition is attended, there is a repeated array on set
           if (i_ == j_) statesToRemove.add(arrayStates[j]);
         }
       }
     }
-    statesToRemove = Array.from(statesToRemove).sort();
+    // Remove repeated elements
     for (let state of statesToRemove) setStates.delete(state);
   }
 
+  /**
+   * Remove repeated transitions of states from the set.
+   *
+   * @param setTransitions
+   * @returns {void}
+   */
   removeRepeatedTransitions(setTransitions) {
+    // Set class cannot garante uniqueness for hashes, because it stores refs
     let arrayTransitions = Array.from(setTransitions);
     let transitionsToRemove = new Set();
     for (let i = 0; i < arrayTransitions.length; ++i) {
       for (let j = i; j < arrayTransitions.length; ++j) {
+        // Check if is not the same element on same position
         if (i != j) {
           let i_ = arrayTransitions[i].from
             .slice()
@@ -106,42 +129,65 @@ export default class FSM {
             .slice()
             .sort()
             .join(',');
-          if (i_ == j_ && arrayTransitions[i].when == arrayTransitions[j].when) transitionsToRemove.add(arrayTransitions[j]);
+          // It this condition is attended, there is a repeated element on set
+          if (i_ == j_ && arrayTransitions[i].when == arrayTransitions[j].when)
+            transitionsToRemove.add(arrayTransitions[j]);
         }
       }
     }
-    transitionsToRemove = Array.from(transitionsToRemove).sort();
-    for (let transition of transitionsToRemove) setTransitions.delete(transition);
+    // Remove repeated elements
+    for (let transition of transitionsToRemove)
+      setTransitions.delete(transition);
   }
 
+  /**
+   * For each new state will check if the current finals includes the new state
+   *
+   * @param newStates
+   * @returns {Array}
+   */
   createNewFinalStates(newStates) {
+    // Uses set to not include repeated states
     let newFinalStates = new Set();
-    for (let final of this.finals) {
-      for (let states of newStates) {
-        for (let state of states) {
-          if (state == final) newFinalStates.add(states);
-        }
+    for (let states of newStates) {
+      for (let state of states) {
+        // Add the state to the new set of finals, if condition is attended
+        if (this.finals.includes(state)) newFinalStates.add(states);
       }
     }
     return Array.from(newFinalStates);
   }
 
-  createNewTransitionsAndStates(newInitial, newStates, newTransitions) {
+  /**
+   * Will create the union of the states for the determinization
+   *
+   * @param newStates
+   * @param newTransitions
+   * @returns {void}
+   */
+  createNewTransitionsAndStates(newStates, newTransitions) {
+    // The set is composed by array of states
     for (let states of newStates) {
       for (let symbol of this.alphabet) {
+        // Uses set to garante uniqueness
         let to = new Set();
+        // Will iterate through each state of the current array
         for (let state of states) {
           let paths = [
             ...R.filter(R.whereEq({ from: state, when: symbol }))(
               this.transitions
             ),
           ];
+          // For each state reachable, adds to set
           for (let path of paths) to.add(path.to);
         }
         if (to.size > 0) {
           let state_ = Array.from(to);
+          // Creates a new transition to just one state
           newTransitions.add({ from: states, to: state_, when: symbol });
+          // Add the state that represents the union of the states
           newStates.add(state_);
+          // Remove repeated arrays in the set
           this.removeRepeatedState(newStates);
         }
       }
@@ -153,13 +199,14 @@ export default class FSM {
     for (let state of this.states) {
       for (let symbol of this.alphabet) {
         let paths = [
-            ...R.filter(R.whereEq({ from: state, when: symbol }))(
-              this.transitions
-            ),
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            this.transitions
+          ),
         ];
         if (paths.length > 0) {
           for (let path of paths) {
-            if (this.finals.includes(path.to)) pro.push(`${state} -> ${symbol}`);
+            if (this.finals.includes(path.to))
+              pro.push(`${state} -> ${symbol}`);
             pro.push(`${state} -> ${symbol}${path.to}`);
           }
         }
