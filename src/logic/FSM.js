@@ -128,25 +128,20 @@ export default class FSM {
 
   createNewTransitionsAndStates(newInitial, newStates, newTransitions) {
     for (let states of newStates) {
-      console.log('>>>>>>');
-      console.log(states);
-      console.log('>>>>>>');
       for (let symbol of this.alphabet) {
-        let to = [];
+        let to = new Set();
         for (let state of states) {
           let paths = [
             ...R.filter(R.whereEq({ from: state, when: symbol }))(
               this.transitions
             ),
           ];
-          for (let path of paths) to.push(path.to);
+          for (let path of paths) to.add(path.to);
         }
-        console.log('<<<<<<');
-        console.log(to);
-        console.log('<<<<<<');
-        if (to.length > 0) {
-          newTransitions.add({ from: states, to: to, when: symbol });
-newStates.add(to);          console.log(newStates);
+        if (to.size > 0) {
+          let state_ = Array.from(to);
+          newTransitions.add({ from: states, to: state_, when: symbol });
+          newStates.add(state_);
           this.removeRepeatedState(newStates);
         }
       }
