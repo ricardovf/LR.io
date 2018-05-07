@@ -2,9 +2,9 @@
 
 This is a tool to manipulate regular languages.
 
-## Demo
+## Demonstration
 
-https://lrio.netlify.com
+https://ricardovf.github.io/LR.io/
 
 ## Information
 
