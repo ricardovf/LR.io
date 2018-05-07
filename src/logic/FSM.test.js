@@ -168,41 +168,44 @@ describe('FSM', () => {
       expect(fsm.transitions.length == 2).toBeTruthy();
     });
 
-    it('should determinate', async() => {
-      const states = ['A', 'B', 'C', 'D'];
-      const alphabet = ['a', 'b', 'c'];
-      const transitions = [
-        { from: 'A', to: 'A', when: 'a' },
-        { from: 'A', to: 'B', when: 'a' },
-        { from: 'A', to: 'A', when: 'b' },
-        { from: 'B', to: 'C', when: 'b' },
-        { from: 'C', to: 'D', when: 'b' },
-      ];
-      const initial = 'A';
-      const finals = ['D'];
-      const fsm = new FSM(states, alphabet, transitions, initial, finals);
-      fsm.determinate();
-      console.log(fsm.transitions);
-      expect(fsm.isDeterministic()).toBeTruthy();
-    });
+    // it('should determinate', async() => {
+    //   const states = ['A', 'B', 'C', 'D'];
+    //   const alphabet = ['a', 'b'];
+    //   const transitions = [
+    //     { from: 'A', to: 'A', when: 'a' },
+    //     { from: 'A', to: 'B', when: 'a' },
+    //     { from: 'A', to: 'A', when: 'b' },
+    //     { from: 'B', to: 'C', when: 'b' },
+    //     { from: 'C', to: 'D', when: 'b' },
+    //   ];
+    //   const initial = 'A';
+    //   const finals = ['D'];
+    //   const fsm = new FSM(states, alphabet, transitions, initial, finals);
+    //   fsm.determinate();
+    //   console.log(fsm.initial)
+    //   console.log(fsm.states);
+    //   console.log(fsm.transitions);
+    //   console.log(fsm.finals);
+    //   expect(fsm.isDeterministic()).toBeTruthy();
+    // });
 
-    it('should NOT determinate', async() => {
-      const states = ['A', 'B', 'C'];
-      const alphabet = ['a', 'b'];
-      const transitions = [
-        { from: 'A', to: 'B', when: 'a' },
-        { from: 'B', to: 'C', when: 'b' },
-      ];
-      const initial = 'A';
-      const finals = ['C'];
-      const fsm = new FSM(states, alphabet, transitions, initial, finals);
-      fsm.determinate();
-      expect(fsm.isDeterministic()).toBeTruthy();
-    });
+    // it('should NOT determinate', async() => {
+    //   const states = ['A', 'B', 'C'];
+    //   const alphabet = ['a', 'b'];
+    //   const transitions = [
+    //     { from: 'A', to: 'B', when: 'a' },
+    //     { from: 'B', to: 'C', when: 'b' },
+    //   ];
+    //   const initial = 'A';
+    //   const finals = ['C'];
+    //   const fsm = new FSM(states, alphabet, transitions, initial, finals);
+    //   fsm.determinate();
+    //   expect(fsm.isDeterministic()).toBeTruthy();
+    // });
 
     it('should determinate with epsilon', async () => {
       const states = ['S', 'A', 'B', 'C', 'F'];
-      const alphabet = [EPSILON, 'a', 'b', 'c'];
+      const alphabet = ['a', 'b', 'c'];
       const transitions = [
         { from: 'S', to: 'A', when: 'a' },
         { from: 'S', to: 'B', when: 'b' },
@@ -229,6 +232,20 @@ describe('FSM', () => {
       console.log(fsm.states);
       expect(fsm.isDeterministic()).toBeTruthy();
     });
+
+  //   it('should create a grammar', async() => {
+  //       const states = ['A', 'B', 'C'];
+  //       const alphabet = ['a', 'b'];
+  //       const transitions = [
+  //         { from: 'A', to: 'B', when: 'a' },
+  //         { from: 'B', to: 'C', when: 'b' },
+  //       ];
+  //       const initial = 'A';
+  //       const finals = ['C'];
+  //       const fsm = new FSM(states, alphabet, transitions, initial, finals);
+  //       console.log(fsm.createGrammarFromFSM());
+  //       expect(fsm.isDeterministic()).toBeTruthy();
+  //   });
   });
 
   // describe('generate', () => {

@@ -1,4 +1,5 @@
 import { EPSILON } from './SymbolValidator';
+import Grammar from './Grammar';
 import * as R from 'ramda';
 
 export const GENERATE_MAX_SIZE = 100;
@@ -40,7 +41,7 @@ export default class FSM {
 
   determinate() {
     if (!this.isDeterministic()) {
-      if (this.hasEpsilonTransitions) this.eliminateEpsilonTransitions();
+      if (this.hasEpsilonTransitions()) this.eliminateEpsilonTransitions();
       let newStates = new Set();
       let newTransitions = new Set();
       let newInitial = [this.initial];
@@ -122,11 +123,14 @@ export default class FSM {
         }
       }
     }
-    return newFinalStates;
+    return Array.from(newFinalStates);
   }
 
   createNewTransitionsAndStates(newInitial, newStates, newTransitions) {
     for (let states of newStates) {
+      console.log('>>>>>>');
+      console.log(states);
+      console.log('>>>>>>');
       for (let symbol of this.alphabet) {
         let to = [];
         for (let state of states) {
@@ -137,15 +141,36 @@ export default class FSM {
           ];
           for (let path of paths) to.push(path.to);
         }
+        console.log('<<<<<<');
+        console.log(to);
+        console.log('<<<<<<');
         if (to.length > 0) {
           newTransitions.add({ from: states, to: to, when: symbol });
-          console.log(to);
-          console.log(newStates);
-          newStates.add(to);
+newStates.add(to);          console.log(newStates);
           this.removeRepeatedState(newStates);
         }
       }
     }
+  }
+
+  createGrammarFromFSM() {
+    let pro = [];
+    for (let state of this.states) {
+      for (let symbol of this.alphabet) {
+        let paths = [
+            ...R.filter(R.whereEq({ from: state, when: symbol }))(
+              this.transitions
+            ),
+        ];
+        if (paths.length > 0) {
+          for (let path of paths) {
+            if (this.finals.includes(path.to)) pro.push(`${state} -> ${symbol}`);
+            pro.push(`${state} -> ${symbol}${path.to}`);
+          }
+        }
+      }
+    }
+    return new Grammar(this.states, this.alphabet, pro, this.initial);
   }
 
   /**
@@ -215,7 +240,7 @@ export default class FSM {
    */
   eliminateEpsilonTransitions() {
     // If the automata have no epsilon transitions, nothing is done
-    if (this.hasEpsilonTransitions) {
+    if (this.hasEpsilonTransitions()) {
       let newTransitions = new Set();
       // Otherwise, will iterate through each state
       for (let state of this.states) {
