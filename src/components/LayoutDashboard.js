@@ -4,11 +4,11 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import GrammarCardConnector from '../connectors/GrammarCardConnector';
-import TransactionTableReadOnlyCardConnector from '../connectors/TransactionTableReadOnlyCardConnector';
 import FSMCardConnector from '../connectors/FSMCardConnector';
 import { Card, CardContent, Typography } from 'material-ui';
 import RecognizeCardConnector from '../connectors/RecognizeCardConnector';
 import EnumerationCardConnector from '../connectors/EnumerationCardConnector';
+import TransitionTableCardConnector from '../connectors/TransitionTableCardConnector';
 
 const styles = theme => ({
   // root: {
@@ -49,6 +49,9 @@ function LayoutDashboard(props) {
               spacing={24}
               style={{ height: 'calc(100% + 24px)' }}
             >
+              <Grid item xs={12}>
+                <TransitionTableCardConnector />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <GrammarCardConnector />
               </Grid>
@@ -60,9 +63,6 @@ function LayoutDashboard(props) {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12}>
-                <TransactionTableReadOnlyCardConnector />
               </Grid>
             </Grid>
           </Grid>

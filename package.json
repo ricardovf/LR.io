@@ -2,6 +2,7 @@
   "name": "LR.io",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ricardovf.github.io/LR.io",
   "dependencies": {
     "@rematch/core": "^0.6.0",
     "@rematch/persist": "^0.2.1",
@@ -30,14 +31,17 @@
   "scripts": {
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build",
-    "analyze": "source-map-explorer build/static/js/main.*",
+    "analyze": "source-map-explorer gh-pages/static/js/main.*",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "coverage": "react-app-rewired test --env=jsdom --coverage",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
+    "gh-pages": "^1.1.0",
     "prettier": "1.12.1"
   }
 }

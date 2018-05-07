@@ -482,4 +482,8 @@ newStates.add(to);          console.log(newStates);
       return null;
     }
   }
+
+  static makeEmptyFSM() {
+    return new this([], [], [], null, []);
+  }
 }
