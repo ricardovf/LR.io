@@ -158,6 +158,8 @@ export default class FSM {
         this.initial,
         this.finals
       );
+      // @todo remove this return when eliminateEpsilonTransitions is implemented
+      return [''];
       fsmWithoutEpsilon.eliminateEpsilonTransitions();
       return fsmWithoutEpsilon.generate(
         maxLength,
@@ -192,6 +194,24 @@ export default class FSM {
     }
 
     return currentState === this.initial ? R.uniq(sentences) : sentences;
+  }
+
+  isDeterministicRicardo() {
+    if (Array.isArray(this.transitions)) {
+      let groupByFromAndWhen = R.groupBy(transition => {
+        return transition.from + transition.when;
+      })(this.transitions);
+
+      return (
+        R.values(
+          R.filter(group => {
+            return group.length > 1;
+          }, groupByFromAndWhen)
+        ).length === 0
+      );
+    }
+
+    return false;
   }
 
   toPlainObject() {
