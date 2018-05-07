@@ -64,7 +64,7 @@ export default class FSM {
   }
 
   acceptsEmptySentence() {
-    return this.finals.includes(this.initial);
+    return this.generate(1).includes('');
   }
 
   /**
