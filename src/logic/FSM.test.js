@@ -1,5 +1,5 @@
 import Grammar from './Grammar';
-import { EPSILON, ACCEPT_STATE } from './SymbolValidator';
+import { EPSILON, ACCEPT_STATE, SPECIAL_NEW_STATE } from './SymbolValidator';
 import * as R from 'ramda';
 import FSM from './FSM';
 
@@ -79,6 +79,22 @@ describe('FSM', () => {
       expect(await fsm.recognize('aaaa')).toBeFalsy();
       expect(await fsm.recognize('aaaaa')).toBeFalsy();
     });
+
+    it('should accept empty language when there is epsilon transitions to final states', async () => {
+      const states = ['S', 'B', 'O', 'Z'];
+      const alphabet = [EPSILON, 'a'];
+      const transitions = [
+        { from: 'S', to: 'B', when: 'a' },
+        { from: 'S', to: 'Z', when: EPSILON },
+        { from: 'B', to: 'S', when: 'a' },
+        { from: 'B', to: 'O', when: 'a' },
+      ];
+      const initial = 'S';
+      const finals = ['Z'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      expect(fsm.generate(1)).toEqual(['']);
+      expect(fsm.acceptsEmptySentence()).toBeTruthy();
+    });
   });
 
   describe('determination', () => {
@@ -154,6 +170,28 @@ describe('FSM', () => {
       expect(fsm.hasEpsilonTransitions()).toBeFalsy();
     });
 
+    it('should remove epsilon transitions but update the finals states if needed', async () => {
+      const states = ['S', 'B', 'O', 'Z'];
+      const alphabet = [EPSILON, 'a'];
+      const transitions = [
+        { from: 'S', to: 'B', when: 'a' },
+        { from: 'S', to: 'Z', when: EPSILON },
+        { from: 'B', to: 'O', when: 'a' },
+        { from: 'B', to: 'S', when: 'a' },
+      ];
+      const initial = 'S';
+      const finals = ['Z'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      expect(fsm.hasEpsilonTransitions()).toBeTruthy();
+
+      fsm.eliminateEpsilonTransitions();
+
+      expect(fsm.hasEpsilonTransitions()).toBeFalsy();
+      expect(fsm.initial).toEqual(SPECIAL_NEW_STATE);
+      expect(fsm.finals).toEqual(SPECIAL_NEW_STATE);
+    });
+
     it('should not remove any transitions', async () => {
       const states = ['A', 'B', 'C'];
       const alphabet = [EPSILON, 'a', 'b', 'c'];
@@ -225,7 +263,6 @@ describe('FSM', () => {
       const finals = ['F'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       fsm.determinate();
-      console.log(fsm.transitions);
       expect(fsm.isDeterministic()).toBeTruthy();
     });
 
@@ -294,7 +331,7 @@ describe('FSM', () => {
       expect(fsm.generate(100)).toEqual(['a', 'aa']);
     });
 
-    it.only('should generate the empty sentence when it have epsilon on the first production', async () => {
+    it('should generate the empty sentence when it have epsilon on the first production', async () => {
       const fsm = Grammar.fromText(
         `Z -> aB | ${EPSILON}
         S -> aB
@@ -305,8 +342,8 @@ describe('FSM', () => {
       expect(fsm.generate(1)).toEqual(['']);
       expect(fsm.generate(2)).toEqual(['', 'aa']);
       expect(fsm.generate(3)).toEqual(['', 'aa']);
-      expect(fsm.generate(4)).toEqual(['', 'aaaa', 'aa']);
-      expect(fsm.generate(5)).toEqual(['', 'aaaa', 'aa']);
+      expect(fsm.generate(4)).toEqual(['', 'aa', 'aaaa']);
+      expect(fsm.generate(5)).toEqual(['', 'aa', 'aaaa']);
       expect(fsm.generate(50).includes('')).toBeTruthy();
     });
 
@@ -345,14 +382,6 @@ describe('FSM', () => {
   });
 
   describe('determination', () => {
-    it('should recognize epsilon and non epsilon transitions', async () => {
-      const fsm = Grammar.fromText(`S -> aA | b | &\nA -> aA | a`).getFSM();
-      expect(fsm).toBeDefined();
-      expect(
-        fsm.stateHasEpsilonAndNonEpsilonTransitions('S', 'a')
-      ).toBeTruthy();
-    });
-
     it('should recognize FSM as deterministic', async () => {
       const fsm = Grammar.fromText(`S -> aB\nB -> aS | b`).getFSM();
       expect(fsm).toBeDefined();

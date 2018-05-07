@@ -284,12 +284,10 @@ export default class FSM {
       // Otherwise, will iterate through each state
       for (let state of this.states) {
         // Find all states reachable using only & symbol, using 1 or more steps
-        let reachbaleStatesByEpsilon = this.findReachbableStatesbyEpsilon(
-          state
-        );
+        let reachableStatesByEpsilon = this.findReachableStatesByEpsilon(state);
         // Will create the union of transitions for the states were reached by &
         this.createUnionForStates(
-          reachbaleStatesByEpsilon,
+          reachableStatesByEpsilon,
           newTransitions,
           state
         );
@@ -306,15 +304,15 @@ export default class FSM {
    *
    * @param state
    * @param reachableStatesByEpsilon
-   * @returns {Array}
+   * @returns {Set}
    */
-  findReachbableStatesbyEpsilon(state, reachbaleStatesByEpsilon = new Set()) {
-    // The condition is only atended if every state was checked
-    if (reachbaleStatesByEpsilon.has(state)) {
-      return reachbaleStatesByEpsilon;
+  findReachableStatesByEpsilon(state, reachableStatesByEpsilon = new Set()) {
+    // The condition is only attended if every state was checked
+    if (reachableStatesByEpsilon.has(state)) {
+      return reachableStatesByEpsilon;
     } else {
-      // Every state reachs itself through &
-      reachbaleStatesByEpsilon.add(state);
+      // Every state reaches itself through &
+      reachableStatesByEpsilon.add(state);
       let paths = [
         ...R.filter(R.whereEq({ from: state, when: EPSILON }))(
           this.transitions
@@ -324,9 +322,9 @@ export default class FSM {
       let epsilonNeighbours = R.pluck('to')(paths);
       // For each neighbour, will call this method
       for (let neighbour of epsilonNeighbours) {
-        this.findReachbableStatesbyEpsilon(neighbour, reachbaleStatesByEpsilon);
+        this.findReachableStatesByEpsilon(neighbour, reachableStatesByEpsilon);
       }
-      return reachbaleStatesByEpsilon;
+      return reachableStatesByEpsilon;
     }
   }
 
@@ -468,6 +466,7 @@ export default class FSM {
       );
 
       fsmWithoutEpsilon.eliminateEpsilonTransitions();
+
       return fsmWithoutEpsilon.generate(
         maxLength,
         currentState,
@@ -478,9 +477,6 @@ export default class FSM {
     let sentences = [];
 
     if (this.finals.includes(currentState)) {
-      // console.log(
-      //   `estado atual ${currentState} é final, colocando a sentença atual ${currentSentence} na lista`
-      // );
       sentences.push(currentSentence);
     }
 
@@ -500,7 +496,7 @@ export default class FSM {
       }
     }
 
-    return currentState === this.initial ? R.uniq(sentences) : sentences;
+    return currentState === this.initial ? R.uniq(sentences).sort() : sentences;
   }
 
   toPlainObject() {
