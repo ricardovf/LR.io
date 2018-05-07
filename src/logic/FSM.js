@@ -38,6 +38,116 @@ export default class FSM {
     return true;
   }
 
+  determinate() {
+    if (!this.isDeterministic()) {
+      if (this.hasEpsilonTransitions) this.eliminateEpsilonTransitions();
+      let newStates = new Set();
+      let newTransitions = new Set();
+      let newInitial = [this.initial];
+      newStates.add(newInitial);
+      for (let symbol of this.alphabet) {
+        let paths = [
+          ...R.filter(R.whereEq({ from: this.initial, when: symbol }))(
+            this.transitions
+          ),
+        ];
+        let states = R.pluck('to')(paths);
+        if (states.length > 0) {
+          newStates.add(states);
+          let transition = { from: newInitial, to: states, when: symbol };
+          newTransitions.add(transition);
+        }
+      }
+
+      this.createNewTransitionsAndStates(newInitial, newStates, newTransitions);
+      this.removeRepeatedState(newStates);
+      this.removeRepeatedTransitions(newTransitions);
+      this.states = Array.from(newStates);
+      this.transitions = Array.from(newTransitions);
+      this.initial = newInitial;
+      this.finals = this.createNewFinalStates(newStates);
+    }
+  }
+
+  removeRepeatedState(setStates) {
+    let arrayStates = Array.from(setStates);
+    let statesToRemove = new Set();
+    for (let i = 0; i < arrayStates.length; ++i) {
+      for (let j = i; j < arrayStates.length; ++j) {
+        if (i != j) {
+          let i_ = arrayStates[i]
+            .slice()
+            .sort()
+            .join(',');
+          let j_ = arrayStates[j]
+            .slice()
+            .sort()
+            .join(',');
+          if (i_ == j_) statesToRemove.add(arrayStates[j]);
+        }
+      }
+    }
+    statesToRemove = Array.from(statesToRemove).sort();
+    for (let state of statesToRemove) setStates.delete(state);
+  }
+
+  removeRepeatedTransitions(setTransitions) {
+    let arrayTransitions = Array.from(setTransitions);
+    let transitionsToRemove = new Set();
+    for (let i = 0; i < arrayTransitions.length; ++i) {
+      for (let j = i; j < arrayTransitions.length; ++j) {
+        if (i != j) {
+          let i_ = arrayTransitions[i].from
+            .slice()
+            .sort()
+            .join(',');
+          let j_ = arrayTransitions[j].from
+            .slice()
+            .sort()
+            .join(',');
+          if (i_ == j_ && arrayTransitions[i].when == arrayTransitions[j].when) transitionsToRemove.add(arrayTransitions[j]);
+        }
+      }
+    }
+    transitionsToRemove = Array.from(transitionsToRemove).sort();
+    for (let transition of transitionsToRemove) setTransitions.delete(transition);
+  }
+
+  createNewFinalStates(newStates) {
+    let newFinalStates = new Set();
+    for (let final of this.finals) {
+      for (let states of newStates) {
+        for (let state of states) {
+          if (state == final) newFinalStates.add(states);
+        }
+      }
+    }
+    return newFinalStates;
+  }
+
+  createNewTransitionsAndStates(newInitial, newStates, newTransitions) {
+    for (let states of newStates) {
+      for (let symbol of this.alphabet) {
+        let to = [];
+        for (let state of states) {
+          let paths = [
+            ...R.filter(R.whereEq({ from: state, when: symbol }))(
+              this.transitions
+            ),
+          ];
+          for (let path of paths) to.push(path.to);
+        }
+        if (to.length > 0) {
+          newTransitions.add({ from: states, to: to, when: symbol });
+          console.log(to);
+          console.log(newStates);
+          newStates.add(to);
+          this.removeRepeatedState(newStates);
+        }
+      }
+    }
+  }
+
   /**
    * Check if the state has other than epsilon transitions
    *
@@ -156,7 +266,7 @@ export default class FSM {
     }
   }
 
-   /**
+  /**
    * For the current state that
    *
    * @param states
