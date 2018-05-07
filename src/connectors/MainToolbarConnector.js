@@ -9,6 +9,7 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   deleteOnClick: id => dispatch.languages.remove({ id }),
+  renameLanguage: (id, name) => dispatch.languages.renameLanguage({ id, name }),
 });
 
 export default connect(mapState, mapDispatch)(MainToolbar);

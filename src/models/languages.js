@@ -6,7 +6,11 @@ import Grammar from '../logic/Grammar';
 import { multiTrim } from '../logic/helpers';
 import * as R from 'ramda';
 import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
+import SymbolValidator from '../logic/SymbolValidator';
 
+/**
+ * @todo transfer the logic to manipulate the FSM to inside the FSM class, like remove/add symbols/states, etc
+ */
 export default {
   state: [],
   reducers: {
@@ -18,8 +22,6 @@ export default {
           name: `Nova linguagem #${state.length}`,
           empty: true,
           valid: true,
-          deterministic: false,
-          minimal: false,
           grammar: undefined,
           expression: undefined,
           fsm: undefined,
@@ -32,6 +34,9 @@ export default {
       return reject(language => language.id === id, [...state]);
     },
     _updateLanguage(state, { id, language }) {
+      // @todo we must recalcute some fields of the language if it changes, like if its valid, deterministic, and others
+      // so this gotta be an effect and
+
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;
       });
@@ -114,6 +119,228 @@ export default {
         language = {
           ...language,
           enumerationLength: length,
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    changeInitialState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            initial: state,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addToFinalStates({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            finals: [...language.fsm.finals, state],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    deleteFromFinalStates({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        const newFinals = R.reject(item => item === state, language.fsm.finals);
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            finals: newFinals,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    renameLanguage({ id, name }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && typeof name === 'string' && name.trim().length > 0) {
+        language = {
+          ...language,
+          name: name.trim(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addNewState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      // make new FSM if there is none
+      if (language && !language.fsm) {
+        language.fsm = FSM.makeEmptyFSM();
+      }
+
+      if (
+        language &&
+        language.fsm &&
+        SymbolValidator.isValidNonTerminal(state) &&
+        !language.fsm.states.includes(state)
+      ) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: [...language.fsm.states, state],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    deleteState({ id, state }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.states.includes(state)) {
+        const newStates = R.reject(item => item === state, language.fsm.states);
+
+        // Delete all transactions going to or from the deleted state
+        let newTransitions = R.reject(R.whereEq({ from: state }))(
+          language.fsm.transitions
+        );
+        newTransitions = R.reject(R.whereEq({ to: state }))(newTransitions);
+
+        // Change the initial state if its the deleted state
+        const newInitial =
+          language.fsm.initial === state ? null : language.fsm.initial;
+
+        // Delete from finals if state is in it
+        const newFinals = R.reject(item => item === state, language.fsm.finals);
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: newStates,
+            transitions: newTransitions,
+            initial: newInitial,
+            finals: newFinals,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    addNewSymbol({ id, symbol }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      // make new FSM if there is none
+      if (language && !language.fsm) {
+        language.fsm = FSM.makeEmptyFSM();
+      }
+
+      if (
+        language &&
+        language.fsm &&
+        SymbolValidator.isValidTerminal(symbol) &&
+        !language.fsm.alphabet.includes(symbol)
+      ) {
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            alphabet: [...language.fsm.alphabet, symbol],
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    deleteSymbol({ id, symbol }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm && language.fsm.alphabet.includes(symbol)) {
+        const newAlphabet = R.reject(
+          item => item === symbol,
+          language.fsm.alphabet
+        );
+
+        // Delete all transactions using the symbol
+        let newTransitions = R.reject(R.whereEq({ when: symbol }))(
+          language.fsm.transitions
+        );
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            alphabet: newAlphabet,
+            transitions: newTransitions,
+          },
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    changeTransition({ id, symbol, fromState, toStates }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (
+        language &&
+        language.fsm &&
+        language.fsm.states.includes(fromState) &&
+        language.fsm.alphabet.includes(symbol)
+      ) {
+        let newTransitions = R.reject(
+          R.whereEq({ from: fromState, when: symbol })
+        )(language.fsm.transitions);
+
+        let newStates = [...language.fsm.states];
+
+        // If it is a new valid state, lets add it
+        for (let toState of toStates) {
+          if (
+            SymbolValidator.isValidNonTerminal(toState) &&
+            !newStates.includes(toState)
+          ) {
+            newStates.push(toState);
+          }
+
+          if (newStates.includes(toState)) {
+            newTransitions.push({
+              from: fromState,
+              to: toState,
+              when: symbol,
+            });
+          }
+        }
+
+        language = {
+          ...language,
+          fsm: {
+            ...language.fsm,
+            states: newStates,
+            transitions: R.uniq(newTransitions),
+          },
         };
 
         dispatch.languages._updateLanguage({ id, language });

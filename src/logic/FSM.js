@@ -477,4 +477,8 @@ export default class FSM {
       return null;
     }
   }
+
+  static makeEmptyFSM() {
+    return new this([], [], [], null, []);
+  }
 }
