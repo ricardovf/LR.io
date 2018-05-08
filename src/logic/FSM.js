@@ -278,8 +278,10 @@ export default class FSM {
    * @returns {void}
    */
   eliminateEpsilonTransitions() {
+    console.log(this.transitions);
     // If the automata have no epsilon transitions, nothing is done
     if (this.hasEpsilonTransitions()) {
+      let newFinals = new Set();
       let newTransitions = new Set();
       // Otherwise, will iterate through each state
       for (let state of this.states) {
@@ -291,11 +293,18 @@ export default class FSM {
           newTransitions,
           state
         );
+        let newFinals_ = Array.from(this.createNewFinalStates(reachableStatesByEpsilon))
+        if (newFinals_.length > 0) newFinals.add(newFinals_);
       }
       // Update the transitions for the automata
       this.transitions = Array.from(newTransitions);
       // Removing epsilon from alphabet
       this.alphabet.splice(this.alphabet.indexOf(EPSILON), 1);
+      // Update final states
+      this.removeRepeatedState(newFinals);
+      this.finals = Array.from(newFinals);
+      this.states.push(Array.from(newFinals));
+      console.log(this.transitions);
     }
   }
 
@@ -360,8 +369,9 @@ export default class FSM {
                 let transition_ = Object.assign({}, transition);
                 transition_.from = state;
                 newTransitions.add(transition_);
+              } else {
+                newTransitions.add(transition);
               }
-              newTransitions.add(transition);
             }
           }
         }
