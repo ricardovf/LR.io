@@ -1,4 +1,4 @@
-import { EPSILON, SPECIAL_NEW_STATE } from '../SymbolValidator';
+import { EPSILON } from '../SymbolValidator';
 import FSM from '../FSM';
 
 describe('FSM', () => {

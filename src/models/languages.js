@@ -36,6 +36,10 @@ export default {
     _updateLanguage(state, { id, language }) {
       // @todo we must recalcute some fields of the language if it changes, like if its valid, deterministic, and others
       // so this gotta be an effect and
+      // if (!language.grammar && language && language.fsm) {
+      //   const fsm = FSM.fromPlainObject(language.fsm);
+      //   language.grammar = fsm.toGrammar();
+      // }
 
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;

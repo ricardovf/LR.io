@@ -37,6 +37,7 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       fsm.determinate();
       expect(fsm.isDeterministic()).toBeTruthy();
+      expect(fsm.finals).toEqual(['D']);
     });
 
     it('should NOT determinate', async () => {

@@ -31,6 +31,8 @@ export function isDeterministic(fsm) {
 /**
  * Determinate automate
  *
+ * @todo make more correct tests
+ *
  * @param fsm FSM
  * @returns {void}
  */
@@ -44,7 +46,7 @@ export function determinate(fsm) {
       fsm.eliminateEpsilonTransitions();
     }
 
-    let newInitial = [fsm.initial];
+    let newInitial = fsm.initial;
     let newStates = [newInitial];
     let newTransitions = [];
 
@@ -55,16 +57,21 @@ export function determinate(fsm) {
           fsm.transitions
         ),
       ];
-      let states = R.pluck('to')(paths);
+
+      let states = R.uniq(R.pluck('to')(paths));
 
       if (states.length > 0) {
+        states = states.sort().join('');
         newStates.push(states);
         let transition = { from: newInitial, to: states, when: symbol };
         newTransitions.push(transition);
       }
     }
-    createNewTransitionsAndStates(fsm, newStates, newTransitions);
+
     newStates = R.uniq(newStates);
+
+    createNewTransitionsAndStates(fsm, newStates, newTransitions);
+
     newTransitions = R.uniq(newTransitions);
     fsm.initial = newInitial;
     fsm.states = newStates;
@@ -86,6 +93,7 @@ function createNewFinalStates(fsm, newStates) {
 
   let newFinalStates = [];
   for (let states of newStates) {
+    states = states.split();
     for (let state of states) {
       if (fsm.finals.includes(state) && !newFinalStates.includes(state)) {
         newFinalStates.push(states);
@@ -124,9 +132,9 @@ function createNewTransitionsAndStates(fsm, newStates, newTransitions) {
       }
 
       if (to.length > 0) {
-        to = R.uniq(to);
+        to = R.uniq(to).sort();
 
-        let state_ = [...to];
+        let state_ = to.join('');
         // Creates a new transition to just one state
         newTransitions.push({ from: states, to: state_, when: symbol });
         // Add the state that represents the union of the states

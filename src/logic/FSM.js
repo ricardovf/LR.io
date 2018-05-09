@@ -40,12 +40,13 @@ export default class FSM {
   /**
    * Return a new Grammar from the FSM
    *
-   * @todo implement tests
+   * @todo implement tests, put in own file FSM/toGrammar.js and make sure new states are single upcase chars. If there is
+   * more then 26 states, then we make new states with emojs =D (https://gist.github.com/ikr7/c72843556ef3a12014c3)
    *
    * @returns {Grammar}
    */
-  createGrammarFromFSM() {
-    let pro = [];
+  toGrammar() {
+    let productions = [];
     for (let state of this.states) {
       for (let symbol of this.alphabet) {
         let paths = [
@@ -56,13 +57,13 @@ export default class FSM {
         if (paths.length > 0) {
           for (let path of paths) {
             if (this.finals.includes(path.to))
-              pro.push(`${state} -> ${symbol}`);
-            pro.push(`${state} -> ${symbol}${path.to}`);
+              productions.push(`${state} -> ${symbol}`);
+            productions.push(`${state} -> ${symbol}${path.to}`);
           }
         }
       }
     }
-    return new Grammar(this.states, this.alphabet, pro, this.initial);
+    return new Grammar(this.states, this.alphabet, productions, this.initial);
   }
 
   /**
@@ -217,6 +218,9 @@ export default class FSM {
     return generate(this, maxLength);
   }
 
+  /**
+   * @returns {{states: *[], alphabet: *[], initial: *, finals: *[], transitions: *[]}}
+   */
   toPlainObject() {
     return {
       states: [...this.states],
@@ -227,6 +231,10 @@ export default class FSM {
     };
   }
 
+  /**
+   * @param object
+   * @returns {FSM}
+   */
   static fromPlainObject(object) {
     try {
       return new this(
@@ -241,6 +249,9 @@ export default class FSM {
     }
   }
 
+  /**
+   * @returns {FSM}
+   */
   static makeEmptyFSM() {
     return new this([], [], [], null, []);
   }

@@ -144,8 +144,6 @@ export default class Grammar {
     return this.isValid() ? this.fsm.generate(size) : [];
   }
 
-  static fromAutomata(automata) {}
-  static fromRegularExpression(expression) {}
   static fromText(text) {
     if (parser.changed(text)) {
       parser.run(text);
