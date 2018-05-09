@@ -71,7 +71,9 @@ class FSMCard extends React.Component {
           </ListItem>
           <ListItem disableGutters>
             <ListItemText
-              secondary="Estado final"
+              secondary={
+                fsm.finals.length > 1 ? 'Estados finais' : 'Estado final'
+              }
               primary={fsm.finals.join(', ')}
             />
           </ListItem>

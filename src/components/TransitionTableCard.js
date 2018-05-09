@@ -67,9 +67,35 @@ const styles = () => ({
       fontSize: '16px',
     },
   },
+  generateCodeIcon: {
+    width: '24px',
+    height: '24px',
+    '& > span > span': {
+      fontSize: '16px',
+    },
+    float: 'right',
+  },
 });
 
 class TransitionTableCard extends React.Component {
+  generateCode(fsm) {
+    const code = `const states = ${JSON.stringify(fsm.states).replace(
+      /"/g,
+      "'"
+    )};
+      const alphabet = ${JSON.stringify(fsm.alphabet)
+        .replace(/"/g, "'")
+        .replace(/'&'/g, 'EPSILON')};
+      const transitions = ${JSON.stringify(fsm.transitions)
+        .replace(/"/g, "'")
+        .replace(/'&'/g, 'EPSILON')};
+      const initial = '${fsm.initial}';
+      const finals = ${JSON.stringify(fsm.finals).replace(/"/g, "'")};
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);`;
+
+    console.log(code);
+  }
+
   buildHeader(fsm) {
     let data = ['*', 'F', 'Estado'];
 
@@ -224,8 +250,22 @@ class TransitionTableCard extends React.Component {
     return (
       <Card className={classes.card}>
         <CardContent>
+          {fsm && (
+            <Tooltip title="Gerar código JavaScript para teste unitário">
+              <IconButton
+                className={classes.generateCodeIcon}
+                aria-label="generate-code-for-fsm"
+                onClick={() => {
+                  this.generateCode(fsm);
+                }}
+              >
+                <Icon>code</Icon>
+              </IconButton>
+            </Tooltip>
+          )}
+
           <Typography gutterBottom variant="headline" component="h2">
-            Tabela de transições
+            Tabela de transições{' '}
           </Typography>
 
           <div className={classes.container}>
