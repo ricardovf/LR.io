@@ -3,7 +3,7 @@ import { EPSILON } from '../SymbolValidator';
 import FSM from '../FSM';
 
 describe('FSM', () => {
-  describe('determination', () => {
+  describe('isDeterministic', () => {
     it('should recognize FSM as deterministic', async () => {
       const fsm = Grammar.fromText(`S -> aB\nB -> aS | b`).getFSM();
       expect(fsm).toBeDefined();
@@ -22,6 +22,38 @@ describe('FSM', () => {
       expect(fsm.isDeterministic()).toBeFalsy();
     });
 
+    it('should recognize automata as NOT deterministic when there is EPSILON + normal symbol ', () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['a', 'b', EPSILON];
+      const transitions = [
+        { from: 'A', to: 'D', when: 'a' },
+        { from: 'D', to: 'A', when: 'b' },
+        { from: 'B', to: 'B', when: 'b' },
+        { from: 'B', to: 'A', when: 'a' },
+        { from: 'B', to: 'C', when: EPSILON },
+        { from: 'A', to: 'B', when: 'b' },
+      ];
+      const initial = 'A';
+      const finals = ['A'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      expect(fsm.isDeterministic()).toBeFalsy();
+    });
+
+    it('should recognize automata as deterministic when there is ONLY EPSILON ', () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['a', 'b', EPSILON];
+      const transitions = [
+        { from: 'A', to: 'D', when: 'a' },
+        { from: 'D', to: 'B', when: EPSILON },
+      ];
+      const initial = 'A';
+      const finals = ['A'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      expect(fsm.isDeterministic()).toBeTruthy();
+    });
+  });
+
+  describe('determination', () => {
     it('should determinate', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['a', 'b'];

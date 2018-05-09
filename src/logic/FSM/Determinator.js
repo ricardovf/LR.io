@@ -1,5 +1,6 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
+import { EPSILON } from '../SymbolValidator';
 
 /**
  * For each state, will check if has more than one transition with the same symbol
@@ -15,6 +16,22 @@ export function isDeterministic(fsm) {
     let groupByFromAndWhen = R.groupBy(transition => {
       return transition.from + transition.when;
     })(fsm.transitions);
+
+    let epsilons = R.filter(R.whereEq({ when: EPSILON }))(fsm.transitions);
+
+    for (let epsilonTransition of epsilons) {
+      // If we have other transitions with different symbols from the same state, we include in the group
+      let sameStateTransitions = R.filter(
+        R.where({
+          from: R.equals(epsilonTransition.from),
+          when: R.complement(R.equals(EPSILON)),
+        })
+      )(fsm.transitions);
+
+      for (let same of sameStateTransitions) {
+        groupByFromAndWhen[same.from + same.when].push(epsilonTransition);
+      }
+    }
 
     return (
       R.values(
@@ -72,11 +89,12 @@ export function determinate(fsm) {
 
     createNewTransitionsAndStates(fsm, newStates, newTransitions);
 
+    fsm.finals = createNewFinalStates(fsm, newStates);
+
     newTransitions = R.uniq(newTransitions);
     fsm.initial = newInitial;
     fsm.states = newStates;
     fsm.transitions = newTransitions;
-    fsm.finals = createNewFinalStates(fsm, newStates);
   }
 }
 
