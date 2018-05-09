@@ -12,6 +12,10 @@ const mapState = state => {
 
 const mapDispatch = dispatch => ({
   onGrammarChange: (id, text) => dispatch.languages.editGrammar({ id, text }),
+  eliminateEpsilonTransitions: id =>
+    dispatch.languages.eliminateEpsilonTransitions({ id }),
+  determinate: id => dispatch.languages.determinate({ id }),
+  minimize: id => dispatch.languages.minimize({ id }),
 });
 
 export default connect(mapState, mapDispatch)(FSMCard);

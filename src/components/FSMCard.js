@@ -7,19 +7,36 @@ import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import * as R from 'ramda';
 import FSM from '../logic/FSM';
+import { SnackbarContent } from 'material-ui/Snackbar';
+import Button from 'material-ui/Button';
 
 const styles = () => ({
   card: {
     height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  cardContent: {
+    flexGrow: 1,
   },
   lastList: {
-    'padding-bottom': 0,
+    paddingTop: '5px',
+    paddingBottom: 0,
+  },
+  snackbar: {
+    minWidth: '100px',
   },
 });
 
 class FSMCard extends React.Component {
   render() {
-    const { classes, language } = this.props;
+    const {
+      classes,
+      language,
+      determinate,
+      eliminateEpsilonTransitions,
+      minimize,
+    } = this.props;
 
     const yesIcon = <Icon style={{ fontSize: 24, color: 'green' }}>check</Icon>;
     const noIcon = <Icon style={{ fontSize: 24, color: 'red' }}>close</Icon>;
@@ -63,9 +80,13 @@ class FSMCard extends React.Component {
         <List dense className={classes.lastList}>
           <ListItem disableGutters>
             <ListItemIcon>
-              {fsm ? (fsm.isDeterministic() ? yesIcon : noIcon) : dontKnowIcon}
+              {fsm
+                ? fsm.acceptsEmptySentence()
+                  ? yesIcon
+                  : noIcon
+                : dontKnowIcon}
             </ListItemIcon>
-            <ListItemText primary="Determinístico" />
+            <ListItemText primary="Aceita sentença vazia" />
           </ListItem>
           <ListItem disableGutters>
             <ListItemIcon>
@@ -79,33 +100,71 @@ class FSMCard extends React.Component {
           </ListItem>
           <ListItem disableGutters>
             <ListItemIcon>
+              {fsm ? (fsm.isDeterministic() ? yesIcon : noIcon) : dontKnowIcon}
+            </ListItemIcon>
+            <ListItemText primary="Determinístico" />
+          </ListItem>
+
+          <ListItem disableGutters>
+            <ListItemIcon>
               {fsm ? (fsm.isMinimal() ? yesIcon : noIcon) : dontKnowIcon}
             </ListItemIcon>
             <ListItemText primary="Mínimo" />
-          </ListItem>
-          <ListItem disableGutters>
-            <ListItemIcon>
-              {fsm
-                ? fsm.acceptsEmptySentence()
-                  ? yesIcon
-                  : noIcon
-                : dontKnowIcon}
-            </ListItemIcon>
-            <ListItemText primary="Aceita sentença vazia" />
           </ListItem>
         </List>
       </React.Fragment>
     );
 
+    let message,
+      actionText,
+      action = null;
+
+    if (fsm) {
+      if (fsm.hasEpsilonTransitions()) {
+        message = 'Você pode eliminar as transições por epsilon';
+        action = eliminateEpsilonTransitions;
+        actionText = 'Eliminar epsilon';
+      } else if (!fsm.isDeterministic()) {
+        message = 'Você pode tornar esse autômato determinístico';
+        action = determinate;
+        actionText = 'Determinizar';
+      } else if (!fsm.isMinimal()) {
+        message = 'Você pode minimizar o autômato';
+        action = minimize;
+        actionText = 'Minimizar';
+      }
+    }
+
+    const actions = message && (
+      <React.Fragment>
+        <SnackbarContent
+          className={classes.snackbar}
+          message={message}
+          action={
+            <Button
+              color="secondary"
+              size="small"
+              onClick={() => {
+                action(language.id);
+              }}
+            >
+              {actionText}
+            </Button>
+          }
+        />
+      </React.Fragment>
+    );
+
     return (
       <Card className={classes.card}>
-        <CardContent>
+        <CardContent className={classes.cardContent}>
           <Typography gutterBottom variant="headline" component="h2">
             Autômato finito
           </Typography>
 
           {info}
         </CardContent>
+        {actions}
       </Card>
     );
   }
@@ -114,6 +173,9 @@ class FSMCard extends React.Component {
 FSMCard.propTypes = {
   classes: PropTypes.object.isRequired,
   language: PropTypes.object,
+  determinate: PropTypes.func,
+  eliminateEpsilonTransitions: PropTypes.func,
+  minimize: PropTypes.func,
 };
 
 export default withStyles(styles)(FSMCard);

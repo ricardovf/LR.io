@@ -347,6 +347,54 @@ export default {
       }
     },
 
+    eliminateEpsilonTransitions({ id }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm) {
+        const fsm = FSM.fromPlainObject(language.fsm);
+        fsm.eliminateEpsilonTransitions();
+
+        language = {
+          ...language,
+          fsm: fsm.toPlainObject(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    determinate({ id }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm) {
+        const fsm = FSM.fromPlainObject(language.fsm);
+        fsm.determinate();
+
+        language = {
+          ...language,
+          fsm: fsm.toPlainObject(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
+    minimize({ id }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm) {
+        const fsm = FSM.fromPlainObject(language.fsm);
+        fsm.minimize();
+
+        language = {
+          ...language,
+          fsm: fsm.toPlainObject(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
     // @todo use promise to process the grammar
     editGrammar: _.debounce(
       (payload, rootState) => {

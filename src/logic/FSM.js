@@ -86,6 +86,8 @@ export default class FSM {
     return false;
   }
 
+  minimize() {}
+
   /**
    * Check if the automata has cycle in the graph
    *
