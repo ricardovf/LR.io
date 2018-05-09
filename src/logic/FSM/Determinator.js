@@ -48,8 +48,6 @@ export function isDeterministic(fsm) {
 /**
  * Determinate automate
  *
- * @todo make more correct tests
- *
  * @param fsm FSM
  * @returns {void}
  */
@@ -63,105 +61,93 @@ export function determinate(fsm) {
       fsm.eliminateEpsilonTransitions();
     }
 
-    let newInitial = fsm.initial;
-    let newStates = [newInitial];
-    let newTransitions = [];
+    // We can only determinate if we have the initial state
+    if (fsm.initial && fsm.states.includes(fsm.initial)) {
+      let currentComposedState = [fsm.initial];
+      let newInitial = currentComposedState;
+      let newStates = [currentComposedState];
+      let newFinals = [];
+      let newTransitions = formComposedState(
+        currentComposedState,
+        fsm.alphabet,
+        fsm.transitions,
+        newStates
+      );
 
-    // Will store the neighbours states of the initial state in a set
-    for (let symbol of fsm.alphabet) {
-      let paths = [
-        ...R.filter(R.whereEq({ from: fsm.initial, when: symbol }))(
-          fsm.transitions
-        ),
-      ];
-
-      let states = R.uniq(R.pluck('to')(paths));
-
-      if (states.length > 0) {
-        states = states.sort().join('');
-        newStates.push(states);
-        let transition = { from: newInitial, to: states, when: symbol };
-        newTransitions.push(transition);
+      // Mark the final states
+      for (let state of newStates) {
+        if (R.intersection(fsm.finals, state).length > 0) {
+          newFinals.push(state);
+        }
       }
+
+      // Convert all composed array states to string
+      newInitial = newInitial.join('');
+      newStates = newStates.map(state => state.join(''));
+      newFinals = newFinals.map(final => final.join(''));
+      newTransitions = newTransitions.map(transition => {
+        transition.to = transition.to.join('');
+        transition.from = transition.from.join('');
+        return transition;
+      });
+
+      fsm.initial = newInitial;
+      fsm.states = newStates;
+      fsm.transitions = newTransitions;
+      fsm.finals = newFinals;
     }
-
-    newStates = R.uniq(newStates);
-
-    createNewTransitionsAndStates(fsm, newStates, newTransitions);
-
-    fsm.finals = createNewFinalStates(fsm, newStates);
-
-    newTransitions = R.uniq(newTransitions);
-    fsm.initial = newInitial;
-    fsm.states = newStates;
-    fsm.transitions = newTransitions;
   }
 }
 
 /**
- * For each new state will check if the current finals includes the new state
- *
- * @todo fix this method?
- *
- * @param fsm FSM
- * @param newStates
+ * @param currentComposedState []
+ * @param alphabet []
+ * @param transitions []
+ * @param states Set
  * @returns {Array}
+ * @private
  */
-function createNewFinalStates(fsm, newStates) {
-  if (!fsm instanceof FSM)
-    throw new Error(`Received ${fsm} instead of an FSM instance.`);
+function formComposedState(
+  currentComposedState,
+  alphabet,
+  transitions,
+  states
+) {
+  let newTransitions = [];
 
-  let newFinalStates = [];
-  for (let states of newStates) {
-    states = states.split('');
-    for (let state of states) {
-      if (fsm.finals.includes(state) && !newFinalStates.includes(state)) {
-        newFinalStates.push(states);
-      }
+  // for each symbol of the alphabet, lets see where we can go on the original FSM and compose the state
+  for (let symbol of alphabet) {
+    let pathsWithSymbol = [];
+    // for each independent state of the current state
+    for (let state of currentComposedState) {
+      pathsWithSymbol = [
+        ...pathsWithSymbol,
+        ...R.filter(R.whereEq({ from: state, when: symbol }))(transitions),
+      ];
     }
-  }
-  return newFinalStates;
-}
 
-/**
- * Will create the union of the states for the determinization
- *
- * @param fsm FSM
- * @param newStates
- * @param newTransitions
- * @returns {void}
- */
-function createNewTransitionsAndStates(fsm, newStates, newTransitions) {
-  if (!fsm instanceof FSM)
-    throw new Error(`Received ${fsm} instead of an FSM instance.`);
+    // If we found transitions from the symbol, we use it to create a new composed state
+    if (pathsWithSymbol.length) {
+      // Will be in a form of ['A', 'C'] for example
+      const newComposedState = R.uniq(R.pluck('to', pathsWithSymbol)).sort();
 
-  // The set is composed by array of states
-  for (let states of newStates) {
-    for (let symbol of fsm.alphabet) {
-      // Uses set to ensure uniqueness
-      let to = [];
-      // Will iterate through each state of the current array
-      for (let state of states) {
-        let paths = [
-          ...R.filter(R.whereEq({ from: state, when: symbol }))(
-            fsm.transitions
-          ),
+      // Create the new transition to the composedState
+      newTransitions.push({
+        from: currentComposedState,
+        to: newComposedState,
+        when: symbol,
+      });
+
+      // If the state is new, lets calculate its transitions and maybe new derived composed states
+      if (!R.contains(newComposedState, states)) {
+        states.push(newComposedState);
+        newTransitions = [
+          ...newTransitions,
+          ...formComposedState(newComposedState, alphabet, transitions, states),
         ];
-        // For each state reachable, adds to set
-        for (let path of paths) to.push(path.to);
-      }
-
-      if (to.length > 0) {
-        to = R.uniq(to).sort();
-
-        let state_ = to.join('');
-        // Creates a new transition to just one state
-        newTransitions.push({ from: states, to: state_, when: symbol });
-        // Add the state that represents the union of the states
-        newStates.push(state_);
-        // Remove repeated arrays in the set
-        newStates = R.uniq(newStates);
       }
     }
   }
+
+  return newTransitions;
 }

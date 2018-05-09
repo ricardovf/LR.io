@@ -54,13 +54,13 @@ describe('FSM', () => {
   });
 
   describe('determination', () => {
-    it('should determinate', async () => {
+    it('should determinate a simple FSM', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['a', 'b'];
       const transitions = [
         { from: 'A', to: 'A', when: 'a' },
-        { from: 'A', to: 'B', when: 'a' },
         { from: 'A', to: 'A', when: 'b' },
+        { from: 'A', to: 'B', when: 'a' },
         { from: 'B', to: 'C', when: 'b' },
         { from: 'C', to: 'D', when: 'b' },
       ];
@@ -69,7 +69,9 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       fsm.determinate();
       expect(fsm.isDeterministic()).toBeTruthy();
-      expect(fsm.finals).toEqual(['D']);
+      expect(fsm.initial).toEqual('A');
+      expect(fsm.states).toEqual(['A', 'AB', 'AC', 'AD']);
+      expect(fsm.finals).toEqual(['AD']);
     });
 
     it('should NOT determinate', async () => {

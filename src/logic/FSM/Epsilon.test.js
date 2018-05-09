@@ -20,6 +20,28 @@ describe('FSM', () => {
       expect(fsm.hasEpsilonTransitions()).toBeFalsy();
     });
 
+    it('should remove the epsilon from the alphabet', async () => {
+      const states = ['S', 'Z'];
+      const alphabet = [EPSILON, 'a'];
+      const transitions = [
+        { from: 'S', to: 'Z', when: 'a' },
+        { from: 'Z', to: 'Z', when: EPSILON },
+      ];
+      const initial = 'S';
+      const finals = ['Z'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      expect(fsm.hasEpsilonTransitions()).toBeTruthy();
+
+      fsm.eliminateEpsilonTransitions();
+
+      expect(fsm.hasEpsilonTransitions()).toBeFalsy();
+      expect(fsm.initial).toEqual('S');
+      expect(fsm.alphabet).toEqual(['a']);
+      expect(fsm.finals).toEqual(['Z']);
+      expect(fsm.transitions).toEqual([{ from: 'S', to: 'Z', when: 'a' }]);
+    });
+
     it('should remove epsilon transitions that go to itself', async () => {
       const states = ['S', 'Z'];
       const alphabet = [EPSILON, 'a'];

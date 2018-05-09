@@ -59,4 +59,6 @@ export function eliminateEpsilonTransitions(fsm) {
     // Remove the epsilon transactions
     fsm.transitions = R.reject(R.whereEq(transition))(fsm.transitions);
   }
+
+  fsm.alphabet.splice(fsm.alphabet.indexOf(EPSILON), 1);
 }
