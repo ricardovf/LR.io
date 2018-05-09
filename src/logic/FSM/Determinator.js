@@ -83,6 +83,8 @@ export function determinate(fsm) {
 /**
  * For each new state will check if the current finals includes the new state
  *
+ * @todo fix this method?
+ *
  * @param fsm FSM
  * @param newStates
  * @returns {Array}
@@ -93,7 +95,7 @@ function createNewFinalStates(fsm, newStates) {
 
   let newFinalStates = [];
   for (let states of newStates) {
-    states = states.split();
+    states = states.split('');
     for (let state of states) {
       if (fsm.finals.includes(state) && !newFinalStates.includes(state)) {
         newFinalStates.push(states);
