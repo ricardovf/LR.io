@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Icon, Input, Typography } from 'material-ui';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
-import Card, { CardContent } from 'material-ui/Card';
 import Table, {
   TableBody,
   TableCell,
@@ -70,7 +69,7 @@ const styles = () => ({
   },
 });
 
-class TransitionTableCard extends React.Component {
+class EditableTransitionTable extends React.Component {
   buildHeader(fsm) {
     let data = ['*', 'F', 'Estado'];
 
@@ -223,139 +222,135 @@ class TransitionTableCard extends React.Component {
     );
 
     return (
-      <Card className={classes.card}>
-        <CardContent>
-          {fsm && <CodeDialog fsm={fsm} />}
+      <div>
+        <Typography gutterBottom variant="headline" component="h2">
+          Tabela de transições
+        </Typography>
 
-          <Typography gutterBottom variant="headline" component="h2">
-            Tabela de transições{' '}
-          </Typography>
-
-          <div className={classes.container}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {header.map((h, index) => {
-                    return (
-                      <TableCell
-                        key={index}
-                        className={
-                          index < 2
-                            ? classes.minimalCell
-                            : language.fsm && language.fsm.alphabet.includes(h)
-                              ? classes.deleteIconHider
-                              : ''
-                        }
-                        padding="dense"
-                      >
-                        <div className={classes.deleteIconHiderContent}>
-                          {h === NEW_SYMBOL ? newSymbolInput : h}
-                          {language.fsm &&
-                            language.fsm.alphabet.includes(h) && (
-                              <IconButton
-                                className={classes.rowDeleteIcon}
-                                aria-label="delete"
-                                onClick={() => {
-                                  deleteSymbol(language.id, h);
-                                }}
-                              >
-                                <Icon>delete</Icon>
-                              </IconButton>
-                            )}
-                        </div>
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((t, index) => {
+        <div className={classes.container}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {header.map((h, index) => {
                   return (
-                    <TableRow
-                      hover={t.state === NEW_STATE ? undefined : true}
+                    <TableCell
                       key={index}
                       className={
-                        t.state === NEW_STATE
-                          ? classes.newRow
-                          : classes.deleteIconHider
+                        index < 2
+                          ? classes.minimalCell
+                          : language.fsm && language.fsm.alphabet.includes(h)
+                            ? classes.deleteIconHider
+                            : ''
                       }
+                      padding="dense"
                     >
-                      <TableCell
-                        padding="checkbox"
-                        className={classes.minimalCell}
-                      >
-                        {t.state !== NEW_STATE && (
-                          <Radio
-                            checked={t.initial}
-                            onChange={event => {
-                              changeInitialState(language.id, t.state);
-                            }}
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell
-                        padding="checkbox"
-                        className={classes.minimalCell}
-                      >
-                        {t.state !== NEW_STATE && (
-                          <Checkbox
-                            checked={t.final}
-                            onChange={event => {
-                              if (event.target.checked) {
-                                addToFinalStates(language.id, t.state);
-                              } else {
-                                deleteFromFinalStates(language.id, t.state);
-                              }
-                            }}
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell padding="dense">
-                        <div className={classes.deleteIconHiderContent}>
-                          {t.state === NEW_STATE ? newStateInput : t.state}
-                          {t.state !== NEW_STATE && (
+                      <div className={classes.deleteIconHiderContent}>
+                        {h === NEW_SYMBOL ? newSymbolInput : h}
+                        {language.fsm &&
+                          language.fsm.alphabet.includes(h) && (
                             <IconButton
                               className={classes.rowDeleteIcon}
                               aria-label="delete"
                               onClick={() => {
-                                deleteState(language.id, t.state);
+                                deleteSymbol(language.id, h);
                               }}
                             >
                               <Icon>delete</Icon>
                             </IconButton>
                           )}
-                        </div>
-                      </TableCell>
-                      {header.slice(3).map((h, index) => {
-                        return (
-                          <TableCell key={index} padding="dense">
-                            {t.state !== NEW_STATE &&
-                              language.fsm &&
-                              language.fsm.alphabet.includes(h) && (
-                                <TransitionEdit
-                                  symbol={h}
-                                  fromState={t.state}
-                                  toStates={t[h]}
-                                  language={language}
-                                  changeTransition={changeTransition}
-                                />
-                              )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
+                      </div>
+                    </TableCell>
                   );
                 })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((t, index) => {
+                return (
+                  <TableRow
+                    hover={t.state === NEW_STATE ? undefined : true}
+                    key={index}
+                    className={
+                      t.state === NEW_STATE
+                        ? classes.newRow
+                        : classes.deleteIconHider
+                    }
+                  >
+                    <TableCell
+                      padding="checkbox"
+                      className={classes.minimalCell}
+                    >
+                      {t.state !== NEW_STATE && (
+                        <Radio
+                          checked={t.initial}
+                          onChange={event => {
+                            changeInitialState(language.id, t.state);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell
+                      padding="checkbox"
+                      className={classes.minimalCell}
+                    >
+                      {t.state !== NEW_STATE && (
+                        <Checkbox
+                          checked={t.final}
+                          onChange={event => {
+                            if (event.target.checked) {
+                              addToFinalStates(language.id, t.state);
+                            } else {
+                              deleteFromFinalStates(language.id, t.state);
+                            }
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell padding="dense">
+                      <div className={classes.deleteIconHiderContent}>
+                        {t.state === NEW_STATE ? newStateInput : t.state}
+                        {t.state !== NEW_STATE && (
+                          <IconButton
+                            className={classes.rowDeleteIcon}
+                            aria-label="delete"
+                            onClick={() => {
+                              deleteState(language.id, t.state);
+                            }}
+                          >
+                            <Icon>delete</Icon>
+                          </IconButton>
+                        )}
+                      </div>
+                    </TableCell>
+                    {header.slice(3).map((h, index) => {
+                      return (
+                        <TableCell key={index} padding="dense">
+                          {t.state !== NEW_STATE &&
+                            language.fsm &&
+                            language.fsm.alphabet.includes(h) && (
+                              <TransitionEdit
+                                symbol={h}
+                                fromState={t.state}
+                                toStates={t[h]}
+                                language={language}
+                                changeTransition={changeTransition}
+                              />
+                            )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     );
   }
 }
 
-TransitionTableCard.propTypes = {
+EditableTransitionTable.propTypes = {
   classes: PropTypes.object.isRequired,
   fsm: PropTypes.object,
   valid: PropTypes.bool,
@@ -369,4 +364,4 @@ TransitionTableCard.propTypes = {
   changeTransition: PropTypes.func,
 };
 
-export default withStyles(styles)(TransitionTableCard);
+export default withStyles(styles)(EditableTransitionTable);

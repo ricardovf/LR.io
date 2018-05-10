@@ -4,21 +4,20 @@ import Dialog, {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
 } from 'material-ui/Dialog';
-import { Icon } from 'material-ui';
-import IconButton from 'material-ui/IconButton';
 import { withStyles } from 'material-ui/styles';
+import { Icon } from 'material-ui';
 import Tooltip from 'material-ui/Tooltip';
+import IconButton from 'material-ui/IconButton';
 
 const styles = () => ({
-  generateCodeIcon: {
+  icon: {
+    marginLeft: '6px',
     width: '24px',
     height: '24px',
     '& > span > span': {
       fontSize: '16px',
     },
-    float: 'right',
   },
 });
 
@@ -62,14 +61,13 @@ class CodeDialog extends React.Component {
       <React.Fragment>
         <Tooltip title="Gerar código JavaScript para teste unitário">
           <IconButton
-            className={classes.generateCodeIcon}
+            className={classes.icon}
             aria-label="generate-code-for-fsm"
             onClick={this.handleClickOpen}
           >
             <Icon>code</Icon>
           </IconButton>
         </Tooltip>
-
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}

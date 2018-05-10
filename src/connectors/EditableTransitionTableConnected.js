@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { find, propEq } from 'ramda';
-import TransitionTableCard from '../components/TransitionTableCard';
+import EditableTransitionTable from '../components/EditableTransitionTable';
 
 const mapState = state => {
   const language = find(propEq('id', state.selectedLanguage))(state.languages);
@@ -27,4 +27,4 @@ const mapDispatch = dispatch => ({
     dispatch.languages.changeTransition({ id, symbol, fromState, toStates }),
 });
 
-export default connect(mapState, mapDispatch)(TransitionTableCard);
+export default connect(mapState, mapDispatch)(EditableTransitionTable);
