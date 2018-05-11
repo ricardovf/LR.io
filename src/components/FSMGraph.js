@@ -22,8 +22,6 @@ class FSMGraph extends React.Component {
         rankdir=LR;
         size="8,5"
         node [shape = doublecircle]; ${fsm.finals.join(' ')};
-        node [shape = point ]; start
-        start -> ${fsm.initial}
         node [shape = circle];
         ${fsm.transitions
           .map(
@@ -33,6 +31,8 @@ class FSMGraph extends React.Component {
               }" ];`
           )
           .join('\n')}
+        node [shape = point ]; start
+        start -> ${fsm.initial}
       }`;
 
     return (
