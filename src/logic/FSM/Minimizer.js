@@ -32,7 +32,7 @@ export function eliminateUnreachableStates(fsm) {
         fsm.transitions.splice(fsm.transitions.indexOf(path), 1);
       fsm.states.splice(fsm.states.indexOf(state), 1);
     }
-  } while (unreachableStates > 0);
+  } while (unreachableStates.length > 0);
 }
 
 export function detectAliveStates(state, aliveStates, transitions) {
@@ -111,17 +111,11 @@ export function isMinimal(fsm) {
       }
     }
   }
-  return true;
+  return equivalentSets.size == fsm.states.length;
 }
 
 export function isInSameSet(state, state_, equivalentSets) {
   for (let set of equivalentSets) {
-    console.log(set.includes(state));
-    console.log(state)
-    console.log(set.includes(state_));
-    console.log(state_);
-    console.log(set);
-    console.log('>>>>>>>>>>>>>>>>>>');
     if (set.includes(state) && set.includes(state_)) {
       return true;
     } else if (!set.includes(state) && !set.includes(state_)) {
