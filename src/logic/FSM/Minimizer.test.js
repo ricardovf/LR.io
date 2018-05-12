@@ -7,7 +7,8 @@ import {
   detectReachableStates,
   detectAliveStates,
   createPhiState,
-  isMinimal
+  isMinimal,
+  minimize
 } from './Minimizer';
 
 describe('FSM', () => {
@@ -134,6 +135,106 @@ describe('FSM', () => {
         const finals = ['E', 'CE', 'ABE'];
         const fsm = new FSM(states, alphabet, transitions, initial, finals);
         expect(isMinimal(fsm)).toBeFalsy();
+    });
+
+    it('should minimize #1', async () => {
+        const states = ['S', 'AD', 'E', 'ABD', 'CE', 'ABE'];
+        const alphabet = ['0', '1'];
+        const transitions = [
+          { from: 'S', to: 'AD', when: '0' },
+          { from: 'S', to: 'E', when: '1' },
+          { from: 'AD', to: 'ABD', when: '0' },
+          { from: 'AD', to: 'CE', when: '1' },
+          { from: 'E', to: 'E', when: '0' },
+          { from: 'E', to: 'E', when: '1' },
+          { from: 'ABD', to: 'ABD', when: '0' },
+          { from: 'ABD', to: 'CE', when: '1' },
+          { from: 'CE', to: 'ABE', when: '0' },
+          { from: 'CE', to: 'E', when: '1' },
+          { from: 'ABE', to: 'ABE', when: '0' },
+          { from: 'ABE', to: 'CE', when: '1' }
+        ];
+        const initial = 'S';
+        const finals = ['E', 'CE', 'ABE'];
+        const fsm = new FSM(states, alphabet, transitions, initial, finals);
+        fsm.minimize();
+        expect(isMinimal(fsm)).toBe(true);
+    });
+
+    it('should minimize #2', async () => {
+        const states = ['S', 'A', 'B', 'C', 'F'];
+        const alphabet = ['a', 'b', 'c'];
+        const transitions = [
+          { from: 'S', to: 'A', when: 'a' },
+          { from: 'S', to: 'B', when: 'b' },
+          { from: 'S', to: 'F', when: 'b' },
+          { from: 'S', to: 'S', when: 'c' },
+          { from: 'S', to: 'F', when: 'c' },
+          { from: 'A', to: 'S', when: 'a' },
+          { from: 'A', to: 'F', when: 'a' },
+          { from: 'A', to: 'C', when: 'b' },
+          { from: 'A', to: 'A', when: 'c' },
+          { from: 'B', to: 'A', when: 'a' },
+          { from: 'B', to: 'B', when: 'c' },
+          { from: 'B', to: 'S', when: 'c' },
+          { from: 'B', to: 'F', when: 'c' },
+          { from: 'C', to: 'S', when: 'a' },
+          { from: 'C', to: 'F', when: 'a' },
+          { from: 'C', to: 'A', when: 'c' },
+          { from: 'C', to: 'C', when: 'c' },
+        ];
+        const initial = 'S';
+        const finals = ['S', 'F'];
+        const fsm = new FSM(states, alphabet, transitions, initial, finals);
+        fsm.minimize();
+        expect(true).toBe(true);
+    });
+
+    it('should minimize #3', async () => {
+        const states = ['S', 'A', 'B', 'C', 'D', 'E'];
+        const alphabet = ['0', '1'];
+        const transitions = [
+          { from: 'S', to: 'A', when: '0' },
+          { from: 'S', to: 'D', when: '0' },
+          { from: 'S', to: 'E', when: '1' },
+          { from: 'A', to: 'A', when: '0' },
+          { from: 'A', to: 'B', when: '0' },
+          { from: 'A', to: 'C', when: '1' },
+          { from: 'A', to: 'E', when: '1' },
+          { from: 'B', to: 'B', when: '0' },
+          { from: 'C', to: 'A', when: '0' },
+          { from: 'C', to: 'B', when: '0' },
+          { from: 'D', to: 'B', when: '0' },
+          { from: 'D', to: 'D', when: '0' },
+          { from: 'D', to: 'C', when: '1' },
+          { from: 'E', to: 'E', when: '0' },
+          { from: 'E', to: 'E', when: '1' },
+        ];
+        const initial = 'S';
+        const finals = ['E'];
+        const fsm = new FSM(states, alphabet, transitions, initial, finals);
+        fsm.minimize();
+        expect(true).toBe(true);
+    });
+
+    it('should minimize #4', async () => {
+        const states = ['Q0', 'Q1', 'Q2', 'Q3', 'Q4'];
+        const alphabet = ['a', 'b'];
+        const transitions = [
+          { from: 'Q0', to: 'Q1', when: 'a' },
+          { from: 'Q0', to: 'Q2', when: 'b' },
+          { from: 'Q1', to: 'Q3', when: 'a' },
+          { from: 'Q2', to: 'Q4', when: 'b' },
+          { from: 'Q3', to: 'Q3', when: 'a' },
+          { from: 'Q3', to: 'Q3', when: 'b' },
+          { from: 'Q4', to: 'Q4', when: 'a' },
+          { from: 'Q4', to: 'Q4', when: 'b' },
+        ];
+        const initial = 'Q0';
+        const finals = ['Q3', 'Q4'];
+        const fsm = new FSM(states, alphabet, transitions, initial, finals);
+        fsm.minimize();
+        expect(true).toBe(true);
     });
   });
 });

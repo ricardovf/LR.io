@@ -86,7 +86,8 @@ export function createPhiState(fsm) {
 export function isMinimal(fsm) {
   let aliveStates = [];
   let reachableStates = [fsm.initial];
-  for (let final of fsm.finals) detectAliveStates(final, aliveStates, fsm.transitions);
+  for (let final of fsm.finals)
+    detectAliveStates(final, aliveStates, fsm.transitions);
   detectReachableStates(fsm.initial, reachableStates, fsm.transitions);
   if (
     aliveStates.length != fsm.states.length ||
@@ -104,9 +105,10 @@ export function isMinimal(fsm) {
           fsm.transitions
         );
         for (let i = 0; i < pathsForFirstState.length; ++i) {
-          let s = pathsForFirstState[i].to;
-          let s_ = pathsForState[i].to;
-          if (!isInSameSet(s, s_, equivalentSets)) return false;
+          let s = pathsForFirstState[i];
+          let s_ = pathsForState[i];
+          if (s != undefined && s_ != undefined)
+            if (!isInSameSet(s.to, s_.to, equivalentSets)) return false;
         }
       }
     }
@@ -124,20 +126,104 @@ export function isInSameSet(state, state_, equivalentSets) {
       return false;
     }
   }
-  return false;
+  return true;
 }
 
-// export function minize(fsm) {
-//   if (!fsm instanceof FSM)
-//     throw new Error(`Received ${fsm} instead of a FSM instance.`);
+export function minimize(fsm) {
+  if (!fsm instanceof FSM)
+    throw new Error(`Received ${fsm} instead of a FSM instance.`);
 
-//   if (!isMinimal(fsm)) {
-//     if (!fsm.isDeterministic()) {
-//       fsm.determinate();
-//     }
-//     if (detectDeadStates(fsm).length > 0) eliminateDeadStates(fsm);
+  if (!isMinimal(fsm)) {
+    if (!fsm.isDeterministic()) fsm.determinate();
+    eliminateDeadStates(fsm);
+    eliminateUnreachableStates(fsm);
+    if (fsm.hasIndefinition()) createPhiState(fsm);
+    let f = [fsm.finals];
+    let fk = [fsm.nonFinalStates()];
+    let equivalents = [f, fk];
+    let oldLengthF = 0,
+      newLengthF = 0,
+      oldLengthFK = 0,
+      newLengthFK = 0;
+    do {
+      oldLengthF = f.length;
+      oldLengthFK = fk.length;
+      for (let equivalent of equivalents) {
+        for (let states of equivalent) {
+          for (let state of states) {
+            for (let symbol of fsm.alphabet) {
+              let s = R.filter(R.whereEq({ from: states[0], when: symbol }))(
+                fsm.transitions
+              ).pop();
+              let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
+                fsm.transitions
+              ).pop();
+              if (!isInSameSet(s.to, s_.to, equivalent)) {
+                createNewSet(states, equivalent, s_.from);
+                break;
+              }
+            }
+          }
+        }
+      }
+      newLengthF = f.length;
+      newLengthFK = fk.length;
+    } while (oldLengthF != newLengthF || oldLengthFK != newLengthFK);
+    createMinimalAutomata(fsm, equivalents);
+  }
+}
+export function createNewSet(states, equivalent, state) {
+  let newEquivalent = [state];
+  states.splice(states.indexOf(state), 1);
+  equivalent.push(newEquivalent);
+}
 
-//     if (detectUnreachableStates(fsm).length > 0)
-//       eliminateUnreachableStates(fsm);
-//   }
-// }
+export function createMinimalAutomata(fsm, equivalents) {
+  let newTransitions = [];
+  let newStates = [];
+  let newFinals = [];
+  let newInitial = '';
+  let k = 0;
+  for (let i = 0; i < equivalents.length; ++i) {
+    for (let j = 0; j < equivalents[i].length; ++j) {
+      let newState = 'Q' + k.toString();
+      newStates.push(newState);
+      if (i == 0) newFinals.push(newState);
+      for (let state of equivalents[i][j])
+        if(state == fsm.initial) newInitial = newState;
+      ++k;
+    }
+  }
+  newTransitions = createNewTransition(fsm, equivalents, newStates);
+  fsm.initial = newInitial;
+  fsm.states = newStates;
+  fsm.finals = newFinals;
+  fsm.transitions = newTransitions;
+}
+
+export function createNewTransition(fsm, equivalents, newStates) {
+  let newTransitions = [];
+  let k = 0;
+  for (let i = 0; i < equivalents.length; ++i) {
+    for (let j = 0; j < equivalents[i].length; ++j) {
+      for (let symbol of fsm.alphabet) {
+        let state = R.filter(R.whereEq({ from: equivalents[i][j][0], when: symbol }))(fsm.transitions).pop().to;
+        let l = findNewStateEquivalent(state, equivalents);
+        newTransitions.push({ from: newStates[k], to: newStates[l], when: symbol })
+      }
+      ++k;
+    }
+  }
+  return newTransitions;
+}
+
+export function findNewStateEquivalent(state, equivalents) {
+  let k = 0;
+  for (let i = 0; i < equivalents.length; ++i) {
+    for (let j = 0; j < equivalents[i].length; ++j) {
+      for (let state_ of equivalents[i][j])
+        if (state_ == state) return k;
+      ++k;
+    }
+  }
+}
