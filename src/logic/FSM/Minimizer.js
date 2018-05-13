@@ -84,43 +84,49 @@ export function createPhiState(fsm) {
 }
 
 export function isMinimal(fsm) {
-  let aliveStates = [];
-  let reachableStates = [fsm.initial];
-  for (let final of fsm.finals)
-    detectAliveStates(final, aliveStates, fsm.transitions);
-  detectReachableStates(fsm.initial, reachableStates, fsm.transitions);
-  if (
-    aliveStates.length != fsm.states.length ||
-    reachableStates.length != fsm.states.length
-  )
-    return false;
-  let equivalentSets = new Set([fsm.finals, fsm.nonFinalStates()]);
-  for (let states of equivalentSets) {
-    for (let symbol of fsm.alphabet) {
-      let pathsForFirstState = R.filter(
-        R.whereEq({ from: states[0], when: symbol })
-      )(fsm.transitions);
-      for (let state of states) {
-        let pathsForState = R.filter(R.whereEq({ from: state, when: symbol }))(
-          fsm.transitions
-        );
-        for (let i = 0; i < pathsForFirstState.length; ++i) {
-          let s = pathsForFirstState[i];
-          let s_ = pathsForState[i];
-          if (s != undefined && s_ != undefined)
-            if (!isInSameSet(s.to, s_.to, equivalentSets)) return false;
+  if (fsm.hasIndefinition() || !(fsm.isDeterministic())) return false;
+  let f = [fsm.finals];
+  let fk = [fsm.nonFinalStates()];
+  let equivalents = [f, fk];
+  let oldLengthF = 0,
+    newLengthF = 0,
+    oldLengthFK = 0,
+    newLengthFK = 0,
+    numStates = 0;
+  do {
+    numStates = 0
+    oldLengthF = f.length;
+    oldLengthFK = fk.length;
+    for (let equivalent of equivalents) {
+      for (let states of equivalent) {
+        for (let state of states) {
+          for (let symbol of fsm.alphabet) {
+            let s = R.filter(R.whereEq({ from: states[0], when: symbol }))(
+              fsm.transitions
+            ).pop();
+            let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
+              fsm.transitions
+            ).pop();
+            if (!isInSameSet(s.to, s_.to, equivalent)) {
+              createNewSet(states, equivalent, s_.from);
+              break;
+            }
+          }
         }
+        ++numStates;
       }
     }
-  }
-  return equivalentSets.size == fsm.states.length;
+    newLengthF = f.length;
+    newLengthFK = fk.length;
+  } while (oldLengthF != newLengthF || oldLengthFK != newLengthFK);
+  return numStates == fsm.states.length;
 }
 
-export function isInSameSet(state, state_, equivalentSets) {
-  for (let set of equivalentSets) {
-    if (set.includes(state) && set.includes(state_)) {
+export function isInSameSet(state, state_, equivalent) {
+  for (let states of equivalent) {
+    if (states.includes(state) && states.includes(state_)) {
       return true;
-    } else if (!set.includes(state) && !set.includes(state_)) {
+    } else if (!states.includes(state) && !states.includes(state_)) {
       continue;
     } else {
       return false;
@@ -190,7 +196,7 @@ export function createMinimalAutomata(fsm, equivalents) {
       newStates.push(newState);
       if (i == 0) newFinals.push(newState);
       for (let state of equivalents[i][j])
-        if(state == fsm.initial) newInitial = newState;
+        if (state == fsm.initial) newInitial = newState;
       ++k;
     }
   }
@@ -207,9 +213,15 @@ export function createNewTransition(fsm, equivalents, newStates) {
   for (let i = 0; i < equivalents.length; ++i) {
     for (let j = 0; j < equivalents[i].length; ++j) {
       for (let symbol of fsm.alphabet) {
-        let state = R.filter(R.whereEq({ from: equivalents[i][j][0], when: symbol }))(fsm.transitions).pop().to;
+        let state = R.filter(
+          R.whereEq({ from: equivalents[i][j][0], when: symbol })
+        )(fsm.transitions).pop().to;
         let l = findNewStateEquivalent(state, equivalents);
-        newTransitions.push({ from: newStates[k], to: newStates[l], when: symbol })
+        newTransitions.push({
+          from: newStates[k],
+          to: newStates[l],
+          when: symbol,
+        });
       }
       ++k;
     }
@@ -221,8 +233,7 @@ export function findNewStateEquivalent(state, equivalents) {
   let k = 0;
   for (let i = 0; i < equivalents.length; ++i) {
     for (let j = 0; j < equivalents[i].length; ++j) {
-      for (let state_ of equivalents[i][j])
-        if (state_ == state) return k;
+      for (let state_ of equivalents[i][j]) if (state_ == state) return k;
       ++k;
     }
   }
