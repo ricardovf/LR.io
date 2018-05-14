@@ -29,6 +29,9 @@ export function eliminateUnreachableStates(fsm) {
       let paths = R.filter(R.whereEq({ to: state }))(fsm.transitions);
       for (let path of paths)
         fsm.transitions.splice(fsm.transitions.indexOf(path), 1);
+
+      if (fsm.finals.includes(state))
+        fsm.finals.splice(fsm.finals.indexOf(state), 1);
       fsm.states.splice(fsm.states.indexOf(state), 1);
     }
   } while (unreachableStates.length > 0);

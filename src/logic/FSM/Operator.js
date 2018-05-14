@@ -183,7 +183,10 @@ export function intersection(fsm, fsm_) {
   return newFsm;
 }
 
-// export function difference(fsm, fsm_) {}
+export function difference(fsm, fsm_) {
+  negation(fsm_);
+  return intersection(fsm, fsm_);
+}
 
 // export function closure(fsm){} ??
 
