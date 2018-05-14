@@ -1,5 +1,11 @@
 import FSM from '../FSM';
-import { union, concatenation, reverse, intersection } from './Operator';
+import {
+  union,
+  concatenation,
+  negation,
+  intersection,
+  reverse,
+} from './Operator';
 
 describe('FSM', () => {
   describe('operators', () => {
@@ -244,12 +250,13 @@ describe('FSM', () => {
         { from: 'Q0', to: 'Q1', when: '0' },
         { from: 'Q1', to: 'Q2', when: '1' },
       ];
+
       const initial = 'Q0';
       const finals = ['Q2'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       reverse(fsm);
-      expect(fsm.finals.length).toBe(3);
+      expect(fsm.finals.length).toBe(1);
     });
 
     it('should reverse FSM #2', async () => {
@@ -261,7 +268,7 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       reverse(fsm);
-      expect(fsm.finals.length).toBe(2);
+      expect(fsm.finals.length).toBe(1);
     });
 
     it('should reverse FSM #3', async () => {
@@ -280,9 +287,100 @@ describe('FSM', () => {
       const initial = 'A';
       const finals = ['C'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
-
       reverse(fsm);
+      expect(fsm.finals.length).toBe(1);
+    });
+
+    it('should obtain initial FSM when reverse twice', async () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['0', '1'];
+      const transitions = [
+        { from: 'A', to: 'A', when: '0' },
+        { from: 'A', to: 'B', when: '1' },
+        { from: 'B', to: 'D', when: '0' },
+        { from: 'B', to: 'C', when: '1' },
+        { from: 'C', to: 'A', when: '0' },
+        { from: 'C', to: 'B', when: '1' },
+        { from: 'D', to: 'B', when: '0' },
+        { from: 'D', to: 'D', when: '1' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      reverse(fsm);
+      reverse(fsm);
+      expect(fsm.states.length).toBe(4);
+      expect(fsm.finals.length).toBe(1);
+    });
+
+    it('should negate FSM #1', async () => {
+      const states = ['Q0', 'Q1', 'Q2'];
+      const alphabet = ['0', '1'];
+      const transitions = [
+        { from: 'Q0', to: 'Q1', when: '0' },
+        { from: 'Q1', to: 'Q2', when: '1' },
+      ];
+      const initial = 'Q0';
+      const finals = ['Q2'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      negation(fsm);
       expect(fsm.finals.length).toBe(3);
+    });
+
+    it('should negate FSM #2', async () => {
+      const states = ['Q0', 'Q1'];
+      const alphabet = ['0'];
+      const transitions = [{ from: 'Q0', to: 'Q1', when: '0' }];
+      const initial = 'Q0';
+      const finals = ['Q1'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      negation(fsm);
+      expect(fsm.finals.length).toBe(2);
+    });
+
+    it('should negate FSM #3', async () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['0', '1'];
+      const transitions = [
+        { from: 'A', to: 'A', when: '0' },
+        { from: 'A', to: 'B', when: '1' },
+        { from: 'B', to: 'D', when: '0' },
+        { from: 'B', to: 'C', when: '1' },
+        { from: 'C', to: 'A', when: '0' },
+        { from: 'C', to: 'B', when: '1' },
+        { from: 'D', to: 'B', when: '0' },
+        { from: 'D', to: 'D', when: '1' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      negation(fsm);
+      expect(fsm.finals.length).toBe(3);
+    });
+
+    it('should obtain initial FSM when negate twice', async () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['0', '1'];
+      const transitions = [
+        { from: 'A', to: 'A', when: '0' },
+        { from: 'A', to: 'B', when: '1' },
+        { from: 'B', to: 'D', when: '0' },
+        { from: 'B', to: 'C', when: '1' },
+        { from: 'C', to: 'A', when: '0' },
+        { from: 'C', to: 'B', when: '1' },
+        { from: 'D', to: 'B', when: '0' },
+        { from: 'D', to: 'D', when: '1' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      negation(fsm);
+      negation(fsm);
+      expect(fsm.finals.length).toBe(1);
     });
   });
 });

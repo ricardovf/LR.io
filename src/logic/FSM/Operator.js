@@ -180,13 +180,59 @@ export function intersection(fsm, fsm_) {
     initial,
     R.uniq(finals)
   );
-  // if (newFsm.hasIndefinition()) createPhiState(newFsm);
   return newFsm;
 }
 
-export function difference(fsm, fsm_) {}
+// export function difference(fsm, fsm_) {}
+
+// export function closure(fsm){} ??
 
 export function reverse(fsm) {
+  let initial = 'Q0';
+  do {
+    initial += '`';
+  } while (fsm.states.includes(initial));
+  let transitions = [];
+  let finals = [fsm.initial];
+  let states = [initial];
+
+  for (let state of fsm.states)
+    if (!fsm.finals.includes(state)) states.push(state);
+
+  for (let transition of fsm.transitions) {
+    if (
+      fsm.finals.includes(transition.from) &&
+      fsm.finals.includes(transition.to)
+    ) {
+      transitions.push({ from: initial, to: initial, when: transition.when });
+    } else if (fsm.finals.includes(transition.from)) {
+      transitions.push({
+        from: transition.to,
+        to: initial,
+        when: transition.when,
+      });
+    } else if (fsm.finals.includes(transition.to)) {
+      transitions.push({
+        from: initial,
+        to: transition.from,
+        when: transition.when,
+      });
+    } else {
+      transitions.push({
+        from: transition.to,
+        to: transition.from,
+        when: transition.when,
+      });
+    }
+  }
+
+  fsm.transitions = R.uniq(transitions);
+  fsm.finals = R.uniq(finals);
+  fsm.initial = initial;
+  fsm.states = states;
+}
+
+export function negation(fsm) {
   if (fsm.hasIndefinition()) createPhiState(fsm);
   if (!fsm.isDeterministic()) fsm.determinate();
   for (let state of fsm.states) {
