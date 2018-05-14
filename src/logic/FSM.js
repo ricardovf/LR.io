@@ -2,6 +2,7 @@ import { EPSILON } from './SymbolValidator';
 import Grammar from './Grammar';
 import * as R from 'ramda';
 import { isDeterministic, determinate } from './FSM/Determinator';
+import { isMinimal, minimize } from './FSM/Minimizer'
 import {
   eliminateEpsilonTransitions,
   hasEpsilonTransitions,
@@ -84,10 +85,26 @@ export default class FSM {
   }
 
   isMinimal() {
-    return false;
+    return isMinimal(this);
   }
 
-  minimize() {}
+  minimize() {
+    minimize(this);
+  }
+
+  hasIndefinition() {
+    for (let symbol of this.alphabet) {
+      for(let state of this.states) {
+        let paths = [
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            this.transitions
+          ),
+        ];
+        if (paths.length == 0) return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * Check if the automata has cycle in the graph
@@ -142,11 +159,6 @@ export default class FSM {
     return this.generate(1).includes('');
   }
 
-  /**
-   * For now returns true, cause the FSM generated is always valid
-   *
-   * @returns {boolean}
-   */
   isValid() {
     return true;
   }
@@ -229,6 +241,14 @@ export default class FSM {
       finals: [...this.finals],
       transitions: [...this.transitions],
     };
+  }
+
+  nonFinalStates() {
+    let nonFinalStates =[]
+    for (let state of this.states) {
+      if (!this.finals.includes(state)) nonFinalStates.push(state);
+    }
+    return nonFinalStates;
   }
 
   /**
