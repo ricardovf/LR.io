@@ -118,7 +118,71 @@ export function concatenation(fsm, fsm_) {
   );
 }
 
-export function intersection(fsm, fsm_) {}
+export function intersection(fsm, fsm_) {
+  let initial = fsm.initial + fsm_.initial;
+  let states = [];
+  let alphabet = R.uniq(fsm.alphabet.concat(fsm_.alphabet));
+  let transitions = [];
+  let finals = [];
+
+  for (let symbol of alphabet) {
+    for (let state of fsm.states) {
+      for (let state_ of fsm_.states) {
+        let newState = state + state_;
+        let paths = [
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            fsm.transitions
+          ),
+        ];
+        let paths_ = [
+          ...R.filter(R.whereEq({ from: state_, when: symbol }))(
+            fsm_.transitions
+          ),
+        ];
+        if (paths.length == 0) {
+          for (let path_ of paths_) {
+            transitions.push({
+              from: state + path_.from,
+              to: state + path_.to,
+              when: symbol,
+            });
+          }
+        } else if (paths_.length == 0) {
+          for (let path of paths) {
+            transitions.push({
+              from: path.from + state_,
+              to: path.to + state_,
+              when: symbol,
+            });
+          }
+        } else {
+          for (let path of paths) {
+            for (let path_ of paths_) {
+              transitions.push({
+                from: path.from + path_.from,
+                to: path.to + path_.to,
+                when: symbol,
+              });
+            }
+          }
+        }
+        if (fsm.finals.includes(state) && fsm_.finals.includes(state_))
+          finals.push(newState);
+        states.push(newState);
+      }
+    }
+  }
+
+  let newFsm = new FSM(
+    R.uniq(states),
+    alphabet,
+    R.uniq(transitions),
+    initial,
+    R.uniq(finals)
+  );
+  // if (newFsm.hasIndefinition()) createPhiState(newFsm);
+  return newFsm;
+}
 
 export function difference(fsm, fsm_) {}
 
@@ -126,7 +190,8 @@ export function reverse(fsm) {
   if (fsm.hasIndefinition()) createPhiState(fsm);
   if (!fsm.isDeterministic()) fsm.determinate();
   for (let state of fsm.states) {
-    if (fsm.finals.includes(state)) fsm.finals.splice(fsm.finals.indexOf(state), 1);
+    if (fsm.finals.includes(state))
+      fsm.finals.splice(fsm.finals.indexOf(state), 1);
     else fsm.finals.push(state);
   }
 }
