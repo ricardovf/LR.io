@@ -1,6 +1,5 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
-import { EPSILON } from '../SymbolValidator';
 
 export function detectReachableStates(state, reachableStates, transitions) {
   let paths = R.filter(R.whereEq({ from: state }))(transitions);
@@ -30,6 +29,9 @@ export function eliminateUnreachableStates(fsm) {
       let paths = R.filter(R.whereEq({ to: state }))(fsm.transitions);
       for (let path of paths)
         fsm.transitions.splice(fsm.transitions.indexOf(path), 1);
+
+      if (fsm.finals.includes(state))
+        fsm.finals.splice(fsm.finals.indexOf(state), 1);
       fsm.states.splice(fsm.states.indexOf(state), 1);
     }
   } while (unreachableStates.length > 0);
@@ -84,7 +86,7 @@ export function createPhiState(fsm) {
 }
 
 export function isMinimal(fsm) {
-  if (fsm.hasIndefinition() || !(fsm.isDeterministic())) return false;
+  if (fsm.hasIndefinition() || !fsm.isDeterministic()) return false;
   let f = [fsm.finals];
   let fk = [fsm.nonFinalStates()];
   let equivalents = [f, fk];
@@ -94,7 +96,7 @@ export function isMinimal(fsm) {
     newLengthFK = 0,
     numStates = 0;
   do {
-    numStates = 0
+    numStates = 0;
     oldLengthF = f.length;
     oldLengthFK = fk.length;
     for (let equivalent of equivalents) {
