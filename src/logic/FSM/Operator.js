@@ -118,8 +118,6 @@ export function concatenation(fsm, fsm_) {
   );
 }
 
-export function closure(fsm, fsm_) {}
-
 export function intersection(fsm, fsm_) {}
 
 export function difference(fsm, fsm_) {}
