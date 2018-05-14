@@ -1,5 +1,6 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
+import { createPhiState } from './Minimizer';
 
 export function union(fsm, fsm_) {
   let initial = 'S';
@@ -123,4 +124,11 @@ export function intersection(fsm, fsm_) {}
 
 export function difference(fsm, fsm_) {}
 
-export function reverse(fsm) {}
+export function reverse(fsm) {
+  if (fsm.hasIndefinition()) createPhiState(fsm);
+  if (!fsm.isDeterministic()) fsm.determinate();
+  for (let state of fsm.states) {
+    if (fsm.finals.includes(state)) fsm.finals.splice(fsm.finals.indexOf(state), 1);
+    else fsm.finals.push(state);
+  }
+}
