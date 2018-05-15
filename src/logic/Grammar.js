@@ -1,4 +1,4 @@
-import GrammarParser from './GrammarParser';
+import GrammarParser from './Grammar/GrammarParser';
 import FSM from './FSM';
 import * as R from 'ramda';
 import SymbolValidator, { EPSILON, ACCEPT_STATE } from './SymbolValidator';

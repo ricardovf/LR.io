@@ -1,5 +1,5 @@
 import GrammarParser from './GrammarParser';
-import { EPSILON } from './SymbolValidator';
+import { EPSILON } from '../SymbolValidator';
 
 describe('GrammarParser', () => {
   const parser = new GrammarParser();

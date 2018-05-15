@@ -1,6 +1,6 @@
-import { multiTrim } from './helpers';
+import { multiTrim } from '../helpers';
 import XRegExp from 'xregexp';
-import SymbolValidator, { SEPARATOR } from './SymbolValidator';
+import SymbolValidator, { SEPARATOR } from '../SymbolValidator';
 import * as R from 'ramda';
 
 const fullLineRegExp = XRegExp(

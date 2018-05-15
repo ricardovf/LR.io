@@ -1,4 +1,4 @@
-export const multiTrim = (input, noSpaces = true) => {
+export function multiTrim (input, noSpaces = true, noLines = false) {
   return input
     .trim()
     .replace(/\|\|+/g, '|')
@@ -13,6 +13,10 @@ export const multiTrim = (input, noSpaces = true) => {
     .map(line => {
       return line.trim();
     })
-    .join('\n')
+    .join(noLines ? '' : '\n')
     .trim();
+};
+
+export function multiTrimNoLines (input) {
+  return multiTrim(input, true, true);
 };
