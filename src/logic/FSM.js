@@ -2,7 +2,7 @@ import { EPSILON } from './SymbolValidator';
 import Grammar from './Grammar';
 import * as R from 'ramda';
 import { isDeterministic, determinate } from './FSM/Determinator';
-import { isMinimal, minimize } from './FSM/Minimizer'
+import { isMinimal, minimize } from './FSM/Minimizer';
 import {
   eliminateEpsilonTransitions,
   hasEpsilonTransitions,
@@ -47,24 +47,40 @@ export default class FSM {
    * @returns {Grammar}
    */
   toGrammar() {
-    let productions = [];
-    for (let state of this.states) {
-      for (let symbol of this.alphabet) {
+    let Vn = this.states;
+    let Vt = this.alphabet;
+    let P = [];
+    let S = this.initial;
+    let Sepsilon = this.initial;
+    let hasEpsilon = false;
+
+    for (let symbol of this.alphabet) {
+      for (let state of this.states) {
         let paths = [
           ...R.filter(R.whereEq({ from: state, when: symbol }))(
             this.transitions
           ),
         ];
-        if (paths.length > 0) {
-          for (let path of paths) {
-            if (this.finals.includes(path.to))
-              productions.push(`${state} -> ${symbol}`);
-            productions.push(`${state} -> ${symbol}${path.to}`);
-          }
+        if (state == this.initial && this.finals.includes(this.initial)) {
+          do {
+            Sepsilon += '`'
+          } while (this.states.includes(Sepsilon));
+          P.push(`${Sepsilon} -> &`);
+          hasEpsilon = true;
         }
+        for (let path of paths) {
+          P.push(`${path.from} -> ${symbol}${path.to}`);
+          if (hasEpsilon) P.push(`${Sepsilon} -> ${symbol}${path.to}`);
+          if (hasEpsilon && this.finals.includes(path.to))
+            P.push(`${Sepsilon} -> ${symbol}`);
+          if (this.finals.includes(path.to))
+            P.push(`${path.from} -> ${symbol}`);
+        }
+        if (hasEpsilon) hasEpsilon = false;
       }
     }
-    return new Grammar(this.states, this.alphabet, productions, this.initial);
+
+    return new Grammar(Vn, Vt, P, S);
   }
 
   /**
@@ -94,7 +110,7 @@ export default class FSM {
 
   hasIndefinition() {
     for (let symbol of this.alphabet) {
-      for(let state of this.states) {
+      for (let state of this.states) {
         let paths = [
           ...R.filter(R.whereEq({ from: state, when: symbol }))(
             this.transitions
@@ -244,7 +260,7 @@ export default class FSM {
   }
 
   nonFinalStates() {
-    let nonFinalStates =[]
+    let nonFinalStates = [];
     for (let state of this.states) {
       if (!this.finals.includes(state)) nonFinalStates.push(state);
     }
