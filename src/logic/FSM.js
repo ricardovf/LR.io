@@ -51,9 +51,35 @@ export default class FSM {
     let Vt = this.alphabet;
     let P = [];
     let S = this.initial;
-    let Sepsilon = this.initial;
-    let hasEpsilon = false;
+    S = this.createEpsilonProdutions(P, S);
+    this.createNonEpsilonProdutions(P);
 
+    return new Grammar(Vn, Vt, P, S);
+  }
+
+  createEpsilonProdutions(P, S) {
+    if (this.finals.includes(this.initial)) {
+      let paths = [
+        ...R.filter(R.whereEq({ to: this.initial }))(this.transitions),
+      ];
+      if (paths.length > 0) {
+        do {
+          S += '`';
+        } while (this.states.includes(S));
+        paths = [
+          ...R.filter(R.whereEq({ from: this.initial }))(this.transitions),
+        ];
+        for (let path of paths) {
+          if (this.finals.includes(path.to)) P.push(`${S} -> ${path.when}`);
+          P.push(`${S} -> ${path.when}${path.to}`);
+        }
+      }
+      P.push(`${S} -> &`);
+    }
+    return S;
+  }
+
+  createNonEpsilonProdutions(P, S) {
     for (let symbol of this.alphabet) {
       for (let state of this.states) {
         let paths = [
@@ -61,26 +87,13 @@ export default class FSM {
             this.transitions
           ),
         ];
-        if (state == this.initial && this.finals.includes(this.initial)) {
-          do {
-            Sepsilon += '`'
-          } while (this.states.includes(Sepsilon));
-          P.push(`${Sepsilon} -> &`);
-          hasEpsilon = true;
-        }
         for (let path of paths) {
           P.push(`${path.from} -> ${symbol}${path.to}`);
-          if (hasEpsilon) P.push(`${Sepsilon} -> ${symbol}${path.to}`);
-          if (hasEpsilon && this.finals.includes(path.to))
-            P.push(`${Sepsilon} -> ${symbol}`);
           if (this.finals.includes(path.to))
             P.push(`${path.from} -> ${symbol}`);
         }
-        if (hasEpsilon) hasEpsilon = false;
       }
     }
-
-    return new Grammar(Vn, Vt, P, S);
   }
 
   /**

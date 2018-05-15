@@ -60,17 +60,19 @@ describe('FSM', () => {
 
     it('should transform FSM to grammar #3', async() => {
       const states_ = ['A', 'B'];
-      const alphabet_ = ['a'];
+      const alphabet_ = ['a', 'b'];
       const transitions_ = [
         { from: 'A', to: 'B', when: 'a' },
-        { from: 'B', to: 'B', when: 'a' },
+        { from: 'A', to: 'A', when: 'b' },
+        { from: 'B', to: 'A', when: 'a' },
+        { from: 'B', to: 'B', when: 'b' },
       ];
+
       const initial_ = 'A';
-      const finals_ = ['A', 'B'];
+      const finals_ = ['A'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
       const grammar = fsm_.toGrammar();
-      console.log(grammar);
-      // expect(grammar.P.length).toBe(10);
+      expect(grammar.P.length).toBe(10);
     });
   });
 });
