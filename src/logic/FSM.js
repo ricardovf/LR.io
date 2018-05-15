@@ -49,16 +49,17 @@ export default class FSM {
   toGrammar() {
     let Vn = this.states;
     let Vt = this.alphabet;
-    let P = [];
+    let P = {};
     let S = this.initial;
     S = this.createEpsilonProdutions(P, S);
     this.createNonEpsilonProdutions(P);
-
-    return new Grammar(Vn, Vt, P, S);
+    let g = new Grammar(Vn, Vt, P, S);
+    return g;
   }
 
   createEpsilonProdutions(P, S) {
     if (this.finals.includes(this.initial)) {
+      let produtions = [];
       let paths = [
         ...R.filter(R.whereEq({ to: this.initial }))(this.transitions),
       ];
@@ -70,30 +71,58 @@ export default class FSM {
           ...R.filter(R.whereEq({ from: this.initial }))(this.transitions),
         ];
         for (let path of paths) {
-          if (this.finals.includes(path.to)) P.push(`${S} -> ${path.when}`);
-          P.push(`${S} -> ${path.when}${path.to}`);
+          if (this.finals.includes(path.to))
+            produtions.push(path.when);
+          produtions.push(path.when + path.to);
         }
+        P[S] = ['&'].concat(produtions);
+      } else {
+        P[S] = ['&'];
       }
-      P.push(`${S} -> &`);
     }
     return S;
   }
 
-  createNonEpsilonProdutions(P, S) {
-    for (let symbol of this.alphabet) {
-      for (let state of this.states) {
+  createNonEpsilonProdutions(P) {
+    for (let state of this.states) {
+      P[state] = [];
+      for (let symbol of this.alphabet) {
         let paths = [
           ...R.filter(R.whereEq({ from: state, when: symbol }))(
             this.transitions
           ),
         ];
         for (let path of paths) {
-          P.push(`${path.from} -> ${symbol}${path.to}`);
+          P[state].push(symbol + path.to);
           if (this.finals.includes(path.to))
-            P.push(`${path.from} -> ${symbol}`);
+            P[state].push(symbol);
         }
       }
     }
+  }
+
+  getGenerator(prodution) {
+    let generator = '';
+    for (let char of prodution) {
+      if (char == ' ' || char == '-')
+        break;
+      generator += char
+    }
+    return generator;
+  }
+
+  getProdution(prodution) {
+    let prodution_ = '';
+    let arrowReaded = false;
+    for (let char of prodution) {
+      if (arrowReaded)
+        if(char != ' ')
+          prodution_ += char;
+
+      if (char == '>')
+        arrowReaded = true;
+    }
+    return prodution_;
   }
 
   /**
