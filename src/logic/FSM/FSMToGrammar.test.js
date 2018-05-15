@@ -80,5 +80,41 @@ describe('FSM', () => {
         expect(grammar.P[nonTerminal]).toBeDefined();
       }
     });
+
+    it('should print produtions when transfrom from FSM to grammar', () =>{
+        const states = ['Q1', 'Q0', 'Q6', 'Q5', 'Q2', 'Q3', 'Q4'];
+        const alphabet = ['a', 'b', 'c'];
+        const transitions = [
+          { from: 'Q1', to: 'Q0', when: 'a' },
+          { from: 'Q1', to: 'Q6', when: 'b' },
+          { from: 'Q1', to: 'Q5', when: 'c' },
+          { from: 'Q0', to: 'Q1', when: 'a' },
+          { from: 'Q0', to: 'Q2', when: 'b' },
+          { from: 'Q0', to: 'Q3', when: 'c' },
+          { from: 'Q6', to: 'Q4', when: 'a' },
+          { from: 'Q6', to: 'Q4', when: 'b' },
+          { from: 'Q6', to: 'Q3', when: 'c' },
+          { from: 'Q5', to: 'Q4', when: 'a' },
+          { from: 'Q5', to: 'Q2', when: 'b' },
+          { from: 'Q5', to: 'Q4', when: 'c' },
+          { from: 'Q2', to: 'Q4', when: 'a' },
+          { from: 'Q2', to: 'Q4', when: 'b' },
+          { from: 'Q2', to: 'Q5', when: 'c' },
+          { from: 'Q3', to: 'Q4', when: 'a' },
+          { from: 'Q3', to: 'Q6', when: 'b' },
+          { from: 'Q3', to: 'Q4', when: 'c' },
+          { from: 'Q4', to: 'Q4', when: 'a' },
+          { from: 'Q4', to: 'Q4', when: 'b' },
+          { from: 'Q4', to: 'Q4', when: 'c' },
+        ];
+        const initial = 'Q1';
+        const finals = ['Q0', 'Q6', 'Q5'];
+        const fsm = new FSM(states, alphabet, transitions, initial, finals);
+        const grammar = fsm.toGrammar();
+        let P = grammar.fixPrintForProdutions(grammar.P);
+        for (let state of fsm.states) {
+          expect(P.includes(state)).toBeTruthy();
+        }
+      });
   });
 });
