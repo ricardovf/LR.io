@@ -1,6 +1,7 @@
 import Parser, {
   buildFSMFromTree,
-  buildTree, convertFromExpressionToFSM,
+  buildTree,
+  convertFromExpressionToFSM,
   LAMBDA,
   toExplicit,
   toPostfix,
@@ -185,39 +186,75 @@ describe('Expression', () => {
 
     describe('invalid expressions', () => {
       it('should throw error when the expression is empty', () => {
-        expect(() => {convertFromExpressionToFSM('    \n \t')}).toThrowError('empty');
+        expect(() => {
+          convertFromExpressionToFSM('    \n \t');
+        }).toThrowError('empty');
       });
 
       it('should throw error when the expression is invalid because of invalid chars', () => {
-        expect(() => {convertFromExpressionToFSM('* `dwqdj2918-é')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('aç')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('a+c')}).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('* `dwqdj2918-é');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('aç');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('a+c');
+        }).toThrow();
       });
 
       it('should throw error when the expression is invalid because of parentheses', () => {
-        expect(() => {convertFromExpressionToFSM('*(')}).toThrowError('parentheses');
-        expect(() => {convertFromExpressionToFSM('(ab')}).toThrowError('parentheses');
-        expect(() => {convertFromExpressionToFSM('(ab))')}).toThrowError('parentheses');
-        expect(() => {convertFromExpressionToFSM('(()))')}).toThrowError('parentheses');
+        expect(() => {
+          convertFromExpressionToFSM('*(');
+        }).toThrowError('parentheses');
+        expect(() => {
+          convertFromExpressionToFSM('(ab');
+        }).toThrowError('parentheses');
+        expect(() => {
+          convertFromExpressionToFSM('(ab))');
+        }).toThrowError('parentheses');
+        expect(() => {
+          convertFromExpressionToFSM('(()))');
+        }).toThrowError('parentheses');
       });
 
       it('should throw error when the expression only has operators', () => {
-        expect(() => {convertFromExpressionToFSM('.')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('...')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('*')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('**')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('|.*?')}).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('.');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('...');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('*');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('**');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('|.*?');
+        }).toThrow();
       });
       it('should throw error when the expression only operators in sequence', () => {
-        expect(() => {convertFromExpressionToFSM('.ab')}).toThrow();
-        expect(() => {convertFromExpressionToFSM('**ab')}).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('.ab');
+        }).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('**ab');
+        }).toThrow();
       });
       it('should not throw error when the expression has correct operators *', () => {
-        expect(() => {convertFromExpressionToFSM('ab*')}).not.toThrow();
-        expect(() => {convertFromExpressionToFSM('ab**')}).not.toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('ab*');
+        }).not.toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('ab**');
+        }).not.toThrow();
       });
       it('should not generate the correct FSM from a simple expression with operator in incorrect place', () => {
-        expect(() => {convertFromExpressionToFSM('(a|b|*c)')}).toThrow();
+        expect(() => {
+          convertFromExpressionToFSM('(a|b|*c)');
+        }).toThrow();
       });
     });
   });

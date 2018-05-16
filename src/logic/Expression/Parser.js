@@ -395,7 +395,12 @@ function checkForInvalidSymbols(input) {
   for (let i = 0; i < input.length; i++) {
     let char = input.charAt(i);
 
-    if (!Parser.isOperator(char) && !SymbolValidator.isValidTerminalWithoutEpsilon(char) && char !== '(' && char !== ')') {
+    if (
+      !Parser.isOperator(char) &&
+      !SymbolValidator.isValidTerminalWithoutEpsilon(char) &&
+      char !== '(' &&
+      char !== ')'
+    ) {
       throw new Error(`Invalid symbol "${char}" detected on the expression.`);
     }
   }
@@ -404,20 +409,21 @@ function checkForInvalidSymbols(input) {
     throw new Error('Invalid parentheses matching');
 }
 
-function hasUnboundParentheses (exp) {
+function hasUnboundParentheses(exp) {
   // Only check if we have parentheses
-  if (exp.indexOf('(') === false && exp.indexOf(')') === false)
-    return true;
+  if (exp.indexOf('(') === false && exp.indexOf(')') === false) return true;
 
-  return exp.split("").reduce((acc, char) => {
-    if (acc < 0) {
+  return (
+    exp.split('').reduce((acc, char) => {
+      if (acc < 0) {
+        return acc;
+      }
+      if (char === '(') {
+        acc++;
+      } else if (char === ')') {
+        acc--;
+      }
       return acc;
-    }
-    if (char === "(") {
-      acc++;
-    } else if (char === ")") {
-      acc--;
-    }
-    return acc;
-  }, 0) === 0;
+    }, 0) === 0
+  );
 }

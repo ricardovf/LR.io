@@ -45,13 +45,12 @@ export function generate(
 
     for (let pathIndex = 0; pathIndex < paths.length; pathIndex++) {
       const path = paths[pathIndex];
-      const innerCurrentSentence =
-        currentSentence + (path.when === EPSILON ? '' : path.when);
+      const innerCurrentSentence = currentSentence + path.when;
 
-      sentences = [
-        ...sentences,
-        ...generate(fsm, maxLength, path.to, innerCurrentSentence),
-      ];
+      sentences = R.union(
+        sentences,
+        generate(fsm, maxLength, path.to, innerCurrentSentence)
+      );
     }
   }
 

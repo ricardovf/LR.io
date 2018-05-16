@@ -71,8 +71,7 @@ export default class FSM {
           ...R.filter(R.whereEq({ from: this.initial }))(this.transitions),
         ];
         for (let path of paths) {
-          if (this.finals.includes(path.to))
-            produtions.push(path.when);
+          if (this.finals.includes(path.to)) produtions.push(path.when);
           produtions.push(path.when + path.to);
         }
         P[S] = ['&'].concat(produtions);
@@ -94,8 +93,7 @@ export default class FSM {
         ];
         for (let path of paths) {
           P[state].push(symbol + path.to);
-          if (this.finals.includes(path.to))
-            P[state].push(symbol);
+          if (this.finals.includes(path.to)) P[state].push(symbol);
         }
       }
     }
@@ -104,9 +102,8 @@ export default class FSM {
   getGenerator(prodution) {
     let generator = '';
     for (let char of prodution) {
-      if (char == ' ' || char == '-')
-        break;
-      generator += char
+      if (char == ' ' || char == '-') break;
+      generator += char;
     }
     return generator;
   }
@@ -115,12 +112,9 @@ export default class FSM {
     let prodution_ = '';
     let arrowReaded = false;
     for (let char of prodution) {
-      if (arrowReaded)
-        if(char != ' ')
-          prodution_ += char;
+      if (arrowReaded) if (char != ' ') prodution_ += char;
 
-      if (char == '>')
-        arrowReaded = true;
+      if (char == '>') arrowReaded = true;
     }
     return prodution_;
   }
