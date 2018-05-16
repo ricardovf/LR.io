@@ -111,7 +111,7 @@ describe('FSM', () => {
       const finals = ['Q0', 'Q6', 'Q5'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       const grammar = fsm.toGrammar();
-      let P = grammar.fixPrintForProdutions(grammar.P);
+      let P = grammar.getFormattedText(grammar.P);
       for (let state of fsm.states) {
         expect(P.includes(state)).toBeTruthy();
       }

@@ -128,8 +128,19 @@ export default class Grammar {
   }
 
   getFormattedText() {
-    // try to generate the text from the FSM associated
-    return '';
+    let P = this.P;
+    let P_ = '';
+    let oldNonTerminal = '';
+    let newNonTerminal = '';
+    let production = '';
+    for (let nonTerminal in P) {
+      P_ += nonTerminal + ' -> ';
+      for (let production of P[nonTerminal]) {
+        P_ += production + ' | ';
+      }
+      P_ = P_.slice(0, -3) + '\n';
+    }
+    return P_.trim();
   }
 
   isValid() {
@@ -156,20 +167,5 @@ export default class Grammar {
     }
 
     return currentGrammarFromText;
-  }
-
-  fixPrintForProdutions(P) {
-    let P_ = '';
-    let oldNonTerminal = '';
-    let newNonTerminal = '';
-    let prodution = '';
-    for (let nonTerminal in P) {
-      P_ += nonTerminal + ' -> ';
-      for (let prodution of P[nonTerminal]) {
-        P_ += prodution + ' | ';
-      }
-      P_ = P_.slice(0, -3) + '\n';
-    }
-    return P_;
   }
 }
