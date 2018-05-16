@@ -75,9 +75,7 @@ class CodeDialog extends React.Component {
           aria-describedby="alert-dialog-description"
         >
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              <div dangerouslySetInnerHTML={{ __html: this.state.code }} />
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-description" dangerouslySetInnerHTML={{ __html: this.state.code }} />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary" autoFocus>
