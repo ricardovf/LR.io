@@ -157,4 +157,19 @@ export default class Grammar {
 
     return currentGrammarFromText;
   }
+
+  fixPrintForProdutions(P) {
+    let P_ = '';
+    let oldNonTerminal = '';
+    let newNonTerminal = '';
+    let prodution = '';
+    for (let nonTerminal in P) {
+      P_ += nonTerminal + ' -> ';
+      for (let prodution of P[nonTerminal]) {
+        P_ += prodution + ' | ';
+      }
+      P_ = P_.slice(0, -3) + '\n';
+    }
+    return P_;
+  }
 }

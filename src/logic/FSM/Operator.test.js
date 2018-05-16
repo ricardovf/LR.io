@@ -280,6 +280,71 @@ describe('FSM', () => {
       expect(newFsm.recognize('11')).toBeTruthy();
     });
 
+    it('should apply difference for FSM #2', async () => {
+      const states = ['Q1', 'Q0', 'Q6', 'Q5', 'Q2', 'Q3', 'Q4'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'Q1', to: 'Q0', when: 'a' },
+        { from: 'Q1', to: 'Q6', when: 'b' },
+        { from: 'Q1', to: 'Q5', when: 'c' },
+        { from: 'Q0', to: 'Q1', when: 'a' },
+        { from: 'Q0', to: 'Q2', when: 'b' },
+        { from: 'Q0', to: 'Q3', when: 'c' },
+        { from: 'Q6', to: 'Q4', when: 'a' },
+        { from: 'Q6', to: 'Q4', when: 'b' },
+        { from: 'Q6', to: 'Q3', when: 'c' },
+        { from: 'Q5', to: 'Q4', when: 'a' },
+        { from: 'Q5', to: 'Q2', when: 'b' },
+        { from: 'Q5', to: 'Q4', when: 'c' },
+        { from: 'Q2', to: 'Q4', when: 'a' },
+        { from: 'Q2', to: 'Q4', when: 'b' },
+        { from: 'Q2', to: 'Q5', when: 'c' },
+        { from: 'Q3', to: 'Q4', when: 'a' },
+        { from: 'Q3', to: 'Q6', when: 'b' },
+        { from: 'Q3', to: 'Q4', when: 'c' },
+        { from: 'Q4', to: 'Q4', when: 'a' },
+        { from: 'Q4', to: 'Q4', when: 'b' },
+        { from: 'Q4', to: 'Q4', when: 'c' },
+      ];
+      const initial = 'Q1';
+      const finals = ['Q0', 'Q6', 'Q5'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      const states_ = ['Q0', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7'];
+      const alphabet_ = ['a', 'b', 'c'];
+      const transitions_ = [
+        { from: 'Q0', to: 'Q1', when: 'a' },
+        { from: 'Q0', to: 'Q2', when: 'b' },
+        { from: 'Q0', to: 'Q3', when: 'c' },
+        { from: 'Q1', to: 'Q0', when: 'a' },
+        { from: 'Q1', to: 'Q4', when: 'b' },
+        { from: 'Q1', to: 'Q7', when: 'c' },
+        { from: 'Q2', to: 'Q4', when: 'a' },
+        { from: 'Q2', to: 'Q0', when: 'b' },
+        { from: 'Q2', to: 'Q5', when: 'c' },
+        { from: 'Q3', to: 'Q7', when: 'a' },
+        { from: 'Q3', to: 'Q5', when: 'b' },
+        { from: 'Q3', to: 'Q0', when: 'c' },
+        { from: 'Q4', to: 'Q2', when: 'a' },
+        { from: 'Q4', to: 'Q1', when: 'b' },
+        { from: 'Q4', to: 'Q6', when: 'c' },
+        { from: 'Q5', to: 'Q6', when: 'a' },
+        { from: 'Q5', to: 'Q3', when: 'b' },
+        { from: 'Q5', to: 'Q2', when: 'c' },
+        { from: 'Q6', to: 'Q5', when: 'a' },
+        { from: 'Q6', to: 'Q7', when: 'b' },
+        { from: 'Q6', to: 'Q4', when: 'c' },
+        { from: 'Q7', to: 'Q3', when: 'a' },
+        { from: 'Q7', to: 'Q6', when: 'b' },
+        { from: 'Q7', to: 'Q1', when: 'c' },
+      ];
+      const initial_ = 'Q0';
+      const finals_ = ['Q6'];
+      const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
+      const newFsm = difference(fsm, fsm_);
+      expect(newFsm.recognize('abcbc')).toBeTruthy();
+    });
+
     it('should reverse FSM #1', async () => {
       const states = ['Q0', 'Q1', 'Q2'];
       const alphabet = ['0', '1'];
