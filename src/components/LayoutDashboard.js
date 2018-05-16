@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import GrammarCardConnector from '../connectors/GrammarCardConnector';
+import ExpressionCardConnector from '../connectors/ExpressionCardConnector';
 import FSMCardConnector from '../connectors/FSMCardConnector';
 import { Card, CardContent, Typography } from 'material-ui';
 import RecognizeCardConnector from '../connectors/RecognizeCardConnector';
@@ -56,13 +57,7 @@ function LayoutDashboard(props) {
                 <GrammarCardConnector />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Card style={{ height: '100%' }}>
-                  <CardContent>
-                    <Typography gutterBottom variant="headline" component="h2">
-                      Expressão regular
-                    </Typography>
-                  </CardContent>
-                </Card>
+                <ExpressionCardConnector />
               </Grid>
             </Grid>
           </Grid>

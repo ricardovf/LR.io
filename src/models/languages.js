@@ -3,10 +3,11 @@ import { find, propEq, reject } from 'ramda';
 import { dispatch } from '../store';
 import _ from 'lodash';
 import Grammar from '../logic/Grammar';
-import { multiTrim } from '../logic/helpers';
+import { multiTrim, multiTrimNoLines } from '../logic/helpers';
 import * as R from 'ramda';
 import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
 import SymbolValidator from '../logic/SymbolValidator';
+import { convertFromExpressionToFSM } from '../logic/Expression/Parser';
 
 /**
  * @todo transfer the logic to manipulate the FSM to inside the FSM class, like remove/add symbols/states, etc
@@ -414,9 +415,45 @@ export default {
           language = {
             ...language,
             valid: valid,
+            expression: undefined,
             grammar: valid
               ? grammar.getFormattedText() || multiTrim(text, false)
               : multiTrim(text, false),
+            fsm: fsm ? fsm.toPlainObject() : undefined,
+          };
+
+          dispatch.languages._updateLanguage({ id, language });
+        }
+      },
+      250,
+      { maxWait: 1000 }
+    ),
+
+    editExpression: _.debounce(
+      (payload, rootState) => {
+        const { id, text } = payload;
+
+        let language = find(propEq('id', id))(rootState.languages);
+
+        if (language) {
+          let valid = true;
+          let fsm = null;
+          let grammar = null;
+
+          try{
+            fsm = convertFromExpressionToFSM(text);
+            grammar = fsm.toGrammar();
+          } catch (e) {
+            fsm = null;
+            grammar = null;
+            valid = false;
+          }
+
+          language = {
+            ...language,
+            valid: valid,
+            expression: multiTrimNoLines(text),
+            grammar: grammar ? grammar.getFormattedText() : undefined,
             fsm: fsm ? fsm.toPlainObject() : undefined,
           };
 
