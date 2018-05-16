@@ -9,13 +9,13 @@ import * as R from 'ramda';
 
 export const LAMBDA = 'λ';
 export const OPERATOR_STAR = '*';
-export const OPERATOR_STAR_PRECEDENCE = 10;
+export const OPERATOR_STAR_PRECEDENCE = 1;
 export const OPERATOR_MAYBE = '?';
-export const OPERATOR_MAYBE_PRECEDENCE = 10;
+export const OPERATOR_MAYBE_PRECEDENCE = 1;
 export const OPERATOR_DOT = '.';
-export const OPERATOR_DOT_PRECEDENCE = 5;
+export const OPERATOR_DOT_PRECEDENCE = 2;
 export const OPERATOR_UNION = '|';
-export const OPERATOR_UNION_PRECEDENCE = 1;
+export const OPERATOR_UNION_PRECEDENCE = 3;
 export const OPERATORS = [
   OPERATOR_STAR,
   OPERATOR_MAYBE,
@@ -80,27 +80,22 @@ export default class Parser {
       this.input = input;
     }
 
-    try {
-      // apply multiTrim (remove spaces and new lines)
-      const trimmed = multiTrimNoLines(this._input);
+    // apply multiTrim (remove spaces and new lines)
+    const trimmed = multiTrimNoLines(this._input);
 
-      // make operations explicit
-      const explicit = toExplicit(trimmed);
+    // check if contains invalid chars
+    checkForInvalidSymbols(trimmed);
 
-      // change to post order
-      const postFixed = toPostfix(explicit);
+    // make operations explicit
+    const explicit = toExplicit(trimmed);
 
-      // build the tree nodes from the post order expression
-      const tree = buildTree(postFixed);
+    // change to post order
+    const postFixed = toPostfix(explicit);
 
-      this.fsm = buildFSMFromTree(tree);
-    } catch (e) {
-      throw new Error(
-        `Could not transform the input '${
-          this._input
-        }' to an FSM. Got the error: ${e}`
-      );
-    }
+    // build the tree nodes from the post order expression
+    const tree = buildTree(postFixed);
+
+    this.fsm = buildFSMFromTree(tree);
 
     return this.fsm;
   }
@@ -155,7 +150,7 @@ export function convertFromExpressionToFSM(text) {
 export function toExplicit(input) {
   let output = '';
 
-  for (let i = 0; i < input.length - 1; i += 1) {
+  for (let i = 0; i < input.length - 1; i++) {
     let currentChar = input.charAt(i);
     output += currentChar;
 
@@ -167,7 +162,7 @@ export function toExplicit(input) {
         currentChar !== '(' &&
         nextChar !== ')') ||
       (currentChar === ')' && nextChar === '(') ||
-      ((currentChar === OPERATOR_STAR || currentChar === OPERATOR_MAYBE) &&
+      (Parser.getOperatorPrecedence(currentChar) === OPERATOR_STAR_PRECEDENCE &&
         nextChar !== ')' &&
         (!Parser.isOperator(nextChar) || nextChar === '('))
     ) {
@@ -180,7 +175,7 @@ export function toExplicit(input) {
 }
 
 /**
- * Adapted from https://gist.github.com/dineshrajpurohit/d14349fc48c6da937a04
+ * Inspired by https://gist.github.com/dineshrajpurohit/d14349fc48c6da937a04
  * Reference: http://interactivepython.org/runestone/static/pythonds/BasicDS/InfixPrefixandPostfixExpressions.html
  *
  * Infix to postfix implementation
@@ -200,36 +195,35 @@ export function toExplicit(input) {
  */
 export function toPostfix(input) {
   let output = '';
-  let infixStack = [];
+  let stack = [];
 
+  let char;
+  let precedence;
   for (let i = 0; i < input.length; i++) {
-    let currentChar = input.charAt(i);
-    if (currentChar === '(') {
-      infixStack.push(currentChar);
-    } else if (currentChar === ')') {
-      while (infixStack[infixStack.length - 1] !== '(') {
-        output += infixStack.pop();
+    char = input.charAt(i);
+    if (char === '(') {
+      stack.push(char);
+    } else if (char === ')') {
+      while (stack[stack.length - 1] !== '(') {
+        output += stack.pop();
       }
-      infixStack.pop();
-    } else if (
-      SymbolValidator.isValidTerminal(currentChar) &&
-      currentChar !== EPSILON
-    ) {
-      output += currentChar;
-    } else if (Parser.isOperator(currentChar)) {
+      stack.pop();
+    } else if ((precedence = Parser.getOperatorPrecedence(char)) >= 0) {
       while (
-        infixStack.length !== 0 &&
-        Parser.getOperatorPrecedence(currentChar) <=
-          Parser.getOperatorPrecedence(infixStack[infixStack.length - 1])
+        stack.length > 0 &&
+        Parser.getOperatorPrecedence(stack[stack.length - 1]) <= precedence &&
+        stack[stack.length - 1] !== '('
       ) {
-        output += infixStack.pop();
+        output += stack.pop();
       }
-      infixStack.push(currentChar);
+      stack.push(char);
+    } else {
+      output += char;
     }
   }
 
-  while (infixStack.length !== 0) {
-    output += infixStack.pop();
+  while (stack.length > 0) {
+    output += stack.pop();
   }
 
   return output;
@@ -244,7 +238,7 @@ export function toPostfix(input) {
 export function buildTree(input) {
   let stack = [];
 
-  for (let i = 0; i < input.length; i += 1) {
+  for (let i = 0; i < input.length; i++) {
     let c = input.charAt(i);
 
     if (Parser.isOperator(c)) {
@@ -382,7 +376,48 @@ export function buildFSMFromTree(node) {
 }
 
 function _uniqueNameToComposition(composition) {
-  return R.uniq(R.map(n => n.value, composition))
+  return R.uniq(R.map(n => n.id, composition))
     .sort()
     .join(', ');
+}
+
+/**
+ * Checks if expression only contains operators (?|.*) or valid terminals or parentheses
+ * @throws if invalid symbol is found
+ * @param input
+ * @returns {boolean}
+ */
+function checkForInvalidSymbols(input) {
+  if (input === '') {
+    throw new Error('Expression can`t be empty!');
+  }
+
+  for (let i = 0; i < input.length; i++) {
+    let char = input.charAt(i);
+
+    if (!Parser.isOperator(char) && !SymbolValidator.isValidTerminalWithoutEpsilon(char) && char !== '(' && char !== ')') {
+      throw new Error(`Invalid symbol "${char}" detected on the expression.`);
+    }
+  }
+
+  if (!hasUnboundParentheses(input))
+    throw new Error('Invalid parentheses matching');
+}
+
+function hasUnboundParentheses (exp) {
+  // Only check if we have parentheses
+  if (exp.indexOf('(') === false && exp.indexOf(')') === false)
+    return true;
+
+  return exp.split("").reduce((acc, char) => {
+    if (acc < 0) {
+      return acc;
+    }
+    if (char === "(") {
+      acc++;
+    } else if (char === ")") {
+      acc--;
+    }
+    return acc;
+  }, 0) === 0;
 }

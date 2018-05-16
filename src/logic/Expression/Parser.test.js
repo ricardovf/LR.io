@@ -1,6 +1,6 @@
 import Parser, {
   buildFSMFromTree,
-  buildTree,
+  buildTree, convertFromExpressionToFSM,
   LAMBDA,
   toExplicit,
   toPostfix,
@@ -9,7 +9,7 @@ import { multiTrimNoLines } from '../helpers';
 import * as R from 'ramda';
 import { ACCEPT_STATE, EPSILON } from '../SymbolValidator';
 
-describe.only('Expression', () => {
+describe('Expression', () => {
   describe('Parser', () => {
     const parser = new Parser();
 
@@ -95,17 +95,66 @@ describe.only('Expression', () => {
         expect(fsm.generate(10)).toEqual(['a']);
       });
 
+      it('should generate the correct FSM from a expression with union (|)', () => {
+        const tree = buildTree(toPostfix(toExplicit('(aa|bb)*')));
+        const fsm = buildFSMFromTree(tree);
+
+        expect(fsm.states).toEqual(['A', 'B', 'C', 'D']);
+        expect(fsm.initial).toEqual('A');
+        expect(fsm.finals).toEqual(['A', 'D']);
+        expect(fsm.alphabet).toEqual(['a', 'b']);
+        expect(fsm.transitions).toEqual([
+          { from: 'A', to: 'B', when: 'a' },
+          { from: 'A', to: 'C', when: 'b' },
+          { from: 'C', to: 'D', when: 'b' },
+          { from: 'D', to: 'B', when: 'a' },
+          { from: 'D', to: 'C', when: 'b' },
+          { from: 'B', to: 'D', when: 'a' },
+        ]);
+        expect(fsm.generate(4).sort()).toEqual(
+          ['', 'aa', 'bb', 'aaaa', 'aabb', 'bbbb', 'bbaa'].sort()
+        );
+      });
+
+      it('should generate the correct FSM from a complex expression', () => {
+        const expression = '(bb|(ab|ba)(aa|bb)*(ab|ba))*';
+        const explicit = '(b.b|(a.b|b.a).(a.a|b.b)*.(a.b|b.a))*';
+        const postfix = 'bb.ab.ba.|aa.bb.|*.ab.ba.|.|*';
+
+        expect(toExplicit(expression)).toEqual(explicit);
+        expect(toPostfix(explicit)).toEqual(postfix);
+
+        const tree = buildTree(postfix);
+
+        const fsm = buildFSMFromTree(tree);
+
+        // expect(fsm.states).toEqual(['A', 'B']);
+        // expect(fsm.initial).toEqual('A');
+        // expect(fsm.finals).toEqual(['A']);
+        // expect(fsm.alphabet).toEqual(['a', 'b']);
+        // expect(fsm.transitions).toEqual([
+        //   { from: 'A', to: 'B', when: 'a' },
+        //   { from: 'A', to: 'B', when: 'b' },
+        //   { from: 'B', to: 'A', when: 'a' },
+        //   { from: 'B', to: 'B', when: 'b' },
+        // ]);
+        expect(fsm.generate(4).sort()).toEqual(
+          ['', 'abab', 'abba', 'baab', 'baba', 'bb', 'bbbb'].sort()
+        );
+      });
+
       it('should generate the correct FSM from a simple expression', () => {
         const tree = buildTree(toPostfix(toExplicit('(ab)*')));
         const fsm = buildFSMFromTree(tree);
 
-        expect(fsm.states).toEqual(['A', 'B']);
+        expect(fsm.states).toEqual(['A', 'B', 'C']);
         expect(fsm.initial).toEqual('A');
-        expect(fsm.finals).toEqual(['A']);
+        expect(fsm.finals).toEqual(['A', 'C']);
         expect(fsm.alphabet).toEqual(['a', 'b']);
         expect(fsm.transitions).toEqual([
           { from: 'A', to: 'B', when: 'a' },
-          { from: 'B', to: 'A', when: 'b' },
+          { from: 'B', to: 'C', when: 'b' },
+          { from: 'C', to: 'B', when: 'a' },
         ]);
         expect(fsm.generate(10)).toEqual([
           '',
@@ -131,6 +180,44 @@ describe.only('Expression', () => {
             );
           }
         }
+      });
+    });
+
+    describe('invalid expressions', () => {
+      it('should throw error when the expression is empty', () => {
+        expect(() => {convertFromExpressionToFSM('    \n \t')}).toThrowError('empty');
+      });
+
+      it('should throw error when the expression is invalid because of invalid chars', () => {
+        expect(() => {convertFromExpressionToFSM('* `dwqdj2918-é')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('aç')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('a+c')}).toThrow();
+      });
+
+      it('should throw error when the expression is invalid because of parentheses', () => {
+        expect(() => {convertFromExpressionToFSM('*(')}).toThrowError('parentheses');
+        expect(() => {convertFromExpressionToFSM('(ab')}).toThrowError('parentheses');
+        expect(() => {convertFromExpressionToFSM('(ab))')}).toThrowError('parentheses');
+        expect(() => {convertFromExpressionToFSM('(()))')}).toThrowError('parentheses');
+      });
+
+      it('should throw error when the expression only has operators', () => {
+        expect(() => {convertFromExpressionToFSM('.')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('...')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('*')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('**')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('|.*?')}).toThrow();
+      });
+      it('should throw error when the expression only operators in sequence', () => {
+        expect(() => {convertFromExpressionToFSM('.ab')}).toThrow();
+        expect(() => {convertFromExpressionToFSM('**ab')}).toThrow();
+      });
+      it('should not throw error when the expression has correct operators *', () => {
+        expect(() => {convertFromExpressionToFSM('ab*')}).not.toThrow();
+        expect(() => {convertFromExpressionToFSM('ab**')}).not.toThrow();
+      });
+      it('should not generate the correct FSM from a simple expression with operator in incorrect place', () => {
+        expect(() => {convertFromExpressionToFSM('(a|b|*c)')}).toThrow();
       });
     });
   });
@@ -190,26 +277,6 @@ const cases = [
     ],
   },
   {
-    text: '(aa|bb|(ab|ba)(aa|bb)*(ab|ba))*',
-    explicit: '(a.a|b.b|(a.b|b.a).(a.a|b.b)*.(a.b|b.a))*',
-    postfix: 'aa.bb.|ab.ba.|aa.bb.|*.ab.ba.|.|*',
-    tree:
-      '[*, [|, [|, [., [a], [a]], [., [b], [b]]], [., [., [|, [., [a], [b]], [., [b], [a]]], [*, [|, [., [a], [a]], [., [b], [b]]]]], [|, [., [a], [b]], [., [b], [a]]]]]]',
-    // enumeration: [
-    //   '',
-    //   'aa',
-    //   'aaaa',
-    //   'aabb',
-    //   'abab',
-    //   'abba',
-    //   'baab',
-    //   'baba',
-    //   'bb',
-    //   'bbaa',
-    //   'bbbb',
-    // ],
-  },
-  {
     text: '(a?(ba)*b?)|(b?(ab)*a?)',
     explicit: '(a?.(b.a)*.b?)|(b?.(a.b)*.a?)',
     postfix: 'a?ba.*.b?.b?ab.*.a?.|',
@@ -228,11 +295,5 @@ const cases = [
       'baba',
       'babab',
     ],
-  },
-  {
-    text: '((a?(ba)*b?)|(b?(ab)*a?)',
-    explicit: '((a?.(b.a)*.b?)|(b?.(a.b)*.a?)',
-    postfix: 'a?ba.*.b?.b?ab.*.a?.|(',
-    enumeration: null,
   },
 ];

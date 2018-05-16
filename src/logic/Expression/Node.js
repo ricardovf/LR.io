@@ -7,12 +7,20 @@ import Parser, {
 } from './Parser';
 import * as R from 'ramda';
 
+/**
+ * We use this index to reference each node in a unique manner.
+ * @type {number}
+ */
+let nodeIndex = 1;
+
 export default class Node {
   constructor(value, { father = null, left = null, right = null } = {}) {
     this.value = value;
     this.father = father;
     this.left = left;
     this.right = right;
+    this._lastFather = null;
+    this.id = nodeIndex++;
   }
 
   /**
@@ -47,25 +55,27 @@ export default class Node {
    * @returns {Node}
    */
   get lastFather() {
-    let lastFather = null;
+    if (this.left !== null && this.right !== null) {
+      return null;
+    }
 
-    if (this.left === null || this.right === null) {
+    if (this._lastFather === null) {
       if (this.father !== null) {
-        lastFather = this.father;
+        this._lastFather = this.father;
         if (this.father.left !== this) {
           while (
-            lastFather.father !== null &&
-            lastFather.father.right !== null &&
-            lastFather.father.right === lastFather
+            this._lastFather.father !== null &&
+            this._lastFather.father.right !== null &&
+            this._lastFather.father.right === this._lastFather
           ) {
-            lastFather = lastFather.father;
+            this._lastFather = this._lastFather.father;
           }
-          lastFather = lastFather.father;
+          this._lastFather = this._lastFather.father;
         }
       }
     }
 
-    return lastFather;
+    return this._lastFather;
   }
 
   collectNodesGoingDown() {

@@ -13,6 +13,9 @@ export default {
   isValidTerminal: terminal => {
     return /^([a-z]|[0-9]|&)$/.test(terminal);
   },
+  isValidTerminalWithoutEpsilon: terminal => {
+    return /^([a-z]|[0-9])$/.test(terminal);
+  },
   isValidNonTerminal: nonTerminal => {
     return /^([A-Z])$/.test(nonTerminal) || nonTerminal === ACCEPT_STATE;
   },
