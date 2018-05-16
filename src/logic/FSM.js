@@ -2,7 +2,7 @@ import { EPSILON } from './SymbolValidator';
 import Grammar from './Grammar';
 import * as R from 'ramda';
 import { isDeterministic, determinate } from './FSM/Determinator';
-import { isMinimal, minimize } from './FSM/Minimizer'
+import { isMinimal, minimize } from './FSM/Minimizer';
 import {
   eliminateEpsilonTransitions,
   hasEpsilonTransitions,
@@ -94,7 +94,7 @@ export default class FSM {
 
   hasIndefinition() {
     for (let symbol of this.alphabet) {
-      for(let state of this.states) {
+      for (let state of this.states) {
         let paths = [
           ...R.filter(R.whereEq({ from: state, when: symbol }))(
             this.transitions
@@ -244,7 +244,7 @@ export default class FSM {
   }
 
   nonFinalStates() {
-    let nonFinalStates =[]
+    let nonFinalStates = [];
     for (let state of this.states) {
       if (!this.finals.includes(state)) nonFinalStates.push(state);
     }

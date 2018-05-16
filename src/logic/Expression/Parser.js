@@ -1,7 +1,13 @@
 import FSM from '../FSM';
 import { multiTrimNoLines } from '../helpers';
-import SymbolValidator, { EPSILON } from '../SymbolValidator';
+import SymbolValidator, {
+  EPSILON,
+  makeNewUniqueStateName,
+} from '../SymbolValidator';
+import Node from './Node';
+import * as R from 'ramda';
 
+export const LAMBDA = 'λ';
 export const OPERATOR_STAR = '*';
 export const OPERATOR_STAR_PRECEDENCE = 10;
 export const OPERATOR_MAYBE = '?';
@@ -23,19 +29,33 @@ export default class Parser {
     this.fsm = null;
   }
 
+  /**
+   * @param input
+   * @returns {boolean}
+   */
   changed(input) {
     return input !== this._originalInput;
   }
 
+  /**
+   * @returns {string}
+   */
   get input() {
     return this._input;
   }
 
+  /**
+   * @param input
+   * @returns {Parser}
+   */
   setInput(input) {
     this.input = input;
     return this;
   }
 
+  /**
+   * @param input
+   */
   set input(input) {
     if (this.changed(input)) {
       this._originalInput = input;
@@ -106,6 +126,10 @@ export default class Parser {
     }
   }
 
+  /**
+   * @param char
+   * @returns {boolean}
+   */
   static isOperator(char) {
     return OPERATORS.includes(char);
   }
@@ -170,6 +194,9 @@ export function toExplicit(input) {
  *    is greater than that of the operator on the stack
  *  - Append the popped operator to the postfix string
  *  - If there are no expressions left in the stack pop all the operators and append to the string
+ *
+ * @param input In a explicit format
+ * @returns {string} The expression on postfix format
  */
 export function toPostfix(input) {
   let output = '';
@@ -208,14 +235,154 @@ export function toPostfix(input) {
   return output;
 }
 
-export function buildTree(input) {}
+/**
+ * Inspired by https://gist.github.com/dineshrajpurohit/3730c63619a828f47c52
+ *
+ * @param input Input text in a postfix format
+ * @returns {Node} The root node of the tree
+ */
+export function buildTree(input) {
+  let stack = [];
+
+  for (let i = 0; i < input.length; i += 1) {
+    let c = input.charAt(i);
+
+    if (Parser.isOperator(c)) {
+      // If it is an operator
+      let node = new Node(c);
+
+      if (Parser.getOperatorPrecedence(c) === OPERATOR_STAR_PRECEDENCE) {
+        // If its an * or ? operator, it just have one left child
+        let leftNode = stack.pop();
+        leftNode.father = node;
+        node.left = leftNode;
+      } else {
+        // If its an . or |, then there are two children
+        let rightNode = stack.pop();
+        rightNode.father = node;
+        node.right = rightNode;
+
+        let leftNode = stack.pop();
+        leftNode.father = node;
+        node.left = leftNode;
+      }
+
+      stack.push(node);
+    } else {
+      // If its not an operator, just create the node and put it on the stack
+      // @todo maybe here we should validate if its a valid terminal and throw if not?
+      stack.push(new Node(c));
+    }
+  }
+
+  return stack.pop();
+}
 
 /**
- * Build an FSM using the De Simone tree
- *
- * @param tree Node
+ * @param node Node
  * @returns {FSM}
  */
-function buildFSMFromTree(tree) {
-  return new FSM();
+export function buildFSMFromTree(node) {
+  let fsm = FSM.makeEmptyFSM();
+
+  // maps a list of nodes to FSM states
+  let statesByNodeComposition = new Map();
+
+  // List of [list of nodes] pending to analyse
+  let pending = [];
+
+  // Add the initial state
+  let initialState = makeNewUniqueStateName();
+  fsm.states.push(initialState);
+  fsm.initial = initialState;
+
+  // Collect nodes going down from the root node and add them to the pending list
+  let firstComposition = node.collectNodesGoingDown();
+  let firstCompositionId = _uniqueNameToComposition(firstComposition);
+  statesByNodeComposition.set(firstCompositionId, initialState);
+  pending.push(firstComposition);
+  let analysed = [];
+
+  // If one of the nodes is lambda, then we add this state to the finals
+  if (
+    firstComposition &&
+    R.map(n => n.value, firstComposition).includes(LAMBDA)
+  ) {
+    fsm.finals.push(initialState);
+  }
+
+  // Build the FSM by consuming the pending list of node composition
+  while (pending.length > 0) {
+    let currentNodeComposition = pending.pop();
+    let currentNodeCompositionId = _uniqueNameToComposition(
+      currentNodeComposition
+    );
+    analysed.push(currentNodeCompositionId);
+
+    let from = statesByNodeComposition.get(currentNodeCompositionId);
+
+    // Map from each symbol to the composition of nodes
+    let compositionsBySymbol = new Map();
+
+    // Build de compositions for each symbol
+    for (let compositionNode of currentNodeComposition) {
+      if (!compositionNode.isLambda()) {
+        let upComposition = compositionNode.collectNodesGoingUp();
+
+        let symbolComposition =
+          compositionsBySymbol.get(compositionNode.value) || [];
+
+        compositionsBySymbol.set(
+          compositionNode.value,
+          R.union(symbolComposition, upComposition)
+        );
+      }
+    }
+
+    // Add to FSM one symbol at a time
+    for (let symbol of Array.from(compositionsBySymbol.keys())) {
+      if (!fsm.alphabet.includes(symbol)) fsm.alphabet.push(symbol);
+
+      let symbolComposition = compositionsBySymbol.get(symbol);
+      let symbolCompositionId = _uniqueNameToComposition(symbolComposition);
+
+      let destiny = statesByNodeComposition.get(symbolCompositionId);
+      if (destiny === undefined) {
+        destiny = makeNewUniqueStateName(fsm.states);
+
+        if (!fsm.states.includes(destiny)) fsm.states.push(destiny);
+
+        statesByNodeComposition.set(symbolCompositionId, destiny);
+
+        // If we have not yet analysed this composition, then we add it to pending
+        if (!analysed.includes(symbolCompositionId))
+          pending.push(symbolComposition);
+
+        // If one of the nodes is lambda, then we add this state to the finals
+        if (
+          symbolComposition &&
+          R.map(n => n.value, symbolComposition).includes(LAMBDA)
+        ) {
+          if (!fsm.finals.includes(destiny)) fsm.finals.push(destiny);
+        }
+      }
+
+      let transition = {
+        from: from,
+        to: destiny,
+        when: symbol,
+      };
+
+      if (!fsm.transitions.includes(transition))
+        fsm.transitions.push(transition);
+    }
+  }
+
+  return fsm;
+}
+
+function _uniqueNameToComposition(composition) {
+  return R.uniq(R.map(n => n.value, composition))
+    .sort()
+    .join(', ');
 }

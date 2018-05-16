@@ -1,4 +1,8 @@
-import SymbolValidator, { EPSILON } from './SymbolValidator';
+import SymbolValidator, {
+  EPSILON,
+  makeNewUniqueStateName,
+  STATES_NAMES,
+} from './SymbolValidator';
 
 describe('SymbolValidator', () => {
   describe('Terminals', () => {
@@ -85,6 +89,24 @@ describe('SymbolValidator', () => {
       expect(SymbolValidator.isEpsilon('ab')).toBeFalsy();
       expect(SymbolValidator.isEpsilon('01')).toBeFalsy();
       expect(SymbolValidator.isEpsilon('10')).toBeFalsy();
+    });
+  });
+
+  describe('makeNewUniqueStateName', () => {
+    it('should generate new symbols always', () => {
+      expect(makeNewUniqueStateName()).toEqual('A');
+      expect(makeNewUniqueStateName(['A'])).toEqual('B');
+      expect(makeNewUniqueStateName(['A', 'B'])).toEqual('C');
+      expect(makeNewUniqueStateName(['A', 'B', 'C'])).toEqual('D');
+      expect(makeNewUniqueStateName(['A', 'C'])).toEqual('B');
+    });
+
+    it('should generate new symbols starting with q + an index when there is no more option', () => {
+      expect(makeNewUniqueStateName([...STATES_NAMES])).toEqual('Q0');
+      expect(makeNewUniqueStateName([...STATES_NAMES, 'Q0'])).toEqual('Q1');
+      expect(makeNewUniqueStateName([...STATES_NAMES, 'Q0', 'Q1'])).toEqual(
+        'Q2'
+      );
     });
   });
 });

@@ -20,3 +20,17 @@ export default {
     return str === EPSILON;
   },
 };
+
+export function makeNewUniqueStateName(states = []) {
+  const possibleStates = R.difference(STATES_NAMES, states);
+
+  let index = 0;
+  let nextName = possibleStates.length ? R.head(possibleStates) : `Q${index}`;
+
+  while (true) {
+    if (!states.includes(nextName)) {
+      return nextName;
+    }
+    nextName = `Q${++index}`;
+  }
+}
