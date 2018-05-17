@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from 'material-ui/Button';
-import { Icon, IconButton, Input, Toolbar, Typography } from 'material-ui';
+import { Icon, IconButton, Toolbar, Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
-import SymbolValidator from '../logic/SymbolValidator';
-import Tooltip from 'material-ui/Tooltip';
 import RenameLanguage from './RenameLanguage';
+import OperationsMenuConnector from '../connectors/operations/MenuConnector';
 
 const styles = theme => ({
   navIconHide: {
@@ -34,7 +32,7 @@ class MainToolbar extends React.Component {
 
     const buttons = language && (
       <React.Fragment>
-        <Button color="inherit">Operações</Button>
+        <OperationsMenuConnector />
         <IconButton
           color="inherit"
           size="small"

@@ -9,27 +9,30 @@ import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
 import SymbolValidator from '../logic/SymbolValidator';
 import { convertFromExpressionToFSM } from '../logic/Expression/Parser';
 
+function _makeNewLanguage(name) {
+  return {
+    id: uuidv4(),
+    name: name,
+    empty: true,
+    valid: true,
+    grammar: undefined,
+    expression: undefined,
+    fsm: undefined,
+    userSentences: [],
+    enumerationLength: 10,
+  };
+}
+
 /**
  * @todo transfer the logic to manipulate the FSM to inside the FSM class, like remove/add symbols/states, etc
  */
 export default {
   state: [],
   reducers: {
-    create(state) {
-      return [
-        ...state,
-        {
-          id: uuidv4(),
-          name: `Nova linguagem #${state.length}`,
-          empty: true,
-          valid: true,
-          grammar: undefined,
-          expression: undefined,
-          fsm: undefined,
-          userSentences: [],
-          enumerationLength: 10,
-        },
-      ];
+    create(state, { language = undefined }) {
+      if (!language)
+        language = _makeNewLanguage(`Nova linguagem #${state.length}`);
+      return [...state, language];
     },
     _removeLanguage(state, { id }) {
       return reject(language => language.id === id, [...state]);
@@ -44,6 +47,21 @@ export default {
     async remove({ id }, rootState) {
       dispatch.languages._removeLanguage({ id });
       dispatch.selectedLanguage.select({ id: null });
+    },
+
+    async newLanguageFromFSM({ id, name, fsm, select }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language) {
+        if (fsm instanceof FSM) fsm = fsm.toPlainObject();
+
+        let newLanguage = _makeNewLanguage(name);
+        newLanguage.fsm = fsm;
+
+        dispatch.languages.create({ language: newLanguage });
+
+        if (select) dispatch.selectedLanguage.select({ id: newLanguage.id });
+      }
     },
 
     async addUserSentence({ id, sentence }, rootState) {

@@ -291,7 +291,7 @@ export default class FSM {
       alphabet: [...this.alphabet],
       initial: this.initial,
       finals: [...this.finals],
-      transitions: [...this.transitions],
+      transitions: [...R.clone(this.transitions)],
     };
   }
 
@@ -326,5 +326,15 @@ export default class FSM {
    */
   static makeEmptyFSM() {
     return new this([], [], [], null, []);
+  }
+
+  clone() {
+    return new FSM(
+      [...this.states],
+      [...this.alphabet],
+      [...R.clone(this.transitions)],
+      this.initial,
+      [...this.finals]
+    );
   }
 }

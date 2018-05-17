@@ -190,6 +190,12 @@ export function difference(fsm, fsm_) {
 
 // export function closure(fsm){} ??
 
+export function reverseWithSteps(fsm) {
+  let reversed = fsm.clone();
+  // reverse(reversed);
+  return [reversed, reversed, reversed];
+}
+
 export function reverse(fsm) {
   let initial = 'Q0';
   do {

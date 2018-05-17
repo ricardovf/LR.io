@@ -32,7 +32,7 @@ class FSMGraph extends React.Component {
           )
           .join('\n')}
         node [shape = point ]; start
-        start -> ${fsm.initial}
+        start -> "${fsm.initial}"
       }`;
 
     return (
@@ -45,14 +45,16 @@ class FSMGraph extends React.Component {
   }
 
   render() {
-    const { classes, fsm = null } = this.props;
+    const { classes, fsm = null, showTitle = true } = this.props;
 
     // Gotta return a div, otherwise React goes crazy with viz.js
     return (
       <div>
-        <Typography gutterBottom variant="headline" component="h2">
-          Grafo
-        </Typography>
+        {showTitle && (
+          <Typography gutterBottom variant="headline" component="h2">
+            Autômato
+          </Typography>
+        )}
 
         <div className={classes.graphContainer}>{this.renderDiagram(fsm)}</div>
       </div>
