@@ -3,6 +3,7 @@ import Button from 'material-ui/Button';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Divider from 'material-ui/Divider';
 import SelfOperationDialog from './SelfOperationDialog';
+import { reverseWithSteps } from '../../logic/FSM/Operator';
 
 class OperationsMenu extends React.Component {
   state = {
@@ -38,6 +39,16 @@ class OperationsMenu extends React.Component {
           title="Reverso"
           subtitle="Revertendo"
           open={operation === 'reverse'}
+          operation={reverseWithSteps}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
+        <SelfOperationDialog
+          title="Fechamento"
+          subtitle="Fechando"
+          operation={undefined}
+          open={operation === 'star'}
           handleCancel={this.handleClose}
           handleSave={handleSave}
           language={language}
@@ -70,7 +81,7 @@ class OperationsMenu extends React.Component {
           <MenuItem onClick={this.makeOperationHandler('reverse')}>
             Reverso
           </MenuItem>
-          <MenuItem onClick={this.makeOperationHandler('closing')}>
+          <MenuItem onClick={this.makeOperationHandler('star')}>
             Fechamento
           </MenuItem>
         </Menu>

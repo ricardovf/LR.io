@@ -13,6 +13,7 @@ import CodeDialog from './CodeDialog';
 const styles = () => ({
   card: {
     height: '100%',
+    overflow: 'auto',
   },
   icons: {
     float: 'right',

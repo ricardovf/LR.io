@@ -7,16 +7,27 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
-import { Icon } from 'material-ui';
-import Tooltip from 'material-ui/Tooltip';
-import IconButton from 'material-ui/IconButton';
+import { Typography } from 'material-ui';
 import { reverseWithSteps } from '../../logic/FSM/Operator';
 import FSM from '../../logic/FSM';
 import FSMGraph from '../FSMGraph';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
 
-const styles = () => ({});
+const styles = () => ({
+  graphContainer: {
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
+  modal: {
+    minHeight: '60%',
+    maxWidth: '700px',
+  },
+  stepsCaption: {
+    flexGrow: 1,
+    marginLeft: '16px',
+  },
+});
 
 class SelfOperationDialog extends React.Component {
   state = {
@@ -28,6 +39,7 @@ class SelfOperationDialog extends React.Component {
     super(props);
 
     this.handleNext = this.handleNext.bind(this);
+    this.handlePrevious = this.handlePrevious.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleSaveAndClose = this.handleSaveAndClose.bind(this);
   }
@@ -41,13 +53,14 @@ class SelfOperationDialog extends React.Component {
     ) {
       reset = true;
     } else if (nextProps.open === true) {
-      let reverseSteps = reverseWithSteps(
-        FSM.fromPlainObject(nextProps.language.fsm)
-      );
-      if (reverseSteps.length > 0) {
-        reverseSteps = R.map(fsm => fsm.toPlainObject(), reverseSteps);
+      let fsms = nextProps.operation
+        ? nextProps.operation(FSM.fromPlainObject(nextProps.language.fsm))
+        : [];
+      if (fsms.length > 0) {
+        fsms = R.map(fsm => fsm.toPlainObject(), fsms);
+
         return {
-          steps: reverseSteps,
+          steps: fsms,
           step: 1,
         };
       } else {
@@ -70,6 +83,12 @@ class SelfOperationDialog extends React.Component {
     }
   }
 
+  handlePrevious() {
+    if (Array.isArray(this.state.steps)) {
+      this.setState({ step: this.state.step - 1 });
+    }
+  }
+
   handleSaveAndClose() {
     const { language, title, handleCancel, handleSave } = this.props;
 
@@ -85,7 +104,7 @@ class SelfOperationDialog extends React.Component {
   }
 
   handleSave() {
-    const { language, title, handleCancel, handleSave } = this.props;
+    const { language, title, handleSave } = this.props;
 
     if (handleSave && language && Array.isArray(this.state.steps))
       handleSave(
@@ -100,57 +119,84 @@ class SelfOperationDialog extends React.Component {
     const { classes, title, subtitle, language, handleCancel } = this.props;
 
     let actionButton = (
-      <Button onClick={this.handleNext} color="primary" autoFocus>
+      <Button
+        variant="raised"
+        onClick={this.handleNext}
+        color="primary"
+        autoFocus
+      >
         Próximo
       </Button>
     );
 
-    let saveButton;
+    let saveButton, previousButton;
 
     if (Array.isArray(this.state.steps)) {
       if (this.state.step === this.state.steps.length)
         actionButton = (
-          <Button onClick={this.handleSaveAndClose} color="primary" autoFocus>
+          <Button
+            variant="raised"
+            onClick={this.handleSaveAndClose}
+            color="primary"
+            autoFocus
+          >
             Salvar
           </Button>
         );
-      else if (this.state.steps.length > 1)
+      else if (this.state.steps.length > 1) {
         saveButton = (
-          <Button onClick={this.handleSave} color="primary">
+          <Button onClick={this.handleSave} color="secondary">
             Salvar intermediário
           </Button>
         );
+      }
+
+      if (this.state.steps.length > 1 && this.state.step !== 1) {
+        previousButton = (
+          <Button onClick={this.handlePrevious} color="primary">
+            Anterior
+          </Button>
+        );
+      }
     }
 
     return (
       <Dialog
+        classes={{ paper: classes.modal }}
+        fullWidth
+        maxWidth={'md'}
         open={this.props.open}
         onClose={handleCancel}
         aria-labelledby="dialog-operation-title"
         aria-describedby="dialog-operation-description"
       >
-        <DialogTitle id="dialog-operation-title">{title}</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="dialog-operation-title">
+          {title}
           <DialogContentText id="dialog-operation-description">
             {subtitle} <strong>{language.name}</strong>
           </DialogContentText>
+        </DialogTitle>
+        <DialogContent>
           {Array.isArray(this.state.steps) && (
             <div>
-              <FSMGraph
-                showTitle={false}
-                fsm={this.state.steps[this.state.step - 1]}
-              />
-              <div>
-                Passo {this.state.step} de {this.state.steps.length}
+              <div className={classes.graphContainer}>
+                <FSMGraph
+                  showTitle={false}
+                  fsm={this.state.steps[this.state.step - 1]}
+                />
               </div>
             </div>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel} color="primary">
-            Cancelar
-          </Button>
+          {Array.isArray(this.state.steps) && (
+            <Typography variant="caption" className={classes.stepsCaption}>
+              Passo {this.state.step} de {this.state.steps.length}
+            </Typography>
+          )}
+          <Button onClick={handleCancel}>Cancelar</Button>
           {saveButton}
+          {previousButton}
           {actionButton}
         </DialogActions>
       </Dialog>

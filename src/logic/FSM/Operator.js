@@ -4,7 +4,7 @@ import { createPhiState } from './Minimizer';
 
 export function unionWithSteps(fsm, fsm_) {
   let automatas = [];
-  union(fsm, fsm_, automatas);
+  union(fsm.clone(), fsm_.clone(), automatas);
   return automatas;
 }
 
@@ -104,7 +104,7 @@ export function union(fsm, fsm_, automatas = []) {
 
 export function concatenationWithSteps(fsm, fsm_) {
   let automatas = [];
-  concatenation(fsm, fsm_, automatas);
+  concatenation(fsm.clone(), fsm_.clone(), automatas);
   return automatas;
 }
 
@@ -199,7 +199,7 @@ export function concatenation(fsm, fsm_, automatas = []) {
 
 export function intersectionWithSteps(fsm, fsm_) {
   let automatas = [];
-  intersection(fsm, fsm_, automatas);
+  intersection(fsm.clone(), fsm_.clone(), automatas);
   return automatas;
 }
 
@@ -298,7 +298,7 @@ export function intersection(fsm, fsm_, automatas = []) {
 
 export function differenceWithSteps(fsm, fsm_) {
   let automatas = [];
-  difference(fsm, fsm_, automatas);
+  difference(fsm.clone(), fsm_.clone(), automatas);
   return automatas;
 }
 
@@ -311,7 +311,7 @@ export function difference(fsm, fsm_, automatas = []) {
 
 export function reverseWithSteps(fsm) {
   let automatas = [];
-  reverse(fsm, automatas);
+  reverse(fsm.clone(), automatas);
   return automatas;
 }
 
@@ -329,7 +329,7 @@ export function reverse(fsm, automatas = []) {
       R.uniq(states),
       R.uniq(fsm.alphabet),
       R.uniq(transitions),
-      R.uniq(initial),
+      initial,
       R.uniq(finals)
     )
   );
@@ -341,7 +341,7 @@ export function reverse(fsm, automatas = []) {
       R.uniq(states),
       R.uniq(fsm.alphabet),
       R.uniq(transitions),
-      R.uniq(initial),
+      initial,
       R.uniq(finals)
     )
   );
@@ -376,7 +376,7 @@ export function reverse(fsm, automatas = []) {
         R.uniq(states),
         R.uniq(fsm.alphabet),
         R.uniq(transitions),
-        R.uniq(initial),
+        initial,
         R.uniq(finals)
       )
     );
@@ -391,7 +391,7 @@ export function reverse(fsm, automatas = []) {
 
 export function negationWithSteps(fsm) {
   let automatas = [];
-  negation(fsm, automatas);
+  negation(fsm.clone(), automatas);
   return automatas;
 }
 

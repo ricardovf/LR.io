@@ -6,9 +6,9 @@ import { Typography } from 'material-ui';
 
 const styles = () => ({
   graphContainer: {
-    overflow: 'auto',
-    maxHeight: '1200px',
-    maxWidth: '100%',
+    // 'overflow-y': 'auto',
+    // maxHeight: '1200px',
+    // maxWidth: '100%',
   },
 });
 
@@ -21,18 +21,20 @@ class FSMGraph extends React.Component {
       digraph fsm {
         rankdir=LR;
         size="8,5"
-        node [shape = doublecircle]; ${fsm.finals.join(' ')};
+        node [shape = doublecircle]; ${fsm.finals
+          .map(s => JSON.stringify(s))
+          .join(' ')};
         node [shape = circle];
         ${fsm.transitions
           .map(
             transition =>
-              `${transition.from} -> ${transition.to} [ label = "${
-                transition.when
-              }" ];`
+              `${JSON.stringify(transition.from)} -> ${JSON.stringify(
+                transition.to
+              )} [ label = ${JSON.stringify(transition.when)} ];`
           )
           .join('\n')}
         node [shape = point ]; start
-        start -> "${fsm.initial}"
+        start -> ${JSON.stringify(fsm.initial)}
       }`;
 
     return (
