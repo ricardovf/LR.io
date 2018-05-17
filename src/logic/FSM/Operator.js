@@ -2,11 +2,27 @@ import FSM from '../FSM';
 import * as R from 'ramda';
 import { createPhiState } from './Minimizer';
 
-export function union(fsm, fsm_) {
+export function unionWithSteps(fsm, fsm_) {
+  let automatas = [];
+  union(fsm, fsm_, automatas);
+  return automatas;
+}
+
+export function union(fsm, fsm_, automatas = []) {
   let initial = 'S';
   let states = [initial];
   let transitions = [];
   let finals = [];
+  let alphabet = fsm.alphabet.concat(fsm_.alphabet);
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(alphabet),
+      R.uniq(transitions),
+      initial,
+      R.uniq(finals)
+    )
+  );
 
   for (let symbol of fsm.alphabet) {
     for (let state of fsm.states) {
@@ -30,6 +46,15 @@ export function union(fsm, fsm_) {
           transitions.push(path);
         }
       }
+      automatas.push(
+        new FSM(
+          R.uniq(states),
+          R.uniq(alphabet),
+          R.uniq(transitions),
+          initial,
+          R.uniq(finals)
+        )
+      );
     }
   }
 
@@ -56,25 +81,60 @@ export function union(fsm, fsm_) {
           transitions.push({ from: newState, to: path.to + '`', when: symbol });
         }
       }
+      automatas.push(
+        new FSM(
+          R.uniq(states),
+          R.uniq(alphabet),
+          R.uniq(transitions),
+          initial,
+          R.uniq(finals)
+        )
+      );
     }
   }
 
   return new FSM(
     R.uniq(states),
-    R.uniq(fsm.alphabet.concat(fsm_.alphabet)),
+    R.uniq(alphabet),
     R.uniq(transitions),
     initial,
     R.uniq(finals)
   );
 }
 
-export function concatenation(fsm, fsm_) {
+export function concatenationWithSteps(fsm, fsm_) {
+  let automatas = [];
+  concatenation(fsm, fsm_, automatas);
+  return automatas;
+}
+
+export function concatenation(fsm, fsm_, automatas = []) {
   let initial = fsm.initial;
   let states = fsm.states;
   let transitions = fsm.transitions;
+  let alphabet = fsm.alphabet.concat(fsm_.alphabet);
   let finals = [];
 
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(alphabet),
+      R.uniq(transitions),
+      initial,
+      R.uniq(finals)
+    )
+  );
   if (fsm_.finals.includes(fsm_.initial)) finals = fsm.finals;
+
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(alphabet),
+      R.uniq(transitions),
+      initial,
+      R.uniq(finals)
+    )
+  );
 
   for (let symbol of fsm_.alphabet) {
     for (let state of fsm_.states) {
@@ -102,6 +162,15 @@ export function concatenation(fsm, fsm_) {
             });
           }
         }
+        automatas.push(
+          new FSM(
+            R.uniq(states),
+            R.uniq(alphabet),
+            R.uniq(transitions),
+            initial,
+            R.uniq(finals)
+          )
+        );
       }
       if (state != fsm_.initial) states.push(newState);
       if (fsm_.finals.includes(state) && state != fsm_.initial)
@@ -109,21 +178,47 @@ export function concatenation(fsm, fsm_) {
     }
   }
 
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(alphabet),
+      R.uniq(transitions),
+      initial,
+      R.uniq(finals)
+    )
+  );
+
   return new FSM(
     R.uniq(states.concat(fsm.states)),
-    R.uniq(fsm.alphabet.concat(fsm_.alphabet)),
+    R.uniq(alphabet),
     R.uniq(transitions),
     fsm.initial,
     R.uniq(finals)
   );
 }
 
-export function intersection(fsm, fsm_) {
+export function intersectionWithSteps(fsm, fsm_) {
+  let automatas = [];
+  intersection(fsm, fsm_, automatas);
+  return automatas;
+}
+
+export function intersection(fsm, fsm_, automatas = []) {
   let initial = fsm.initial + fsm_.initial;
   let states = [];
   let alphabet = R.uniq(fsm.alphabet.concat(fsm_.alphabet));
   let transitions = [];
   let finals = [];
+
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(alphabet),
+      R.uniq(transitions),
+      initial,
+      R.uniq(finals)
+    )
+  );
 
   for (let symbol of alphabet) {
     for (let state of fsm.states) {
@@ -166,11 +261,29 @@ export function intersection(fsm, fsm_) {
             }
           }
         }
+        automatas.push(
+          new FSM(
+            R.uniq(states),
+            R.uniq(alphabet),
+            R.uniq(transitions),
+            initial,
+            R.uniq(finals)
+          )
+        );
         if (fsm.finals.includes(state) && fsm_.finals.includes(state_))
           finals.push(newState);
         states.push(newState);
       }
     }
+    automatas.push(
+      new FSM(
+        R.uniq(states),
+        R.uniq(alphabet),
+        R.uniq(transitions),
+        initial,
+        R.uniq(finals)
+      )
+    );
   }
 
   let newFsm = new FSM(
@@ -183,20 +296,26 @@ export function intersection(fsm, fsm_) {
   return newFsm;
 }
 
-export function difference(fsm, fsm_) {
+export function differenceWithSteps(fsm, fsm_) {
+  let automatas = [];
+  difference(fsm, fsm_, automatas);
+  return automatas;
+}
+
+export function difference(fsm, fsm_, automatas = []) {
   negation(fsm_);
-  return intersection(fsm, fsm_);
+  return intersection(fsm, fsm_, automatas);
 }
 
 // export function closure(fsm){} ??
 
 export function reverseWithSteps(fsm) {
-  let reversed = fsm.clone();
-  // reverse(reversed);
-  return [reversed, reversed, reversed];
+  let automatas = [];
+  reverse(fsm, automatas);
+  return automatas;
 }
 
-export function reverse(fsm) {
+export function reverse(fsm, automatas = []) {
   let initial = 'Q0';
   do {
     initial += '`';
@@ -204,9 +323,28 @@ export function reverse(fsm) {
   let transitions = [];
   let finals = [fsm.initial];
   let states = [initial];
+  automatas.push(fsm);
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(fsm.alphabet),
+      R.uniq(transitions),
+      R.uniq(initial),
+      R.uniq(finals)
+    )
+  );
 
   for (let state of fsm.states)
     if (!fsm.finals.includes(state)) states.push(state);
+  automatas.push(
+    new FSM(
+      R.uniq(states),
+      R.uniq(fsm.alphabet),
+      R.uniq(transitions),
+      R.uniq(initial),
+      R.uniq(finals)
+    )
+  );
 
   for (let transition of fsm.transitions) {
     if (
@@ -233,20 +371,39 @@ export function reverse(fsm) {
         when: transition.when,
       });
     }
+    automatas.push(
+      new FSM(
+        R.uniq(states),
+        R.uniq(fsm.alphabet),
+        R.uniq(transitions),
+        R.uniq(initial),
+        R.uniq(finals)
+      )
+    );
   }
 
   fsm.transitions = R.uniq(transitions);
   fsm.finals = R.uniq(finals);
   fsm.initial = initial;
   fsm.states = states;
+  automatas.push(fsm);
 }
 
-export function negation(fsm) {
+export function negationWithSteps(fsm) {
+  let automatas = [];
+  negation(fsm, automatas);
+  return automatas;
+}
+
+export function negation(fsm, automatas = []) {
+  automatas.push(fsm);
   if (fsm.hasIndefinition()) createPhiState(fsm);
   if (!fsm.isDeterministic()) fsm.determinate();
+  automatas.push(fsm);
   for (let state of fsm.states) {
     if (fsm.finals.includes(state))
       fsm.finals.splice(fsm.finals.indexOf(state), 1);
     else fsm.finals.push(state);
+    automatas.push(fsm);
   }
 }
