@@ -102,8 +102,6 @@ class TwoLanguagesOperationDialog extends React.Component {
       if (fsms.length > 0) {
         fsms = R.map(fsm => fsm.toPlainObject(), fsms);
 
-        console.log(fsms);
-
         this.setState({
           steps: fsms,
           step: 1,
@@ -245,13 +243,17 @@ class TwoLanguagesOperationDialog extends React.Component {
       }
     }
 
+    let selectedLanguage = R.find(R.propEq('id', this.state.selectedLanguage))(
+      this.props.languages
+    );
+
     return (
       <React.Fragment>
         <DialogTitle id="dialog-operation-title">
           {title}
           <DialogContentText id="dialog-operation-description">
             {subtitle} <strong>{language.name}</strong> com{' '}
-            <strong>{this.state.selectedLanguage.name}</strong>
+            <strong>{selectedLanguage.name}</strong>
           </DialogContentText>
         </DialogTitle>
         <DialogContent>

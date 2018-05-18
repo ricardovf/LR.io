@@ -334,8 +334,12 @@ export function reverse(fsm, automatas = []) {
     )
   );
 
-  for (let state of fsm.states)
-    if (!fsm.finals.includes(state)) states.push(state);
+  for (let state of fsm.states) {
+    if (!fsm.finals.includes(state)) {
+      states.push(state);
+    }
+  }
+
   automatas.push(
     new FSM(
       R.uniq(states),
