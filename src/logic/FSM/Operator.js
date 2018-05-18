@@ -238,18 +238,20 @@ export function intersection(fsm, fsm_, automatas = []) {
           for (let path_ of paths_) {
             transitions.push({
               from: state + path_.from,
-              to: state + path_.to,
+              to: 'PHI',
               when: symbol,
             });
           }
+          states.push('PHI');
         } else if (paths_.length == 0) {
           for (let path of paths) {
             transitions.push({
               from: path.from + state_,
-              to: path.to + state_,
+              to: 'PHI',
               when: symbol,
             });
           }
+          states.push('PHI');
         } else {
           for (let path of paths) {
             for (let path_ of paths_) {
