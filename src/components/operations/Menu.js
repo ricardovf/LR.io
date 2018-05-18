@@ -7,6 +7,7 @@ import {
   concatenationWithSteps,
   differenceWithSteps,
   intersectionWithSteps,
+  negationWithSteps,
   reverseWithSteps,
   unionWithSteps,
 } from '../../logic/FSM/Operator';
@@ -42,6 +43,15 @@ class OperationsMenu extends React.Component {
 
     return (
       <div>
+        <SelfOperationDialog
+          title="Complemento"
+          subtitle="Complementando"
+          open={operation === 'negation'}
+          operation={negationWithSteps}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
         <SelfOperationDialog
           title="Reverso"
           subtitle="Revertendo"
@@ -129,6 +139,9 @@ class OperationsMenu extends React.Component {
             Interseção
           </MenuItem>
           <Divider />
+          <MenuItem onClick={this.makeOperationHandler('negation')}>
+            Complemento
+          </MenuItem>
           <MenuItem onClick={this.makeOperationHandler('reverse')}>
             Reverso
           </MenuItem>
