@@ -129,7 +129,6 @@ export function isInSameSet(state, state_, equivalent) {
     if (states.includes(state) && states.includes(state_)) {
       return true;
     } else if (!states.includes(state) && !states.includes(state_)) {
-      continue;
     } else {
       return false;
     }

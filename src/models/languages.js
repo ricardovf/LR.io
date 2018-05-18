@@ -1,10 +1,10 @@
 import uuidv4 from 'uuid/v4';
+import * as R from 'ramda';
 import { find, propEq, reject } from 'ramda';
 import { dispatch } from '../store';
 import _ from 'lodash';
 import Grammar from '../logic/Grammar';
 import { multiTrim, multiTrimNoLines } from '../logic/helpers';
-import * as R from 'ramda';
 import FSM, { GENERATE_MAX_SIZE } from '../logic/FSM';
 import SymbolValidator from '../logic/SymbolValidator';
 import { convertFromExpressionToFSM } from '../logic/Expression/Parser';

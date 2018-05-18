@@ -1,6 +1,3 @@
-import Grammar from '../Grammar';
-import { EPSILON } from '../SymbolValidator';
-import * as R from 'ramda';
 import FSM from '../FSM';
 
 describe('FSM', () => {

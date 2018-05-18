@@ -1,7 +1,7 @@
 import GrammarParser from './Grammar/GrammarParser';
 import FSM from './FSM';
 import * as R from 'ramda';
-import SymbolValidator, { EPSILON, ACCEPT_STATE } from './SymbolValidator';
+import SymbolValidator, { ACCEPT_STATE, EPSILON } from './SymbolValidator';
 
 const parser = new GrammarParser();
 
@@ -31,33 +31,41 @@ export default class Grammar {
         (this.Vn.length > 0 &&
           R.filter(SymbolValidator.isValidNonTerminal, this.Vn).length === 0)
       )
-        throw `Invalid non terminal detected: ${this.Vn.join(', ')}`;
+        throw new Error(`Invalid non terminal detected: ${this.Vn.join(', ')}`);
 
       if (
         !Array.isArray(this.Vt) ||
         (this.Vt.length > 0 &&
           R.filter(SymbolValidator.isValidTerminal, this.Vt).length === 0)
       )
-        throw `Invalid terminal detected: ${this.Vt.join(', ')}`;
+        throw new Error(`Invalid terminal detected: ${this.Vt.join(', ')}`);
 
       if (
         !SymbolValidator.isValidNonTerminal(this.S) ||
         !this.Vn.includes(this.S)
       )
-        throw 'Initial symbol is invalid non terminal or is not in Vn';
+        throw new Error(
+          'Initial symbol is invalid non terminal or is not in Vn'
+        );
 
       if (!(typeof this.P === 'object'))
-        throw `The productions should be an object with the form: {S: ['a', 'aS']}`;
+        throw new Error(
+          `The productions should be an object with the form: {S: ['a', 'aS']}`
+        );
 
       if (this.P[this.S] === undefined)
-        throw `There should be an ${this.P} -> x | xY | & production`;
+        throw new Error(
+          `There should be an ${this.P} -> x | xY | & production`
+        );
 
       let hasEpsilonOnInitialNonTerminal = false;
 
       R.forEachObjIndexed((productions, producer) => {
         if (producer !== this.S) {
           if (productions.includes(EPSILON))
-            throw `There should not be a production of type ${producer} -> & (epsilon)`;
+            throw new Error(
+              `There should not be a production of type ${producer} -> & (epsilon)`
+            );
         } else if (productions.includes(EPSILON)) {
           hasEpsilonOnInitialNonTerminal = true;
         }
@@ -67,7 +75,9 @@ export default class Grammar {
         R.forEachObjIndexed((productions, producer) => {
           R.forEach(production => {
             if (production.length === 2 && production.charAt(1) === this.S)
-              throw `There should not be a production of type ${producer} -> x${producer} when there is & (epsilon)`;
+              throw new Error(
+                `There should not be a production of type ${producer} -> x${producer} when there is & (epsilon)`
+              );
           }, productions);
         }, this.P);
       }
@@ -84,7 +94,9 @@ export default class Grammar {
         R.forEach(production => {
           if (production.length === 1) {
             if (!alphabet.includes(production))
-              throw `The production ${producer} -> ${production} is invalid because ${production} is not on terminals/alphabet list`;
+              throw new Error(
+                `The production ${producer} -> ${production} is invalid because ${production} is not on terminals/alphabet list`
+              );
 
             // @todo review format
             transitions.push({
@@ -94,14 +106,18 @@ export default class Grammar {
             });
           } else if (production.length === 2) {
             if (!alphabet.includes(production.charAt(0)))
-              throw `The production ${producer} -> ${production} is invalid because ${production.charAt(
-                0
-              )} is not on terminals/alphabet list`;
+              throw new Error(
+                `The production ${producer} -> ${production} is invalid because ${production.charAt(
+                  0
+                )} is not on terminals/alphabet list`
+              );
 
             if (!states.includes(production.charAt(1)))
-              throw `The production ${producer} -> ${production} is invalid because ${production.charAt(
-                1
-              )} is not on non terminals list`;
+              throw new Error(
+                `The production ${producer} -> ${production} is invalid because ${production.charAt(
+                  1
+                )} is not on non terminals list`
+              );
 
             transitions.push({
               from: producer,
@@ -130,9 +146,9 @@ export default class Grammar {
   getFormattedText() {
     let P = this.P;
     let P_ = '';
-    let oldNonTerminal = '';
-    let newNonTerminal = '';
-    let production = '';
+    // let oldNonTerminal = '';
+    // let newNonTerminal = '';
+    // let production = '';
     for (let nonTerminal in P) {
       P_ += nonTerminal + ' -> ';
       for (let production of P[nonTerminal]) {

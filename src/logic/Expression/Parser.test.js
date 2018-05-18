@@ -8,7 +8,6 @@ import Parser, {
 } from './Parser';
 import { multiTrimNoLines } from '../helpers';
 import * as R from 'ramda';
-import { ACCEPT_STATE, EPSILON } from '../SymbolValidator';
 
 describe('Expression', () => {
   describe('Parser', () => {

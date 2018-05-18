@@ -16,7 +16,6 @@ import SymbolValidator from '../logic/SymbolValidator';
 
 import IconButton from 'material-ui/IconButton';
 import TransitionEdit from './TransitionEdit';
-import CodeDialog from './CodeDialog';
 
 const NEW_SYMBOL = 'Novo símbolo';
 const NEW_STATE = 'Novo estado';

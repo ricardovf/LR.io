@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import { EPSILON } from '../SymbolValidator';
 import FSM, { GENERATE_MAX_SIZE } from '../FSM';
 
 /**

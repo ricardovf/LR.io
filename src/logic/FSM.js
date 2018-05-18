@@ -1,7 +1,7 @@
 import { EPSILON } from './SymbolValidator';
 import Grammar from './Grammar';
 import * as R from 'ramda';
-import { isDeterministic, determinate } from './FSM/Determinator';
+import { determinate, isDeterministic } from './FSM/Determinator';
 import { isMinimal, minimize } from './FSM/Minimizer';
 import {
   eliminateEpsilonTransitions,

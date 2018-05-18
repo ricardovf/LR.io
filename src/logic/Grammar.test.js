@@ -1,5 +1,5 @@
 import Grammar from './Grammar';
-import { EPSILON, ACCEPT_STATE } from './SymbolValidator';
+import { ACCEPT_STATE, EPSILON } from './SymbolValidator';
 
 describe('Grammar', () => {
   describe('fromText', () => {

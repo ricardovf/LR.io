@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 import { connect } from 'react-redux';
 import { find, propEq } from 'ramda';
 import EnumerationCard from '../components/EnumerationCard';

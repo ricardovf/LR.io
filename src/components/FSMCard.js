@@ -5,7 +5,6 @@ import { withStyles } from 'material-ui/styles';
 import Card, { CardContent } from 'material-ui/Card';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import * as R from 'ramda';
 import FSM from '../logic/FSM';
 import { SnackbarContent } from 'material-ui/Snackbar';
 import Button from 'material-ui/Button';

@@ -1,11 +1,11 @@
 import FSM from '../FSM';
 import {
-  union,
   concatenation,
-  negation,
-  intersection,
-  reverse,
   difference,
+  intersection,
+  negation,
+  reverse,
+  union,
 } from './Operator';
 
 describe('FSM', () => {

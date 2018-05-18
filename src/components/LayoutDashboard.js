@@ -6,7 +6,6 @@ import Grid from 'material-ui/Grid';
 import GrammarCardConnector from '../connectors/GrammarCardConnector';
 import ExpressionCardConnector from '../connectors/ExpressionCardConnector';
 import FSMCardConnector from '../connectors/FSMCardConnector';
-import { Card, CardContent, Typography } from 'material-ui';
 import RecognizeCardConnector from '../connectors/RecognizeCardConnector';
 import EnumerationCardConnector from '../connectors/EnumerationCardConnector';
 import TableOrGraphCardConnector from '../connectors/TableOrGraphCardConnector';

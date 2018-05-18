@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
 import ListSubheader from 'material-ui/List/ListSubheader';
-import { Icon, withStyles } from 'material-ui';
+import { withStyles } from 'material-ui';
 
 const isSelected = (item, language) =>
   language !== undefined && language.id === item.id;
@@ -13,7 +13,6 @@ class LanguagesMenuList extends React.Component {
     const {
       language,
       languages,
-      classes,
       selectLanguageOnClick,
       newLanguageOnClick,
     } = this.props;

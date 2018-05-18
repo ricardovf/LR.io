@@ -1,9 +1,6 @@
 import FSM from '../FSM';
 import { multiTrimNoLines } from '../helpers';
-import SymbolValidator, {
-  EPSILON,
-  makeNewUniqueStateName,
-} from '../SymbolValidator';
+import SymbolValidator, { makeNewUniqueStateName } from '../SymbolValidator';
 import Node from './Node';
 import * as R from 'ramda';
 

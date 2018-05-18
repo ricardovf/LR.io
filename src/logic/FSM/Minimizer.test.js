@@ -1,14 +1,11 @@
-import Grammar from '../Grammar';
-import { EPSILON } from '../SymbolValidator';
 import FSM from '../FSM';
 import {
-  eliminateUnreachableStates,
-  eliminateDeadStates,
-  detectReachableStates,
-  detectAliveStates,
   createPhiState,
+  detectAliveStates,
+  detectReachableStates,
+  eliminateDeadStates,
+  eliminateUnreachableStates,
   isMinimal,
-  minimize,
 } from './Minimizer';
 
 describe('FSM', () => {
