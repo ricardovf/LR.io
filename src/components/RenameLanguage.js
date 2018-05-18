@@ -31,7 +31,7 @@ class RenameLanguage extends React.Component {
       <Tooltip title="Renomear a linguagem" placement="bottom">
         <Input
           disableUnderline
-          // fullWidth
+          fullWidth
           placeholder="Nome da linguagem"
           margin="none"
           className={classes.input}
