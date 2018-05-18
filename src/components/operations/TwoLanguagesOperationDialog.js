@@ -7,7 +7,7 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
-import { Typography } from 'material-ui';
+import { FormControlLabel, Radio, RadioGroup, Typography } from 'material-ui';
 import FSM from '../../logic/FSM';
 import FSMGraph from '../FSMGraph';
 import * as R from 'ramda';
@@ -28,10 +28,12 @@ const styles = () => ({
   },
 });
 
-class SelfOperationDialog extends React.Component {
+class TwoLanguagesOperationDialog extends React.Component {
   state = {
     steps: undefined,
     step: undefined,
+    selectedLanguage: undefined,
+    confirmed: undefined,
   };
 
   constructor(props) {
@@ -41,6 +43,8 @@ class SelfOperationDialog extends React.Component {
     this.handlePrevious = this.handlePrevious.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleSaveAndClose = this.handleSaveAndClose.bind(this);
+    this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
+    this.handleConfirmSelection = this.handleConfirmSelection.bind(this);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -52,25 +56,15 @@ class SelfOperationDialog extends React.Component {
     ) {
       reset = true;
     } else if (nextProps.open === true) {
-      let fsms = nextProps.operation
-        ? nextProps.operation(FSM.fromPlainObject(nextProps.language.fsm))
-        : [];
-      if (fsms.length > 0) {
-        fsms = R.map(fsm => fsm.toPlainObject(), fsms);
-
-        return {
-          steps: fsms,
-          step: 1,
-        };
-      } else {
-        reset = true;
-      }
+      reset = true;
     }
 
     if (reset)
       return {
         steps: undefined,
         step: undefined,
+        selectedLanguage: undefined,
+        confirmed: undefined,
       };
 
     return null;
@@ -79,6 +73,42 @@ class SelfOperationDialog extends React.Component {
   handleNext() {
     if (Array.isArray(this.state.steps)) {
       this.setState({ step: this.state.step + 1 });
+    }
+  }
+
+  handleSelectLanguage(event) {
+    this.setState({ selectedLanguage: event.target.value });
+  }
+
+  handleConfirmSelection() {
+    this.setState({ confirmed: true });
+
+    let selectedLanguage = R.find(R.propEq('id', this.state.selectedLanguage))(
+      this.props.languages
+    );
+
+    if (
+      this.props.operation &&
+      this.props.language &&
+      this.props.language.fsm &&
+      selectedLanguage &&
+      selectedLanguage.fsm
+    ) {
+      let fsms = this.props.operation(
+        FSM.fromPlainObject(this.props.language.fsm),
+        FSM.fromPlainObject(selectedLanguage.fsm)
+      );
+
+      if (fsms.length > 0) {
+        fsms = R.map(fsm => fsm.toPlainObject(), fsms);
+
+        console.log(fsms);
+
+        this.setState({
+          steps: fsms,
+          step: 1,
+        });
+      }
     }
   }
 
@@ -114,7 +144,63 @@ class SelfOperationDialog extends React.Component {
       );
   }
 
-  render() {
+  _makeSelectorDialogContent() {
+    const {
+      title,
+      actionSubtitle,
+      language,
+      languages,
+      handleCancel,
+    } = this.props;
+
+    let actionButton = (
+      <Button
+        variant="raised"
+        onClick={this.handleConfirmSelection}
+        color="primary"
+        autoFocus
+        disabled={!this.state.selectedLanguage}
+      >
+        Continuar
+      </Button>
+    );
+
+    return (
+      <React.Fragment>
+        <DialogTitle id="dialog-operation-title">
+          {title}
+          <DialogContentText id="dialog-operation-description">
+            Selecione uma linguagem para {actionSubtitle}{' '}
+            <strong>{language.name}</strong>
+          </DialogContentText>
+        </DialogTitle>
+        <DialogContent>
+          <RadioGroup
+            aria-label="selectedLanguage"
+            name="selectedLanguage"
+            onChange={this.handleSelectLanguage}
+            value={this.state.selectedLanguage}
+          >
+            {languages &&
+              languages.map(radioLanguage => (
+                <FormControlLabel
+                  value={radioLanguage.id}
+                  key={radioLanguage.id}
+                  control={<Radio />}
+                  label={radioLanguage.name}
+                />
+              ))}
+          </RadioGroup>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancelar</Button>
+          {actionButton}
+        </DialogActions>
+      </React.Fragment>
+    );
+  }
+
+  _makeStepsDialogContent() {
     const { classes, title, subtitle, language, handleCancel } = this.props;
 
     let actionButton = (
@@ -160,19 +246,12 @@ class SelfOperationDialog extends React.Component {
     }
 
     return (
-      <Dialog
-        classes={{ paper: classes.modal }}
-        fullWidth
-        maxWidth={'md'}
-        open={this.props.open}
-        onClose={handleCancel}
-        aria-labelledby="dialog-operation-title"
-        aria-describedby="dialog-operation-description"
-      >
+      <React.Fragment>
         <DialogTitle id="dialog-operation-title">
           {title}
           <DialogContentText id="dialog-operation-description">
-            {subtitle} <strong>{language.name}</strong>
+            {subtitle} <strong>{language.name}</strong> com{' '}
+            <strong>{this.state.selectedLanguage.name}</strong>
           </DialogContentText>
         </DialogTitle>
         <DialogContent>
@@ -198,16 +277,36 @@ class SelfOperationDialog extends React.Component {
           {previousButton}
           {actionButton}
         </DialogActions>
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    const { classes, handleCancel } = this.props;
+
+    return (
+      <Dialog
+        classes={{ paper: classes.modal }}
+        fullWidth
+        maxWidth={'md'}
+        open={this.props.open}
+        onClose={handleCancel}
+        aria-labelledby="dialog-operation-title"
+        aria-describedby="dialog-operation-description"
+      >
+        {this.state.selectedLanguage && this.state.confirmed
+          ? this._makeStepsDialogContent()
+          : this._makeSelectorDialogContent()}
       </Dialog>
     );
   }
 }
 
-SelfOperationDialog.propTypes = {
+TwoLanguagesOperationDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   language: PropTypes.object,
   handleCancel: PropTypes.func,
   handleSave: PropTypes.func,
 };
 
-export default withStyles(styles)(SelfOperationDialog);
+export default withStyles(styles)(TwoLanguagesOperationDialog);

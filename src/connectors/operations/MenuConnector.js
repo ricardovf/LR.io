@@ -7,6 +7,7 @@ const mapState = state => {
   const language = find(propEq('id', state.selectedLanguage))(state.languages);
   return {
     language,
+    languages: state.languages,
   };
 };
 

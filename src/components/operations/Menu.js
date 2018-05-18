@@ -3,7 +3,14 @@ import Button from 'material-ui/Button';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Divider from 'material-ui/Divider';
 import SelfOperationDialog from './SelfOperationDialog';
-import { reverseWithSteps } from '../../logic/FSM/Operator';
+import {
+  concatenationWithSteps,
+  differenceWithSteps,
+  intersectionWithSteps,
+  reverseWithSteps,
+  unionWithSteps,
+} from '../../logic/FSM/Operator';
+import TwoLanguagesOperationDialog from './TwoLanguagesOperationDialog';
 
 class OperationsMenu extends React.Component {
   state = {
@@ -27,7 +34,7 @@ class OperationsMenu extends React.Component {
 
   render() {
     const { anchorEl, operation } = this.state;
-    const { language, handleSave } = this.props;
+    const { language, languages, handleSave } = this.props;
 
     if (!language || !language.fsm) {
       return '';
@@ -53,6 +60,50 @@ class OperationsMenu extends React.Component {
           handleSave={handleSave}
           language={language}
         />
+        <TwoLanguagesOperationDialog
+          title="Concatenação"
+          subtitle="Concatenando"
+          actionSubtitle="concatenar com"
+          operation={concatenationWithSteps}
+          open={operation === 'concatenation'}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+          languages={languages}
+        />
+        <TwoLanguagesOperationDialog
+          title="Diferença"
+          subtitle="Diferenciando"
+          actionSubtitle="calcular a diferença de"
+          operation={differenceWithSteps}
+          open={operation === 'difference'}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+          languages={languages}
+        />
+        <TwoLanguagesOperationDialog
+          title="União"
+          subtitle="Unindo"
+          actionSubtitle="unir com"
+          operation={unionWithSteps}
+          open={operation === 'union'}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+          languages={languages}
+        />
+        <TwoLanguagesOperationDialog
+          title="Interseção"
+          subtitle="interseccionando"
+          actionSubtitle="intersectar com"
+          operation={intersectionWithSteps}
+          open={operation === 'intersection'}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+          languages={languages}
+        />
         <Button
           color="inherit"
           aria-owns={anchorEl ? 'operations-menu' : null}
@@ -67,7 +118,7 @@ class OperationsMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.makeOperationHandler('concat')}>
+          <MenuItem onClick={this.makeOperationHandler('concatenation')}>
             Concatenar
           </MenuItem>
           <MenuItem onClick={this.makeOperationHandler('difference')}>

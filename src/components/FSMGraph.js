@@ -23,7 +23,7 @@ class FSMGraph extends React.Component {
         size="8,5"
         node [shape = doublecircle]; ${fsm.finals
           .map(s => JSON.stringify(s))
-          .join(' ')};
+          .join(' ') + (fsm.finals.length > 0 ? ';' : '')}
         node [shape = circle];
         ${fsm.transitions
           .map(
