@@ -323,7 +323,7 @@ export function reverse(fsm, automatas = []) {
   let transitions = [];
   let finals = [fsm.initial];
   let states = [initial];
-  automatas.push(fsm);
+  automatas.push(fsm.clone());
   automatas.push(
     new FSM(
       R.uniq(states),
