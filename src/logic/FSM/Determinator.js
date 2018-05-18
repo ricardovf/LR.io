@@ -11,12 +11,10 @@ import { EPSILON } from '../SymbolValidator';
 export function isDeterministic(fsm) {
   if (!fsm instanceof FSM)
     throw new Error(`Received ${fsm} instead of an FSM instance.`);
-
   if (Array.isArray(fsm.transitions)) {
     let groupByFromAndWhen = R.groupBy(transition => {
       return transition.from + transition.when;
     })(fsm.transitions);
-
     let epsilons = R.filter(R.whereEq({ when: EPSILON }))(fsm.transitions);
 
     for (let epsilonTransition of epsilons) {

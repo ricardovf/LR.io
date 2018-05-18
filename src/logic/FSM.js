@@ -155,6 +155,7 @@ export default class FSM {
         if (paths.length == 0) return true;
       }
     }
+
     return false;
   }
 

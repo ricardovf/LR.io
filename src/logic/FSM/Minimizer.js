@@ -87,6 +87,7 @@ export function createPhiState(fsm) {
 
 export function isMinimal(fsm) {
   if (fsm.hasIndefinition() || !fsm.isDeterministic()) return false;
+
   let f = [fsm.finals];
   let fk = [fsm.nonFinalStates()];
   let equivalents = [f, fk];
@@ -165,9 +166,11 @@ export function minimize(fsm) {
               let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
                 fsm.transitions
               ).pop();
-              if (!isInSameSet(s.to, s_.to, equivalent)) {
-                createNewSet(states, equivalent, s_.from);
-                break;
+              if (s !== undefined && s_ !== undefined) {
+                if (!isInSameSet(s.to, s_.to, equivalent)) {
+                  createNewSet(states, equivalent, s_.from);
+                  break;
+                }
               }
             }
           }
@@ -216,13 +219,15 @@ export function createNewTransition(fsm, equivalents, newStates) {
       for (let symbol of fsm.alphabet) {
         let state = R.filter(
           R.whereEq({ from: equivalents[i][j][0], when: symbol })
-        )(fsm.transitions).pop().to;
-        let l = findNewStateEquivalent(state, equivalents);
-        newTransitions.push({
-          from: newStates[k],
-          to: newStates[l],
-          when: symbol,
-        });
+        )(fsm.transitions).pop();
+        if (state !== undefined) {
+          let l = findNewStateEquivalent(state.to, equivalents);
+          newTransitions.push({
+            from: newStates[k],
+            to: newStates[l],
+            when: symbol,
+          });
+        }
       }
       ++k;
     }
