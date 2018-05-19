@@ -144,6 +144,10 @@ export default class Grammar {
   }
 
   getFormattedText() {
+    if (!this.S || !this.P) {
+      return '';
+    }
+
     let P = this.P;
 
     // make sure that the first production is first
