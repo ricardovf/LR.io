@@ -212,7 +212,7 @@ export default {
       }
     },
 
-    renameLanguage({ id, name }, rootState) {
+    renameLanguage: _.debounce(({ id, name }, rootState) => {
       let language = find(propEq('id', id))(rootState.languages);
 
       if (language && typeof name === 'string' && name.trim().length > 0) {
@@ -223,7 +223,7 @@ export default {
 
         dispatch.languages._updateLanguage({ id, language });
       }
-    },
+    }, 250),
 
     addNewState({ id, state }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
