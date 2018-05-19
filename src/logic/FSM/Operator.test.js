@@ -29,7 +29,9 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = union(fsm, fsm_);
-      expect(newFsm.states.length).toBe(3);
+      expect(await newFsm.recognize('01')).toBeTruthy();
+      expect(await newFsm.recognize('a')).toBeTruthy();
+      expect(await newFsm.recognize('a1')).toBeFalsy();
     });
 
     it('should unite two FSM #2', async () => {
@@ -48,7 +50,9 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = union(fsm, fsm_);
-      expect(newFsm.states.length).toBe(3);
+      expect(await newFsm.recognize('0')).toBeTruthy();
+      expect(await newFsm.recognize('1')).toBeTruthy();
+      expect(await newFsm.recognize('01')).toBeFalsy();
     });
 
     it('should unite two FSM #3', async () => {
@@ -85,7 +89,9 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = union(fsm, fsm_);
-      expect(newFsm.states.length).toBe(7);
+      expect(await newFsm.recognize('11')).toBeTruthy();
+      expect(await newFsm.recognize('0')).toBeTruthy();
+      expect(await newFsm.recognize('110')).toBeTruthy();
     });
 
     it('should concat two FSM #1', async () => {
@@ -107,10 +113,10 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = concatenation(fsm, fsm_);
-      expect(newFsm.finals.length).toBe(1);
+      expect(await newFsm.recognize('01a')).toBeTruthy();
     });
 
-    it('should unite two FSM #2', async () => {
+    it('should concat two FSM #2', async () => {
       const states = ['Q0', 'Q1'];
       const alphabet = ['0'];
       const transitions = [{ from: 'Q0', to: 'Q1', when: '0' }];
@@ -126,10 +132,10 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = concatenation(fsm, fsm_);
-      expect(newFsm.finals.length).toBe(1);
+      expect(await newFsm.recognize('01')).toBeTruthy();
     });
 
-    it('should unite two FSM #3', async () => {
+    it('should concat two FSM #3', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['0', '1'];
       const transitions = [
@@ -163,7 +169,7 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = concatenation(fsm, fsm_);
-      expect(newFsm.finals.length).toBe(1);
+      expect(await newFsm.recognize('110')).toBeTruthy();
     });
 
     it('should intersect two FSM #1', async () => {
@@ -213,17 +219,18 @@ describe('FSM', () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['0', '1'];
       const transitions = [
-        { from: 'A', to: 'A', when: '0' },
-        { from: 'A', to: 'B', when: '1' },
-        { from: 'B', to: 'D', when: '0' },
+        { from: 'A', to: 'B', when: '0' },
+        { from: 'A', to: 'C', when: '1' },
+        { from: 'B', to: 'B', when: '0' },
         { from: 'B', to: 'C', when: '1' },
-        { from: 'C', to: 'A', when: '0' },
+        { from: 'C', to: 'D', when: '0' },
         { from: 'C', to: 'B', when: '1' },
-        { from: 'D', to: 'B', when: '0' },
+        { from: 'D', to: 'C', when: '0' },
         { from: 'D', to: 'D', when: '1' },
       ];
+
       const initial = 'A';
-      const finals = ['C'];
+      const finals = ['B'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       const states_ = ['A', 'B', 'C', 'D'];
@@ -238,13 +245,13 @@ describe('FSM', () => {
         { from: 'D', to: 'C', when: '0' },
         { from: 'D', to: 'D', when: '1' },
       ];
+
       const initial_ = 'A';
       const finals_ = ['B'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = intersection(fsm, fsm_);
-      expect(await newFsm.recognize('11')).toBeFalsy();
-      expect(await newFsm.recognize('00')).toBeFalsy();
+      expect(await newFsm.recognize('1100')).toBeTruthy();
     });
 
     it('should intersect two FSM #4', async () => {
@@ -309,72 +316,36 @@ describe('FSM', () => {
       const finals_ = ['B'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
       const newFsm = difference(fsm, fsm_);
-      expect(newFsm.recognize('11')).toBeTruthy();
+      expect(await newFsm.recognize('11')).toBeTruthy();
+      expect(await newFsm.recognize('110')).toBeFalsy();
     });
 
     it('should apply difference for FSM #2', async () => {
-      const states = ['Q1', 'Q0', 'Q6', 'Q5', 'Q2', 'Q3', 'Q4'];
+      const states = ['Q0', 'Q1', 'Q2'];
       const alphabet = ['a', 'b', 'c'];
       const transitions = [
-        { from: 'Q1', to: 'Q0', when: 'a' },
-        { from: 'Q1', to: 'Q6', when: 'b' },
-        { from: 'Q1', to: 'Q5', when: 'c' },
-        { from: 'Q0', to: 'Q1', when: 'a' },
-        { from: 'Q0', to: 'Q2', when: 'b' },
-        { from: 'Q0', to: 'Q3', when: 'c' },
-        { from: 'Q6', to: 'Q4', when: 'a' },
-        { from: 'Q6', to: 'Q4', when: 'b' },
-        { from: 'Q6', to: 'Q3', when: 'c' },
-        { from: 'Q5', to: 'Q4', when: 'a' },
-        { from: 'Q5', to: 'Q2', when: 'b' },
-        { from: 'Q5', to: 'Q4', when: 'c' },
-        { from: 'Q2', to: 'Q4', when: 'a' },
-        { from: 'Q2', to: 'Q4', when: 'b' },
-        { from: 'Q2', to: 'Q5', when: 'c' },
-        { from: 'Q3', to: 'Q4', when: 'a' },
-        { from: 'Q3', to: 'Q6', when: 'b' },
-        { from: 'Q3', to: 'Q4', when: 'c' },
-        { from: 'Q4', to: 'Q4', when: 'a' },
-        { from: 'Q4', to: 'Q4', when: 'b' },
-        { from: 'Q4', to: 'Q4', when: 'c' },
+        { from: 'Q0', to: 'Q0', when: 'a' },
+        { from: 'Q1', to: 'Q2', when: 'b' },
+        { from: 'Q2', to: 'Q0', when: 'c' },
       ];
-      const initial = 'Q1';
-      const finals = ['Q0', 'Q6', 'Q5'];
+      const initial = 'Q0';
+      const finals = ['Q0'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
-      const states_ = ['Q0', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7'];
-      const alphabet_ = ['a', 'b', 'c'];
+      const states_ = ['Q0', 'Q1', 'Q2'];
+      const alphabet_ = ['a', 'b'];
       const transitions_ = [
         { from: 'Q0', to: 'Q1', when: 'a' },
-        { from: 'Q0', to: 'Q2', when: 'b' },
-        { from: 'Q0', to: 'Q3', when: 'c' },
-        { from: 'Q1', to: 'Q0', when: 'a' },
-        { from: 'Q1', to: 'Q4', when: 'b' },
-        { from: 'Q1', to: 'Q7', when: 'c' },
-        { from: 'Q2', to: 'Q4', when: 'a' },
-        { from: 'Q2', to: 'Q0', when: 'b' },
-        { from: 'Q2', to: 'Q5', when: 'c' },
-        { from: 'Q3', to: 'Q7', when: 'a' },
-        { from: 'Q3', to: 'Q5', when: 'b' },
-        { from: 'Q3', to: 'Q0', when: 'c' },
-        { from: 'Q4', to: 'Q2', when: 'a' },
-        { from: 'Q4', to: 'Q1', when: 'b' },
-        { from: 'Q4', to: 'Q6', when: 'c' },
-        { from: 'Q5', to: 'Q6', when: 'a' },
-        { from: 'Q5', to: 'Q3', when: 'b' },
-        { from: 'Q5', to: 'Q2', when: 'c' },
-        { from: 'Q6', to: 'Q5', when: 'a' },
-        { from: 'Q6', to: 'Q7', when: 'b' },
-        { from: 'Q6', to: 'Q4', when: 'c' },
-        { from: 'Q7', to: 'Q3', when: 'a' },
-        { from: 'Q7', to: 'Q6', when: 'b' },
-        { from: 'Q7', to: 'Q1', when: 'c' },
+        { from: 'Q1', to: 'Q2', when: 'b' },
       ];
       const initial_ = 'Q0';
-      const finals_ = ['Q6'];
+      const finals_ = ['Q2'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
       const newFsm = difference(fsm, fsm_);
-      expect(newFsm.recognize('abcbc')).toBeTruthy();
+      console.log(newFsm.transitions);
+      expect(await newFsm.recognize('')).toBeTruthy();
+      expect(await newFsm.recognize('ab')).toBeFalsy();
+      expect(await newFsm.recognize('abc')).toBeTruthy();
     });
 
     it('should reverse FSM #1', async () => {
@@ -390,7 +361,7 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       reverse(fsm);
-      expect(fsm.finals.length).toBe(1);
+      expect(await fsm.recognize('10')).toBeTruthy();
     });
 
     it('should reverse FSM #2', async () => {
@@ -402,7 +373,7 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       reverse(fsm);
-      expect(fsm.finals.length).toBe(1);
+      expect(await fsm.recognize('0')).toBeTruthy();
     });
 
     it('should reverse FSM #3', async () => {
@@ -422,7 +393,7 @@ describe('FSM', () => {
       const finals = ['C'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       reverse(fsm);
-      expect(fsm.finals.length).toBe(1);
+      expect(await fsm.recognize('11')).toBeTruthy();
     });
 
     it('should reverse FSM #4', async () => {
@@ -456,48 +427,24 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       reverse(fsm);
       reverse(fsm);
-      expect(fsm.isDeterministic()).toBeFalsy();
+      expect(await fsm.recognize('bcb')).toBeTruthy();
     });
 
-    // it('should reverse FSM #5', async () => {
-    //   const states = ['Q0', 'Q1'];
-    //   const alphabet = ['a', 'b'];
-    //   const transitions = [
-    //     { from: 'Q0', to: 'Q1', when: 'a' },
-    //     { from: 'Q1', to: 'Q0', when: 'b' }
-    //   ];
-    //   const initial = 'Q0';
-    //   const finals = ['Q0'];
-    //   const fsm = new FSM(states, alphabet, transitions, initial, finals);
-
-    //   reverse(fsm);
-    //   console.log(fsm.initial);
-    //   console.log(fsm.states);
-    //   console.log(fsm.finals);
-    //   console.log(fsm.transitions);
-    //   expect(fsm.finals.length).toBe(1);
-    // });
-
-    it('should obtain initial FSM when reverse twice', async () => {
-      const states = ['A', 'B', 'C', 'D'];
-      const alphabet = ['0', '1'];
+    it('should reverse FSM #5', async () => {
+      const states = ['Q0', 'Q1'];
+      const alphabet = ['a', 'b'];
       const transitions = [
-        { from: 'A', to: 'A', when: '0' },
-        { from: 'A', to: 'B', when: '1' },
-        { from: 'B', to: 'D', when: '0' },
-        { from: 'B', to: 'C', when: '1' },
-        { from: 'C', to: 'A', when: '0' },
-        { from: 'C', to: 'B', when: '1' },
-        { from: 'D', to: 'B', when: '0' },
-        { from: 'D', to: 'D', when: '1' },
+        { from: 'Q0', to: 'Q1', when: 'a' },
+        { from: 'Q1', to: 'Q0', when: 'b' }
       ];
-      const initial = 'A';
-      const finals = ['C'];
+      const initial = 'Q0';
+      const finals = ['Q0'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
       reverse(fsm);
-      reverse(fsm);
-      expect(fsm.states.length).toBe(4);
-      expect(fsm.finals.length).toBe(1);
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('ba')).toBeTruthy();
+      expect(await fsm.recognize('baba')).toBeTruthy();
     });
 
     it('should negate FSM #1', async () => {
@@ -512,7 +459,9 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       negation(fsm);
-      expect(fsm.finals.length).toBe(3);
+      expect(await fsm.recognize('0')).toBeTruthy();
+      expect(await fsm.recognize('1')).toBeTruthy();
+      expect(await fsm.recognize('01')).toBeFalsy();
     });
 
     it('should negate FSM #2', async () => {
@@ -524,7 +473,8 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       negation(fsm);
-      expect(fsm.finals.length).toBe(2);
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('0')).toBeFalsy();
     });
 
     it('should negate FSM #3', async () => {
@@ -545,7 +495,9 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
 
       negation(fsm);
-      expect(fsm.finals.length).toBe(3);
+      expect(await fsm.recognize('0')).toBeTruthy();
+      expect(await fsm.recognize('010')).toBeTruthy();
+      expect(await fsm.recognize('11')).toBeFalsy();
     });
 
     it('should obtain initial FSM when negate twice', async () => {
@@ -567,7 +519,7 @@ describe('FSM', () => {
 
       negation(fsm);
       negation(fsm);
-      expect(fsm.finals.length).toBe(1);
+      expect(await fsm.recognize('11')).toBeTruthy();
     });
   });
 });

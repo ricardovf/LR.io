@@ -322,25 +322,12 @@ export function reverse(fsm, automatas = []) {
   do {
     initial += '`';
   } while (fsm.states.includes(initial));
+  let states = [initial];
   let transitions = [];
   let finals = [fsm.initial];
-  let states = [initial];
-  automatas.push(fsm.clone());
-  automatas.push(
-    new FSM(
-      R.uniq(states),
-      R.uniq(fsm.alphabet),
-      R.uniq(transitions),
-      initial,
-      R.uniq(finals)
-    )
-  );
 
-  for (let state of fsm.states) {
-    if (!fsm.finals.includes(state)) {
-      states.push(state);
-    }
-  }
+  if (fsm.finals.includes(fsm.initial))
+    finals.push(initial);
 
   automatas.push(
     new FSM(
@@ -364,18 +351,22 @@ export function reverse(fsm, automatas = []) {
         to: initial,
         when: transition.when,
       });
+      states.push(transition.to);
     } else if (fsm.finals.includes(transition.to)) {
       transitions.push({
         from: initial,
         to: transition.from,
         when: transition.when,
       });
+      states.push(transition.from);
     } else {
       transitions.push({
         from: transition.to,
         to: transition.from,
         when: transition.when,
       });
+      states.push(transition.when);
+      states.push(transition.to);
     }
     automatas.push(
       new FSM(
