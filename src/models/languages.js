@@ -40,7 +40,9 @@ export default {
               ? language.fsm
               : FSM.fromPlainObject(language.fsm);
           language.grammar = fsm.toGrammar().getFormattedText();
-        } catch (e) {}
+        } catch (e) {
+          console.log(e);
+        }
       }
 
       return [...state, language];
@@ -56,7 +58,9 @@ export default {
               ? language.fsm
               : FSM.fromPlainObject(language.fsm);
           language.grammar = fsm.toGrammar().getFormattedText();
-        } catch (e) {}
+        } catch (e) {
+          console.log(e);
+        }
       }
 
       return [...state].map(item => {
