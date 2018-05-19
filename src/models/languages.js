@@ -19,7 +19,7 @@ function _makeNewLanguage(name) {
     expression: undefined,
     fsm: undefined,
     userSentences: [],
-    enumerationLength: 10,
+    enumerationLength: 5,
   };
 }
 
