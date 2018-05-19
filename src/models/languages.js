@@ -96,6 +96,8 @@ export default {
 
         let newLanguage = _makeNewLanguage(name);
         newLanguage.fsm = fsm;
+        newLanguage.userSentences = language.userSentences;
+        newLanguage.enumerationLength = language.enumerationLength;
 
         dispatch.languages.create({ language: newLanguage });
 
