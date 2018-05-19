@@ -32,12 +32,33 @@ export default {
     create(state, { language = undefined }) {
       if (!language)
         language = _makeNewLanguage(`Nova linguagem #${state.length}`);
+
+      if (language.fsm) {
+        try {
+          const fsm =
+            language.fsm instanceof FSM
+              ? language.fsm
+              : FSM.fromPlainObject(language.fsm);
+          language.grammar = fsm.toGrammar().getFormattedText();
+        } catch (e) {}
+      }
+
       return [...state, language];
     },
     _removeLanguage(state, { id }) {
       return reject(language => language.id === id, [...state]);
     },
     _updateLanguage(state, { id, language }) {
+      if (language && language.fsm) {
+        try {
+          const fsm =
+            language.fsm instanceof FSM
+              ? language.fsm
+              : FSM.fromPlainObject(language.fsm);
+          language.grammar = fsm.toGrammar().getFormattedText();
+        } catch (e) {}
+      }
+
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;
       });

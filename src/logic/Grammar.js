@@ -146,10 +146,9 @@ export default class Grammar {
   getFormattedText() {
     let P = this.P;
     let P_ = '';
-    // let oldNonTerminal = '';
-    // let newNonTerminal = '';
-    // let production = '';
     for (let nonTerminal in P) {
+      if (P[nonTerminal].length === 0) continue;
+
       P_ += nonTerminal + ' -> ';
       for (let production of P[nonTerminal]) {
         P_ += production + ' | ';
