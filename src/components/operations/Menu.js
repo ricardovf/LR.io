@@ -5,6 +5,7 @@ import Divider from 'material-ui/Divider';
 import SelfOperationDialog from './SelfOperationDialog';
 import {
   cloneFSMWithSteps,
+  closureWithSteps,
   concatenationWithSteps,
   differenceWithSteps,
   intersectionWithSteps,
@@ -65,8 +66,8 @@ class OperationsMenu extends React.Component {
         <SelfOperationDialog
           title="Fechamento"
           subtitle="Fechando"
-          operation={undefined}
-          open={operation === 'star'}
+          operation={closureWithSteps}
+          open={operation === 'closure'}
           handleCancel={this.handleClose}
           handleSave={handleSave}
           language={language}
@@ -155,7 +156,7 @@ class OperationsMenu extends React.Component {
           <MenuItem onClick={this.makeOperationHandler('reverse')}>
             Reverso
           </MenuItem>
-          <MenuItem onClick={this.makeOperationHandler('star')}>
+          <MenuItem onClick={this.makeOperationHandler('closure')}>
             Fechamento
           </MenuItem>
           <Divider />

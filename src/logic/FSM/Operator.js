@@ -226,20 +226,28 @@ export function intersection(fsm, fsm_, automatas = []) {
     for (let state of fsm.states) {
       for (let state_ of fsm_.states) {
         let paths = [
-          ...R.filter(R.whereEq({ from: state, when: symbol }))(fsm.transitions),
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(
+            fsm.transitions
+          ),
         ];
         let paths_ = [
-          ...R.filter(R.whereEq({ from: state_, when: symbol }))(fsm_.transitions),
+          ...R.filter(R.whereEq({ from: state_, when: symbol }))(
+            fsm_.transitions
+          ),
         ];
         if (paths.length === 0) {
-          paths.push({from: state, to: 'PHI', when: symbol})
+          paths.push({ from: state, to: 'PHI', when: symbol });
         }
         if (paths_.length === 0) {
-          paths_.push({from: state_, to: 'PHI', when: symbol})
+          paths_.push({ from: state_, to: 'PHI', when: symbol });
         }
         for (let path of paths) {
           for (let path_ of paths_) {
-              transitions.push({from: state + state_, to: path.to + path_.to, when: symbol});
+            transitions.push({
+              from: state + state_,
+              to: path.to + path_.to,
+              when: symbol,
+            });
           }
         }
         states.push(state + state_);
@@ -273,20 +281,49 @@ export function difference(fsm, fsm_, automatas = []) {
   return intersection(fsm, fsm_, automatas);
 }
 
-export function closure(fsm){
+export function closureWithSteps(fsm) {
+  let automatas = [];
+  closure(fsm.clone(), automatas);
+  return automatas;
+}
+
+export function closure(fsm, automatas = []) {
   for (let final of fsm.finals) {
     for (let symbol of fsm.alphabet) {
       let paths = [
-        ...R.filter(R.whereEq({ from: fsm.initial, when: symbol }))(fsm.transitions),
+        ...R.filter(R.whereEq({ from: fsm.initial, when: symbol }))(
+          fsm.transitions
+        ),
       ];
       for (let path of paths) {
         fsm.transitions.push({ from: final, to: path.to, when: symbol });
+
+        automatas.push(
+          new FSM(
+            R.uniq(fsm.states),
+            R.uniq(fsm.alphabet),
+            R.uniq(fsm.transitions),
+            fsm.initial,
+            R.uniq(fsm.finals)
+          )
+        );
       }
     }
   }
 
-  if (!fsm.finals.includes(fsm.initial))
+  if (!fsm.finals.includes(fsm.initial)) {
     fsm.finals.push(fsm.initial);
+
+    automatas.push(
+      new FSM(
+        R.uniq(fsm.states),
+        R.uniq(fsm.alphabet),
+        R.uniq(fsm.transitions),
+        fsm.initial,
+        R.uniq(fsm.finals)
+      )
+    );
+  }
 }
 
 export function reverseWithSteps(fsm) {
