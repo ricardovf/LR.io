@@ -363,6 +363,10 @@ export function reverse(fsm, automatas = []) {
   automatas.push(fsm);
 }
 
+export function cloneFSMWithSteps(fsm) {
+  return [fsm.clone()];
+}
+
 export function negationWithSteps(fsm) {
   let automatas = [];
   negation(fsm.clone(), automatas);

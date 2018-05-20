@@ -19,6 +19,12 @@ export default {
   isValidNonTerminal: nonTerminal => {
     return /^([A-Z])$/.test(nonTerminal) || nonTerminal === ACCEPT_STATE;
   },
+  isStandardAtoZName: stateName => {
+    return /^([A-Z])$/.test(stateName);
+  },
+  isStandardStateName: stateName => {
+    return /^([A-Z]|Q[0-9]*)$/.test(stateName);
+  },
   isEpsilon: str => {
     return str === EPSILON;
   },

@@ -19,7 +19,7 @@ function _makeNewLanguage(name) {
     expression: undefined,
     fsm: undefined,
     userSentences: [],
-    enumerationLength: 10,
+    enumerationLength: 5,
   };
 }
 
@@ -32,12 +32,51 @@ export default {
     create(state, { language = undefined }) {
       if (!language)
         language = _makeNewLanguage(`Nova linguagem #${state.length}`);
+
+      if (language.fsm) {
+        try {
+          const fsm =
+            language.fsm instanceof FSM
+              ? language.fsm
+              : FSM.fromPlainObject(language.fsm);
+          language.grammar = fsm.toGrammar().getFormattedText();
+        } catch (e) {
+          language.grammar = undefined;
+          language.expression = undefined;
+        }
+      }
+
       return [...state, language];
     },
     _removeLanguage(state, { id }) {
       return reject(language => language.id === id, [...state]);
     },
-    _updateLanguage(state, { id, language }) {
+    _updateLanguage(
+      state,
+      { id, language, updateGrammar = true, updateExpression = true }
+    ) {
+      if (updateGrammar) {
+        if (language && language.fsm) {
+          try {
+            const fsm =
+              language.fsm instanceof FSM
+                ? language.fsm
+                : FSM.fromPlainObject(language.fsm);
+            language.grammar = fsm.toGrammar().getFormattedText();
+            language.valid = true;
+          } catch (e) {
+            language.grammar = undefined;
+            language.expression = undefined;
+            console.log(e);
+          }
+        } else {
+          if (updateGrammar) language.grammar = undefined;
+          if (updateExpression) language.expression = undefined;
+        }
+      }
+
+      if (updateExpression) language.expression = undefined;
+
       return [...state].map(item => {
         return item.id === id && language ? { ...language } : item;
       });
@@ -57,6 +96,8 @@ export default {
 
         let newLanguage = _makeNewLanguage(name);
         newLanguage.fsm = fsm;
+        newLanguage.userSentences = language.userSentences;
+        newLanguage.enumerationLength = language.enumerationLength;
 
         dispatch.languages.create({ language: newLanguage });
 
@@ -94,7 +135,12 @@ export default {
             userSentencesAccepted,
           };
 
-          dispatch.languages._updateLanguage({ id, language });
+          dispatch.languages._updateLanguage({
+            id,
+            language,
+            updateExpression: false,
+            updateGrammar: false,
+          });
         }
       }
     },
@@ -124,7 +170,12 @@ export default {
           userSentencesAccepted,
         };
 
-        dispatch.languages._updateLanguage({ id, language });
+        dispatch.languages._updateLanguage({
+          id,
+          language,
+          updateExpression: false,
+          updateGrammar: false,
+        });
       }
     },
 
@@ -137,7 +188,12 @@ export default {
           enumerationLength: length,
         };
 
-        dispatch.languages._updateLanguage({ id, language });
+        dispatch.languages._updateLanguage({
+          id,
+          language,
+          updateExpression: false,
+          updateGrammar: false,
+        });
       }
     },
 
@@ -191,7 +247,7 @@ export default {
       }
     },
 
-    renameLanguage({ id, name }, rootState) {
+    renameLanguage: _.debounce(({ id, name }, rootState) => {
       let language = find(propEq('id', id))(rootState.languages);
 
       if (language && typeof name === 'string' && name.trim().length > 0) {
@@ -202,7 +258,7 @@ export default {
 
         dispatch.languages._updateLanguage({ id, language });
       }
-    },
+    }, 250),
 
     addNewState({ id, state }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
@@ -433,7 +489,11 @@ export default {
             fsm: fsm ? fsm.toPlainObject() : undefined,
           };
 
-          dispatch.languages._updateLanguage({ id, language });
+          dispatch.languages._updateLanguage({
+            id,
+            language,
+            updateGrammar: false,
+          });
         }
       },
       250,
@@ -449,14 +509,11 @@ export default {
         if (language) {
           let valid = true;
           let fsm = null;
-          let grammar = null;
 
           try {
             fsm = convertFromExpressionToFSM(text);
-            grammar = fsm.toGrammar();
           } catch (e) {
             fsm = null;
-            grammar = null;
             valid = false;
           }
 
@@ -464,11 +521,14 @@ export default {
             ...language,
             valid: valid,
             expression: multiTrimNoLines(text),
-            grammar: grammar ? grammar.getFormattedText() : undefined,
             fsm: fsm ? fsm.toPlainObject() : undefined,
           };
 
-          dispatch.languages._updateLanguage({ id, language });
+          dispatch.languages._updateLanguage({
+            id,
+            language,
+            updateExpression: false,
+          });
         }
       },
       250,

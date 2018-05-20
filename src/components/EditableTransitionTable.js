@@ -69,6 +69,13 @@ const styles = () => ({
 });
 
 class EditableTransitionTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.newStateInputRef = null;
+    this.newSymbolInputRef = null;
+  }
+
   buildHeader(fsm) {
     let data = ['*', 'F', 'Estado'];
 
@@ -164,6 +171,7 @@ class EditableTransitionTable extends React.Component {
         placement="right"
       >
         <Input
+          inputRef={e => (this.newStateInputRef = e)}
           disableUnderline
           // fullWidth
           placeholder="Novo estado"
@@ -182,6 +190,9 @@ class EditableTransitionTable extends React.Component {
               ) {
                 addNewState(language.id, event.target.value);
                 event.target.value = '';
+                setTimeout(() => {
+                  this.newStateInputRef.focus();
+                }, 250);
               }
             }
           }}
@@ -195,6 +206,7 @@ class EditableTransitionTable extends React.Component {
         placement="left"
       >
         <Input
+          inputRef={e => (this.newSymbolInputRef = e)}
           disableUnderline
           // fullWidth
           placeholder="Novo símbolo"
@@ -213,6 +225,9 @@ class EditableTransitionTable extends React.Component {
               ) {
                 addNewSymbol(language.id, event.target.value);
                 event.target.value = '';
+                setTimeout(() => {
+                  this.newSymbolInputRef.focus();
+                }, 250);
               }
             }
           }}

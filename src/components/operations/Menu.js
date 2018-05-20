@@ -4,6 +4,7 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import Divider from 'material-ui/Divider';
 import SelfOperationDialog from './SelfOperationDialog';
 import {
+  cloneFSMWithSteps,
   concatenationWithSteps,
   differenceWithSteps,
   intersectionWithSteps,
@@ -66,6 +67,15 @@ class OperationsMenu extends React.Component {
           subtitle="Fechando"
           operation={undefined}
           open={operation === 'star'}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
+        <SelfOperationDialog
+          title="Clonar"
+          subtitle="Clonando"
+          open={operation === 'clone'}
+          operation={cloneFSMWithSteps}
           handleCancel={this.handleClose}
           handleSave={handleSave}
           language={language}
@@ -147,6 +157,10 @@ class OperationsMenu extends React.Component {
           </MenuItem>
           <MenuItem onClick={this.makeOperationHandler('star')}>
             Fechamento
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={this.makeOperationHandler('clone')}>
+            Clonar
           </MenuItem>
         </Menu>
       </div>

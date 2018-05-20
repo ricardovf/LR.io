@@ -1,4 +1,4 @@
-import { EPSILON } from './SymbolValidator';
+import { EPSILON, makeNewUniqueStateName } from './SymbolValidator';
 import Grammar from './Grammar';
 import * as R from 'ramda';
 import { determinate, isDeterministic } from './FSM/Determinator';
@@ -8,6 +8,8 @@ import {
   hasEpsilonTransitions,
 } from './FSM/Epsilon';
 import { generate } from './FSM/Generator';
+import { toGrammar } from './FSM/toGrammar';
+import SymbolValidator from './SymbolValidator';
 
 export const GENERATE_MAX_SIZE = 100;
 
@@ -41,83 +43,72 @@ export default class FSM {
   /**
    * Return a new Grammar from the FSM
    *
-   * @todo implement tests, put in own file FSM/toGrammar.js and make sure new states are single upcase chars. If there is
-   * more then 26 states, then we make new states with emojs =D (https://gist.github.com/ikr7/c72843556ef3a12014c3)
-   *
    * @returns {Grammar}
    */
   toGrammar() {
-    let Vn = this.states;
-    let Vt = this.alphabet;
-    let P = {};
-    let S = this.initial;
-    S = this.createEpsilonProdutions(P, S);
-    this.createNonEpsilonProdutions(P);
-    let g = new Grammar(Vn, Vt, P, S);
-    return g;
+    return toGrammar(this);
   }
 
-  createEpsilonProdutions(P, S) {
-    if (this.finals.includes(this.initial)) {
-      let produtions = [];
-      let paths = [
-        ...R.filter(R.whereEq({ to: this.initial }))(this.transitions),
-      ];
-      if (paths.length > 0) {
-        do {
-          S += '`';
-        } while (this.states.includes(S));
-        paths = [
-          ...R.filter(R.whereEq({ from: this.initial }))(this.transitions),
-        ];
-        for (let path of paths) {
-          if (this.finals.includes(path.to)) produtions.push(path.when);
-          produtions.push(path.when + path.to);
-        }
-        P[S] = ['&'].concat(produtions);
-      } else {
-        P[S] = ['&'];
-      }
+  /**
+   * Makes sure that all states names are from A...Z and then from Q0...Q9999999
+   */
+  ensureStatesNamesAreStandard() {
+    this.states = Array.isArray(this.states) ? R.uniq(this.states) : [];
+    this.finals = Array.isArray(this.finals) ? R.uniq(this.finals) : [];
+    this.transitions = Array.isArray(this.transitions)
+      ? R.uniq(this.transitions)
+      : [];
+
+    let statesToRename = R.reject(
+      SymbolValidator.isStandardAtoZName,
+      this.states
+    );
+
+    for (let name of statesToRename) {
+      // make a new unique name for this state
+      let newName = makeNewUniqueStateName(this.states);
+
+      // delete old name and insert new
+      this.states.splice(this.states.indexOf(name), 1, newName);
+
+      // change initial state if equal old name
+      if (this.initial === name) this.initial = newName;
+
+      // change finals
+      if (this.finals.includes(name))
+        this.finals.splice(this.finals.indexOf(name), 1, newName);
+
+      // change transitions
+      this.transitions = R.map(transition => {
+        if (transition.from === name) transition.from = newName;
+        if (transition.to === name) transition.to = newName;
+        return transition;
+      }, this.transitions);
     }
-    return S;
+
+    this.states.sort();
+    this.finals.sort();
   }
 
-  createNonEpsilonProdutions(P) {
-    for (let state of this.states) {
-      P[state] = [];
-      for (let symbol of this.alphabet) {
-        let paths = [
-          ...R.filter(R.whereEq({ from: state, when: symbol }))(
-            this.transitions
-          ),
-        ];
-        for (let path of paths) {
-          P[state].push(symbol + path.to);
-          if (this.finals.includes(path.to)) P[state].push(symbol);
-        }
-      }
-    }
-  }
-
-  getGenerator(prodution) {
-    let generator = '';
-    for (let char of prodution) {
-      if (char == ' ' || char == '-') break;
-      generator += char;
-    }
-    return generator;
-  }
-
-  getProdution(prodution) {
-    let prodution_ = '';
-    let arrowReaded = false;
-    for (let char of prodution) {
-      if (arrowReaded) if (char != ' ') prodution_ += char;
-
-      if (char == '>') arrowReaded = true;
-    }
-    return prodution_;
-  }
+  // getGenerator(prodution) {
+  //   let generator = '';
+  //   for (let char of prodution) {
+  //     if (char == ' ' || char == '-') break;
+  //     generator += char;
+  //   }
+  //   return generator;
+  // }
+  //
+  // getProdution(prodution) {
+  //   let prodution_ = '';
+  //   let arrowReaded = false;
+  //   for (let char of prodution) {
+  //     if (arrowReaded) if (char != ' ') prodution_ += char;
+  //
+  //     if (char == '>') arrowReaded = true;
+  //   }
+  //   return prodution_;
+  // }
 
   /**
    * Check if the state has other than epsilon transitions
