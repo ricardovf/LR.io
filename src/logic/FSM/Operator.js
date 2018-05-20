@@ -210,6 +210,8 @@ export function intersection(fsm, fsm_, automatas = []) {
   let transitions = [];
   let finals = [];
 
+  if (fsm.hasIndefinition()) createPhiState(fsm);
+  if (fsm_.hasIndefinition()) createPhiState(fsm_);
   automatas.push(
     new FSM(
       R.uniq(states),
@@ -223,79 +225,41 @@ export function intersection(fsm, fsm_, automatas = []) {
   for (let symbol of alphabet) {
     for (let state of fsm.states) {
       for (let state_ of fsm_.states) {
-        let newState = state + state_;
         let paths = [
-          ...R.filter(R.whereEq({ from: state, when: symbol }))(
-            fsm.transitions
-          ),
+          ...R.filter(R.whereEq({ from: state, when: symbol }))(fsm.transitions),
         ];
         let paths_ = [
-          ...R.filter(R.whereEq({ from: state_, when: symbol }))(
-            fsm_.transitions
-          ),
+          ...R.filter(R.whereEq({ from: state_, when: symbol }))(fsm_.transitions),
         ];
-        if (paths.length == 0) {
+        if (paths.length === 0) {
+          paths.push({from: state, to: 'PHI', when: symbol})
+        }
+        if (paths_.length === 0) {
+          paths_.push({from: state_, to: 'PHI', when: symbol})
+        }
+        for (let path of paths) {
           for (let path_ of paths_) {
-            transitions.push({
-              from: state + path_.from,
-              to: 'PHI',
-              when: symbol,
-            });
-          }
-          states.push('PHI');
-        } else if (paths_.length == 0) {
-          for (let path of paths) {
-            transitions.push({
-              from: path.from + state_,
-              to: 'PHI',
-              when: symbol,
-            });
-          }
-          states.push('PHI');
-        } else {
-          for (let path of paths) {
-            for (let path_ of paths_) {
-              transitions.push({
-                from: path.from + path_.from,
-                to: path.to + path_.to,
-                when: symbol,
-              });
-            }
+              transitions.push({from: state + state_, to: path.to + path_.to, when: symbol});
           }
         }
-        automatas.push(
-          new FSM(
-            R.uniq(states),
-            R.uniq(alphabet),
-            R.uniq(transitions),
-            initial,
-            R.uniq(finals)
-          )
-        );
-        if (fsm.finals.includes(state) && fsm_.finals.includes(state_))
-          finals.push(newState);
-        states.push(newState);
+        states.push(state + state_);
       }
     }
-    automatas.push(
-      new FSM(
-        R.uniq(states),
-        R.uniq(alphabet),
-        R.uniq(transitions),
-        initial,
-        R.uniq(finals)
-      )
-    );
   }
 
-  let newFsm = new FSM(
+  for (let final of fsm.finals) {
+    for (let final_ of fsm_.finals) {
+      finals.push(final + final_);
+    }
+  }
+
+  return new FSM(
     R.uniq(states),
     alphabet,
     R.uniq(transitions),
     initial,
     R.uniq(finals)
   );
-  return newFsm;
 }
 
 export function differenceWithSteps(fsm, fsm_) {
@@ -309,7 +273,21 @@ export function difference(fsm, fsm_, automatas = []) {
   return intersection(fsm, fsm_, automatas);
 }
 
-// export function closure(fsm){} ??
+export function closure(fsm){
+  for (let final of fsm.finals) {
+    for (let symbol of fsm.alphabet) {
+      let paths = [
+        ...R.filter(R.whereEq({ from: fsm.initial, when: symbol }))(fsm.transitions),
+      ];
+      for (let path of paths) {
+        fsm.transitions.push({ from: final, to: path.to, when: symbol });
+      }
+    }
+  }
+
+  if (!fsm.finals.includes(fsm.initial))
+    fsm.finals.push(fsm.initial);
+}
 
 export function reverseWithSteps(fsm) {
   let automatas = [];
@@ -326,8 +304,7 @@ export function reverse(fsm, automatas = []) {
   let transitions = [];
   let finals = [fsm.initial];
 
-  if (fsm.finals.includes(fsm.initial))
-    finals.push(initial);
+  if (fsm.finals.includes(fsm.initial)) finals.push(initial);
 
   automatas.push(
     new FSM(

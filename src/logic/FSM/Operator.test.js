@@ -6,6 +6,7 @@ import {
   negation,
   reverse,
   union,
+  closure
 } from './Operator';
 
 describe('FSM', () => {
@@ -324,7 +325,7 @@ describe('FSM', () => {
       const states = ['Q0', 'Q1', 'Q2'];
       const alphabet = ['a', 'b', 'c'];
       const transitions = [
-        { from: 'Q0', to: 'Q0', when: 'a' },
+        { from: 'Q0', to: 'Q1', when: 'a' },
         { from: 'Q1', to: 'Q2', when: 'b' },
         { from: 'Q2', to: 'Q0', when: 'c' },
       ];
@@ -341,8 +342,8 @@ describe('FSM', () => {
       const initial_ = 'Q0';
       const finals_ = ['Q2'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
+
       const newFsm = difference(fsm, fsm_);
-      console.log(newFsm.transitions);
       expect(await newFsm.recognize('')).toBeTruthy();
       expect(await newFsm.recognize('ab')).toBeFalsy();
       expect(await newFsm.recognize('abc')).toBeTruthy();
@@ -520,6 +521,56 @@ describe('FSM', () => {
       negation(fsm);
       negation(fsm);
       expect(await fsm.recognize('11')).toBeTruthy();
+    });
+
+    it('should obtain a closure for FSM #1', async() => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = ['a', 'a'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'B', to: 'C', when: 'b' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      closure(fsm);
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('abab')).toBeTruthy();
+    });
+
+    it('should obtain a closure for FSM #2', async() => {
+      const states = ['A'];
+      const alphabet = ['a'];
+      const transitions = [
+        { from: 'A', to: 'A', when: 'a' },
+      ];
+      const initial = 'A';
+      const finals = ['A'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      closure(fsm);
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('a')).toBeTruthy();
+      expect(await fsm.recognize('aa')).toBeTruthy();
+    });
+
+    it('should obtain a closure for FSM #3', async() => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'A', to: 'C', when: 'b' },
+        { from: 'A', to: 'D', when: 'c' },
+      ];
+      const initial = 'A';
+      const finals = ['B', 'C', 'D'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      closure(fsm);
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('a')).toBeTruthy();
+      expect(await fsm.recognize('bcaba')).toBeTruthy();
     });
   });
 });
