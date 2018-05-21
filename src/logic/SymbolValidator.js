@@ -5,6 +5,7 @@ export const SEPARATOR = '|';
 export const DERIVATION = '->';
 export const ACCEPT_STATE = 'Ã';
 export const SPECIAL_NEW_STATE = '$';
+export const PHI = 'Φ';
 export const STATES_NAMES = Object.freeze(
   R.map(decimal => String.fromCharCode(decimal), R.range(65, 91))
 );
