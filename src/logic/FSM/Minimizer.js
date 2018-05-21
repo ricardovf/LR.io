@@ -117,9 +117,6 @@ export function createPhiState(fsm) {
 export function isMinimal(fsm) {
   fsm = fsm.clone();
 
-  if (!fsm.isDeterministic() || hasDeadStates(fsm) || hasUnreachableStates(fsm))
-    return false;
-
   if (fsm.hasIndefinition()) createPhiState(fsm);
 
   let f = [fsm.finals];
@@ -174,11 +171,27 @@ export function isInSameSet(state, state_, equivalent) {
   return true;
 }
 
+export function minimizeEmptyFSMForEmptyLanguage(fsm) {
+  let initial = 'Q0';
+  let states = [initial];
+  let transitions = [];
+
+  for (let symbol of fsm.alphabet) {
+    transitions.push({ from: initial, to: initial, when: symbol });
+  }
+
+  fsm.initial = initial;
+  fsm.states = states;
+  fsm.transitions = transitions;
+}
+
 export function minimize(fsm) {
   if (!fsm instanceof FSM)
     throw new Error(`Received ${fsm} instead of a FSM instance.`);
 
   if (!isMinimal(fsm)) {
+    if (fsm.states.length > 0 && fsm.finals.length === 0)
+      return minimizeEmptyFSMForEmptyLanguage(fsm);
     if (!fsm.isDeterministic()) fsm.determinate();
     eliminateDeadStates(fsm);
     eliminateUnreachableStates(fsm);
