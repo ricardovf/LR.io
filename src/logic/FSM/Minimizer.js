@@ -119,13 +119,14 @@ export function isMinimal(fsm) {
             }
           }
         }
-        ++numStates;
+        if (states.length > 0)
+          ++numStates;
       }
     }
     newLengthF = f.length;
     newLengthFK = fk.length;
   } while (oldLengthF != newLengthF || oldLengthFK != newLengthFK);
-  return numStates == fsm.states.length;
+  return numStates === fsm.states.length;
 }
 
 export function isInSameSet(state, state_, equivalent) {
@@ -199,12 +200,14 @@ export function createMinimalAutomata(fsm, equivalents) {
   let k = 0;
   for (let i = 0; i < equivalents.length; ++i) {
     for (let j = 0; j < equivalents[i].length; ++j) {
-      let newState = 'Q' + k.toString();
-      newStates.push(newState);
-      if (i == 0) newFinals.push(newState);
-      for (let state of equivalents[i][j])
-        if (state == fsm.initial) newInitial = newState;
-      ++k;
+      if (equivalents[i][j].length > 0) {
+        let newState = 'Q' + k.toString();
+        newStates.push(newState);
+        if (i == 0) newFinals.push(newState);
+        for (let state of equivalents[i][j])
+          if (state == fsm.initial) newInitial = newState;
+        ++k;
+      }
     }
   }
   newTransitions = createNewTransition(fsm, equivalents, newStates);

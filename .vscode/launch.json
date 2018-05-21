@@ -13,7 +13,7 @@
                 "test", 
                 "--env=jsdom", 
                 "--testPathPattern", 
-                "FSM.test.js" 
+                "Minimizer.test.js" 
             ],
             "protocol": "inspector",
             "console": "integratedTerminal",

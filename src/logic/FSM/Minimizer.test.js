@@ -251,5 +251,20 @@ describe('FSM', () => {
       fsm.minimize();
       expect(isMinimal(fsm)).toBe(true);
     });
+
+    it('should minimize #6', async () => {
+      const states = ['Q0', 'Q1'];
+      const alphabet = ['a'];
+      const transitions = [
+        { from: 'Q0', to: 'Q1', when: 'a' },
+        { from: 'Q1', to: 'Q1', when: 'a' },
+      ];
+      const initial = 'Q0';
+      const finals = ['Q0', 'Q1'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      fsm.minimize();
+      expect(fsm.states.length).toBe(1);
+      expect(isMinimal(fsm)).toBe(true);
+    });
   });
 });
