@@ -42,6 +42,7 @@ export function detectAliveStates(state, aliveStates, transitions) {
   for (let path of paths) {
     if (aliveStates.includes(path.from)) continue;
     aliveStates.push(path.from);
+    if (!aliveStates.includes(state)) aliveStates.push(state);
     detectAliveStates(path.from, aliveStates, transitions);
   }
 }
@@ -78,7 +79,7 @@ export function createPhiState(fsm) {
       let paths = [
         ...R.filter(R.whereEq({ from: state, when: symbol }))(fsm.transitions),
       ];
-      if (paths.length == 0) {
+      if (paths.length === 0) {
         fsm.transitions.push({ from: state, to: 'PHI', when: symbol });
       }
     }
@@ -87,9 +88,7 @@ export function createPhiState(fsm) {
 
 export function isMinimal(fsm) {
   fsm = fsm.clone();
-
   if (fsm.hasIndefinition() || !fsm.isDeterministic()) return false;
-
   let f = [fsm.finals];
   let fk = [fsm.nonFinalStates()];
   let equivalents = [f, fk];
@@ -112,9 +111,11 @@ export function isMinimal(fsm) {
             let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
               fsm.transitions
             ).pop();
-            if (!isInSameSet(s.to, s_.to, equivalent)) {
-              createNewSet(states, equivalent, s_.from);
-              break;
+            if (s !== undefined && s_ !== undefined) {
+              if (!isInSameSet(s.to, s_.to, equivalent)) {
+                createNewSet(states, equivalent, s_.from);
+                break;
+              }
             }
           }
         }
