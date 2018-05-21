@@ -48,16 +48,16 @@ class FSMCard extends React.Component {
 
     if (language && language.fsm) {
       fsm = FSM.fromPlainObject(language.fsm);
-
-      if (fsm) {
-      }
     }
 
     const info = fsm && (
       <React.Fragment>
         <List dense>
           <ListItem disableGutters>
-            <ListItemText secondary="Estados" primary={fsm.states.join(', ')} />
+            <ListItemText
+              secondary={'Estados'}
+              primary={fsm.states.join(', ')}
+            />
           </ListItem>
           <ListItem disableGutters>
             <ListItemText

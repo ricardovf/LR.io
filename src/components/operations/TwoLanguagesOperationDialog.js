@@ -186,6 +186,7 @@ class TwoLanguagesOperationDialog extends React.Component {
                   key={radioLanguage.id}
                   control={<Radio />}
                   label={radioLanguage.name}
+                  disabled={!radioLanguage.fsm}
                 />
               ))}
           </RadioGroup>

@@ -30,7 +30,26 @@ const styles = () => ({
 
 class TableOrGraphCard extends React.Component {
   render() {
-    const { classes, view = 'table', alternateView, fsm } = this.props;
+    const {
+      classes,
+      view = 'table',
+      alternateView,
+      renameStatesToStandard,
+      language,
+      fsm,
+    } = this.props;
+
+    const renameStates = fsm && (
+      <Tooltip title="Renomear estados para A...Z">
+        <IconButton
+          className={classes.icon}
+          aria-label="rename-states"
+          onClick={() => renameStatesToStandard(language.id)}
+        >
+          <Icon>spellcheck</Icon>
+        </IconButton>
+      </Tooltip>
+    );
 
     return (
       <Card className={classes.card}>
@@ -50,6 +69,7 @@ class TableOrGraphCard extends React.Component {
                   </IconButton>
                 </Tooltip>
                 {<CodeDialog fsm={fsm} />}
+                {renameStates}
               </React.Fragment>
             )}
           </div>
@@ -66,8 +86,10 @@ class TableOrGraphCard extends React.Component {
 
 TableOrGraphCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  language: PropTypes.object,
   view: PropTypes.string,
   alternateView: PropTypes.func,
+  renameStatesToStandard: PropTypes.func,
 };
 
 export default withStyles(styles)(TableOrGraphCard);

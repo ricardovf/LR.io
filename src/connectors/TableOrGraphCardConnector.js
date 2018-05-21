@@ -8,12 +8,15 @@ const mapState = state => {
 
   return {
     view: state.FSMViewType,
+    language: language,
     fsm: language !== undefined ? language.fsm : undefined,
   };
 };
 
 const mapDispatch = dispatch => ({
   alternateView: () => dispatch.FSMViewType.alternate(),
+  renameStatesToStandard: id =>
+    dispatch.languages.renameStatesToStandard({ id }),
 });
 
 export default connect(mapState, mapDispatch)(TableOrGraphCard);

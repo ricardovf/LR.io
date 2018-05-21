@@ -88,6 +88,26 @@ export default {
       dispatch.selectedLanguage.select({ id: null });
     },
 
+    renameStatesToStandard({ id }, rootState) {
+      let language = find(propEq('id', id))(rootState.languages);
+
+      if (language && language.fsm) {
+        const fsm =
+          language.fsm instanceof FSM
+            ? language.fsm
+            : FSM.fromPlainObject(language.fsm);
+
+        fsm.ensureStatesNamesAreStandard();
+
+        language = {
+          ...language,
+          fsm: fsm.toPlainObject(),
+        };
+
+        dispatch.languages._updateLanguage({ id, language });
+      }
+    },
+
     async newLanguageFromFSM({ id, name, fsm, select }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
