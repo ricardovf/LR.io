@@ -6,7 +6,7 @@ import {
   negation,
   reverse,
   union,
-  closure
+  closure,
 } from './Operator';
 
 describe('FSM', () => {
@@ -436,7 +436,7 @@ describe('FSM', () => {
       const alphabet = ['a', 'b'];
       const transitions = [
         { from: 'Q0', to: 'Q1', when: 'a' },
-        { from: 'Q1', to: 'Q0', when: 'b' }
+        { from: 'Q1', to: 'Q0', when: 'b' },
       ];
       const initial = 'Q0';
       const finals = ['Q0'];
@@ -523,7 +523,7 @@ describe('FSM', () => {
       expect(await fsm.recognize('11')).toBeTruthy();
     });
 
-    it('should obtain a closure for FSM #1', async() => {
+    it('should obtain a closure for FSM #1', async () => {
       const states = ['A', 'B', 'C'];
       const alphabet = ['a', 'a'];
       const transitions = [
@@ -539,12 +539,10 @@ describe('FSM', () => {
       expect(await fsm.recognize('abab')).toBeTruthy();
     });
 
-    it('should obtain a closure for FSM #2', async() => {
+    it('should obtain a closure for FSM #2', async () => {
       const states = ['A'];
       const alphabet = ['a'];
-      const transitions = [
-        { from: 'A', to: 'A', when: 'a' },
-      ];
+      const transitions = [{ from: 'A', to: 'A', when: 'a' }];
       const initial = 'A';
       const finals = ['A'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
@@ -555,7 +553,7 @@ describe('FSM', () => {
       expect(await fsm.recognize('aa')).toBeTruthy();
     });
 
-    it('should obtain a closure for FSM #3', async() => {
+    it('should obtain a closure for FSM #3', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['a', 'b', 'c'];
       const transitions = [

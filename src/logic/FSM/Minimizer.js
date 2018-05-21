@@ -19,6 +19,12 @@ export function getUnreachableStates(reachableStates, fsm) {
   return unreachableStates;
 }
 
+export function hasUnreachableStates(fsm) {
+  let reachableStates = [fsm.initial];
+  detectReachableStates(fsm.initial, reachableStates, R.clone(fsm.transitions));
+  return getUnreachableStates(reachableStates, fsm).length > 0;
+}
+
 export function eliminateUnreachableStates(fsm) {
   let unreachableStates = [];
   do {
@@ -72,6 +78,28 @@ export function eliminateDeadStates(fsm) {
   } while (deadStates.length > 0);
 }
 
+export function hasDeadStates(fsm) {
+  fsm = fsm.clone();
+  let deadStates = [];
+  do {
+    let aliveStates = [];
+    for (let final of fsm.finals)
+      detectAliveStates(final, aliveStates, fsm.transitions);
+    deadStates = getDeadStates(aliveStates, fsm);
+    if (deadStates.length > 0) {
+      return true;
+    }
+    for (let state of deadStates) {
+      let paths = R.filter(R.whereEq({ to: state }))(fsm.transitions);
+      for (let path of paths)
+        fsm.transitions.splice(fsm.transitions.indexOf(path), 1);
+      fsm.states.splice(fsm.states.indexOf(state), 1);
+    }
+  } while (deadStates.length > 0);
+
+  return false;
+}
+
 export function createPhiState(fsm) {
   fsm.states.push('PHI');
   for (let symbol of fsm.alphabet) {
@@ -88,7 +116,12 @@ export function createPhiState(fsm) {
 
 export function isMinimal(fsm) {
   fsm = fsm.clone();
-  if (fsm.hasIndefinition() || !fsm.isDeterministic()) return false;
+
+  if (!fsm.isDeterministic() || hasDeadStates(fsm) || hasUnreachableStates(fsm))
+    return false;
+
+  if (fsm.hasIndefinition()) createPhiState(fsm);
+
   let f = [fsm.finals];
   let fk = [fsm.nonFinalStates()];
   let equivalents = [f, fk];
@@ -184,6 +217,8 @@ export function minimize(fsm) {
       newLengthFK = fk.length;
     } while (oldLengthF != newLengthF || oldLengthFK != newLengthFK);
     createMinimalAutomata(fsm, equivalents);
+    eliminateDeadStates(fsm);
+    fsm.ensureStatesNamesAreStandard();
   }
 }
 export function createNewSet(states, equivalent, state) {
