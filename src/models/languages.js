@@ -236,12 +236,21 @@ export default {
     addToFinalStates({ id, state }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
-      if (language && language.fsm && language.fsm.states.includes(state)) {
+      if (
+        language &&
+        language.fsm &&
+        language.fsm.states.includes(state) &&
+        !language.fsm.finals.includes(state)
+      ) {
+        let newFinals = R.clone(language.fsm.finals);
+        newFinals.push(state);
+        newFinals = R.uniq(newFinals);
+
         language = {
           ...language,
           fsm: {
             ...language.fsm,
-            finals: [...language.fsm.finals, state],
+            finals: newFinals,
           },
         };
 

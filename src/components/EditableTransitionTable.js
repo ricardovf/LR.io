@@ -77,7 +77,7 @@ class EditableTransitionTable extends React.Component {
   }
 
   buildHeader(fsm) {
-    let data = ['*', 'F', 'Estado'];
+    let data = ['→', 'F', 'Estado'];
 
     if (fsm && Array.isArray(fsm.alphabet)) {
       data = [...data, ...fsm.alphabet];

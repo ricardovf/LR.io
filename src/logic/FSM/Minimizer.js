@@ -86,6 +86,8 @@ export function createPhiState(fsm) {
 }
 
 export function isMinimal(fsm) {
+  fsm = fsm.clone();
+
   if (fsm.hasIndefinition() || !fsm.isDeterministic()) return false;
 
   let f = [fsm.finals];

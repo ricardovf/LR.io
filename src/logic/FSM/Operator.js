@@ -282,7 +282,7 @@ export function difference(fsm, fsm_, automatas = []) {
 }
 
 export function closureWithSteps(fsm) {
-  let automatas = [];
+  let automatas = [fsm.clone()];
   closure(fsm.clone(), automatas);
   return automatas;
 }

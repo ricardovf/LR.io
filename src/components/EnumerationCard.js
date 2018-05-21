@@ -38,7 +38,7 @@ class EnumerationCard extends React.Component {
         const fsm = FSM.fromPlainObject(language.fsm);
 
         if (fsm) {
-          sentences = R.sortBy(s => s.length, fsm.generate(length));
+          sentences = R.sortBy(s => s.length, fsm.generate(length).sort());
         }
       }
 
