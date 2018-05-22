@@ -117,6 +117,12 @@ export function createPhiState(fsm) {
 export function isMinimal(fsm) {
   fsm = fsm.clone();
 
+  if(fsm.finals.length === 0)
+    return fsm.states.length === 1;
+
+  if (hasDeadStates(fsm) || hasUnreachableStates(fsm))
+    return false;
+
   if (fsm.hasIndefinition()) createPhiState(fsm);
 
   let f = [fsm.finals];
