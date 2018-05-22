@@ -141,6 +141,7 @@ export function isMinimal(fsm) {
             let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
               fsm.transitions
             ).pop();
+
             if (s !== undefined && s_ !== undefined) {
               if (!isInSameSet(s.to, s_.to, equivalent)) {
                 createNewSet(states, equivalent, s_.from);
@@ -235,9 +236,26 @@ export function minimize(fsm) {
   }
 }
 export function createNewSet(states, equivalent, state) {
-  let newEquivalent = [state];
-  states.splice(states.indexOf(state), 1);
-  equivalent.push(newEquivalent);
+  let findEquivalentSet = false;
+  let states_ = states.join();
+  let oldLength = equivalent.length;
+
+  for (let equivalentStates of equivalent) {
+    if (findEquivalentSet) {
+      equivalentStates.push(state);
+      return;
+    } else {
+      if (equivalentStates.join() === states_) {
+        findEquivalentSet = true;
+        states.splice(states.indexOf(state), 1);
+      }
+    }
+  }
+  if (!findEquivalentSet)
+    equivalent.push([state]);
+
+  if (findEquivalentSet && equivalent.length == oldLength)
+    equivalent.push([state]);
 }
 
 export function createMinimalAutomata(fsm, equivalents) {
