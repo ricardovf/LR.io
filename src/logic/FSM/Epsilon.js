@@ -32,18 +32,18 @@ export function eliminateEpsilonTransitions(fsm) {
     // Get one epsilon transition
     let transition = R.find(R.whereEq({ when: EPSILON }))(fsm.transitions);
 
-    // Copy the transitions that goes from the transition and not to itself
+    // Select the transitions that goes from the transition
     let newTransitions = R.filter(
       R.where({
         from: R.equals(transition.to),
-        to: R.complement(R.equals(transition.to)),
       })
     )(fsm.transitions);
 
-    // Change the from of the copy transitions
-    newTransitions = R.map(R.set(R.lensProp('from'), transition.from))(
-      newTransitions
-    );
+    newTransitions = R.map(t => {
+      t.to = t.to === t.from ? transition.from : t.to;
+      t.from = transition.from;
+      return t;
+    })(newTransitions);
 
     // Set the new transitions
     fsm.transitions = R.uniq([...fsm.transitions, ...newTransitions]);
