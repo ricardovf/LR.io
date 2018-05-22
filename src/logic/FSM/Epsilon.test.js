@@ -147,7 +147,7 @@ describe('FSM', () => {
       ]);
     });
 
-    it.only('should remove epsilon from a*b', () => {
+    it('should remove epsilon from a*b', () => {
       const states = ['A', 'B', 'C'];
       const alphabet = ['a', 'b', EPSILON];
       const transitions = [
