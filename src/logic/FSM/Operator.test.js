@@ -284,6 +284,38 @@ describe('FSM', () => {
       expect(await newFsm.recognize('abcd')).toBeFalsy();
     });
 
+    it('should intersect two FSM #5', async () => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = ['a', 'b'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'A', to: 'A', when: 'b' },
+        { from: 'B', to: 'C', when: 'a' },
+        { from: 'B', to: 'B', when: 'b' },
+        { from: 'C', to: 'A', when: 'a' },
+        { from: 'C', to: 'C', when: 'b' },
+      ];
+
+      const initial = 'C';
+      const finals = ['A', 'B'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      const states_ = ['A', 'B'];
+      const alphabet_ = ['a', 'b'];
+      const transitions_ = [
+        { from: 'A', to: 'A', when: 'a' },
+        { from: 'A', to: 'B', when: 'b' },
+        { from: 'B', to: 'B', when: 'a' },
+        { from: 'B', to: 'A', when: 'b' },
+      ];
+      const initial_ = 'A';
+      const finals_ = ['A'];
+      const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
+
+      const newFsm = intersection(fsm, fsm_);
+      expect(await newFsm.recognize('babbababab')).toBeTruthy();
+    });
+
     it('should apply difference for FSM #1', async () => {
       const states = ['A', 'B', 'C', 'D'];
       const alphabet = ['0', '1'];
