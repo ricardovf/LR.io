@@ -150,8 +150,7 @@ export function isMinimal(fsm) {
             }
           }
         }
-        if (states.length > 0)
-          ++numStates;
+        if (states.length > 0) ++numStates;
       }
     }
     newLengthF = f.length;
@@ -251,8 +250,7 @@ export function createNewSet(states, equivalent, state) {
       }
     }
   }
-  if (!findEquivalentSet)
-    equivalent.push([state]);
+  if (!findEquivalentSet) equivalent.push([state]);
 
   if (findEquivalentSet && equivalent.length == oldLength)
     equivalent.push([state]);

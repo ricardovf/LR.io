@@ -63,13 +63,7 @@ export function generate(
  */
 function makeClonedNonEpsilonFSM(fsm) {
   // create a new FSM without epsilon transitions and run the generate there, so we prevent infinite loops
-  const fsmWithoutEpsilon = new FSM(
-    [...fsm.states],
-    [...fsm.alphabet],
-    [...fsm.transitions],
-    fsm.initial,
-    [...fsm.finals]
-  );
+  const fsmWithoutEpsilon = fsm.clone();
 
   fsmWithoutEpsilon.eliminateEpsilonTransitions();
 

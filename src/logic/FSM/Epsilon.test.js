@@ -146,5 +146,26 @@ describe('FSM', () => {
         { from: 'B', to: 'C', when: 'c' },
       ]);
     });
+
+    it.only('should remove epsilon from a*b', () => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = ['a', 'b', EPSILON];
+      const transitions = [
+        { from: 'A', to: 'B', when: EPSILON },
+        { from: 'B', to: 'B', when: 'a' },
+        { from: 'B', to: 'C', when: 'b' },
+      ];
+      const initial = 'A';
+      const finals = ['C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      fsm.eliminateEpsilonTransitions();
+      expect(fsm.initial).toEqual('A');
+      expect(fsm.finals).toEqual(['C']);
+      expect(fsm.alphabet).toEqual(['a', 'b']);
+      expect(fsm.transitions).toEqual([
+        { from: 'A', to: 'A', when: 'a' },
+        { from: 'A', to: 'C', when: 'b' },
+      ]);
+    });
   });
 });
