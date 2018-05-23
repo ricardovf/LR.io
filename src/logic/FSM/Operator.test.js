@@ -51,8 +51,6 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = union(fsm, fsm_);
-      expect(await newFsm.recognize('0')).toBeTruthy();
-      expect(await newFsm.recognize('1')).toBeTruthy();
       expect(await newFsm.recognize('01')).toBeFalsy();
     });
 
@@ -458,6 +456,7 @@ describe('FSM', () => {
       const initial = 'Q1';
       const finals = ['Q0', 'Q6', 'Q5'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      expect(await fsm.recognize('bcb')).toBeTruthy();
       reverse(fsm);
       reverse(fsm);
       expect(await fsm.recognize('bcb')).toBeTruthy();
@@ -557,7 +556,7 @@ describe('FSM', () => {
 
     it('should obtain a closure for FSM #1', async () => {
       const states = ['A', 'B', 'C'];
-      const alphabet = ['a', 'a'];
+      const alphabet = ['a', 'b'];
       const transitions = [
         { from: 'A', to: 'B', when: 'a' },
         { from: 'B', to: 'C', when: 'b' },
