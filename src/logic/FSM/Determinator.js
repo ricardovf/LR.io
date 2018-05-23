@@ -1,6 +1,7 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
 import { EPSILON } from '../SymbolValidator';
+import { difference } from './Operator';
 
 /**
  * For each state, will check if has more than one transition with the same symbol
@@ -43,13 +44,20 @@ export function isDeterministic(fsm) {
   return false;
 }
 
+export function determinateWithSteps(fsm) {
+  let automatas = [fsm.clone()];
+  determinate(fsm.clone(), automatas);
+  return automatas;
+}
+
 /**
  * Determinate automate
  *
  * @param fsm FSM
- * @returns {void}
+ * @param automatas Array
+ * @return {Array}
  */
-export function determinate(fsm) {
+export function determinate(fsm, automatas = []) {
   if (!fsm instanceof FSM)
     throw new Error(`Received ${fsm} instead of an FSM instance.`);
 
@@ -57,6 +65,7 @@ export function determinate(fsm) {
     // Eliminate epsilon transitions to ensure the determinism
     if (fsm.hasEpsilonTransitions()) {
       fsm.eliminateEpsilonTransitions();
+      automatas.push(fsm.clone());
     }
 
     // We can only determinate if we have the initial state
@@ -94,7 +103,11 @@ export function determinate(fsm) {
       fsm.transitions = newTransitions;
       fsm.finals = newFinals;
     }
+
+    automatas.push(fsm.clone());
   }
+
+  return automatas;
 }
 
 /**

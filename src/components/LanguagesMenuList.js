@@ -10,12 +10,12 @@ const isSelected = (item, language) =>
 
 const styles = theme => ({
   selected: {
-    background: theme.palette.secondary.main,
+    background: theme.palette.primary.main,
     '& h3': {
-      color: theme.palette.secondary.contrastText,
+      color: theme.palette.primary.contrastText,
     },
     '&:hover': {
-      background: theme.palette.secondary.main,
+      background: theme.palette.primary.light,
     },
   },
 });
@@ -54,7 +54,12 @@ class LanguagesMenuList extends React.Component {
         {listItems}
 
         <ListItem>
-          <Button variant="raised" color="primary" onClick={newLanguageOnClick}>
+          <Button
+            fullWidth
+            variant="raised"
+            color="secondary"
+            onClick={newLanguageOnClick}
+          >
             Nova linguagem
           </Button>
         </ListItem>

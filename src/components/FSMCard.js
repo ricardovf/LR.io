@@ -93,11 +93,11 @@ class FSMCard extends React.Component {
             <ListItemIcon>
               {fsm
                 ? fsm.hasEpsilonTransitions()
-                  ? yesIcon
-                  : noIcon
+                  ? noIcon
+                  : yesIcon
                 : dontKnowIcon}
             </ListItemIcon>
-            <ListItemText primary="Transições por epsilon" />
+            <ListItemText primary="Sem transições por epsilon" />
           </ListItem>
           <ListItem disableGutters>
             <ListItemIcon>
@@ -118,43 +118,44 @@ class FSMCard extends React.Component {
 
     let message,
       actionText,
-      action = null;
+      action,
+      actions = null;
 
-    if (fsm) {
-      if (fsm.hasEpsilonTransitions()) {
-        message = 'Você pode eliminar as transições por epsilon';
-        action = eliminateEpsilonTransitions;
-        actionText = 'Eliminar epsilon';
-      } else if (!fsm.isDeterministic()) {
-        message = 'Você pode tornar esse autômato determinístico';
-        action = determinate;
-        actionText = 'Determinizar';
-      } else if (!fsm.isMinimal()) {
-        message = 'Você pode minimizar o autômato';
-        action = minimize;
-        actionText = 'Minimizar';
-      }
-    }
+    // if (fsm) {
+    //   if (fsm.hasEpsilonTransitions()) {
+    //     message = 'Você pode eliminar as transições por epsilon';
+    //     action = eliminateEpsilonTransitions;
+    //     actionText = 'Eliminar epsilon';
+    //   } else if (!fsm.isDeterministic()) {
+    //     message = 'Você pode tornar esse autômato determinístico';
+    //     action = determinate;
+    //     actionText = 'Determinizar';
+    //   } else if (!fsm.isMinimal()) {
+    //     message = 'Você pode minimizar o autômato';
+    //     action = minimize;
+    //     actionText = 'Minimizar';
+    //   }
+    // }
 
-    const actions = message && (
-      <React.Fragment>
-        <SnackbarContent
-          className={classes.snackbar}
-          message={message}
-          action={
-            <Button
-              color="secondary"
-              size="small"
-              onClick={() => {
-                action(language.id);
-              }}
-            >
-              {actionText}
-            </Button>
-          }
-        />
-      </React.Fragment>
-    );
+    // actions = message && (
+    //   <React.Fragment>
+    //     <SnackbarContent
+    //       className={classes.snackbar}
+    //       message={message}
+    //       action={
+    //         <Button
+    //           color="secondary"
+    //           size="small"
+    //           onClick={() => {
+    //             action(language.id);
+    //           }}
+    //         >
+    //           {actionText}
+    //         </Button>
+    //       }
+    //     />
+    //   </React.Fragment>
+    // );
 
     return (
       <Card className={classes.card}>

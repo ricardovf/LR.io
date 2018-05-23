@@ -1,5 +1,6 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
+import { determinate } from './Determinator';
 
 export function detectReachableStates(state, reachableStates, transitions) {
   let paths = R.filter(R.whereEq({ from: state }))(transitions);
@@ -23,6 +24,25 @@ export function hasUnreachableStates(fsm) {
   let reachableStates = [fsm.initial];
   detectReachableStates(fsm.initial, reachableStates, R.clone(fsm.transitions));
   return getUnreachableStates(reachableStates, fsm).length > 0;
+}
+
+export function generatesTheEmptyLanguage(fsm) {
+  if (
+    fsm.initial === undefined ||
+    fsm.initial === null ||
+    fsm.finals.length === 0
+  ) {
+    return true;
+  }
+
+  fsm = fsm.clone();
+
+  let reachableStates = [fsm.initial];
+  detectReachableStates(fsm.initial, reachableStates, R.clone(fsm.transitions));
+  return R.equals(
+    R.uniq(getUnreachableStates(reachableStates, fsm)).sort(),
+    R.uniq(fsm.states).sort()
+  );
 }
 
 export function eliminateUnreachableStates(fsm) {
@@ -117,11 +137,9 @@ export function createPhiState(fsm) {
 export function isMinimal(fsm) {
   fsm = fsm.clone();
 
-  if(fsm.finals.length === 0)
-    return fsm.states.length === 1;
+  if (fsm.finals.length === 0) return fsm.states.length === 1;
 
-  if (hasDeadStates(fsm) || hasUnreachableStates(fsm))
-    return false;
+  if (hasDeadStates(fsm) || hasUnreachableStates(fsm)) return false;
 
   if (fsm.hasIndefinition()) createPhiState(fsm);
 
@@ -187,21 +205,35 @@ export function minimizeEmptyFSMForEmptyLanguage(fsm) {
   }
 
   fsm.initial = initial;
+  fsm.finals = [];
   fsm.states = states;
   fsm.transitions = transitions;
 }
 
-export function minimize(fsm) {
+export function minimizeWithSteps(fsm) {
+  let automatas = [fsm.clone()];
+  minimize(fsm.clone(), automatas);
+  return automatas;
+}
+
+export function minimize(fsm, automatas = []) {
   if (!fsm instanceof FSM)
     throw new Error(`Received ${fsm} instead of a FSM instance.`);
 
   if (!isMinimal(fsm)) {
-    if (fsm.states.length > 0 && fsm.finals.length === 0)
-      return minimizeEmptyFSMForEmptyLanguage(fsm);
+    if (generatesTheEmptyLanguage(fsm)) {
+      minimizeEmptyFSMForEmptyLanguage(fsm);
+      automatas.push(fsm.clone());
+      return automatas;
+    }
+
     if (!fsm.isDeterministic()) fsm.determinate();
     eliminateDeadStates(fsm);
     eliminateUnreachableStates(fsm);
     if (fsm.hasIndefinition()) createPhiState(fsm);
+
+    automatas.push(fsm.clone());
+
     let f = [fsm.finals];
     let fk = [fsm.nonFinalStates()];
     let equivalents = [f, fk];
@@ -236,9 +268,22 @@ export function minimize(fsm) {
       newLengthFK = fk.length;
     } while (oldLengthF != newLengthF || oldLengthFK != newLengthFK);
     createMinimalAutomata(fsm, equivalents);
+
+    automatas.push(fsm.clone());
+
     eliminateDeadStates(fsm);
+    eliminateUnreachableStates(fsm);
     fsm.ensureStatesNamesAreStandard();
+
+    // If we generated an empty fsm
+    if (generatesTheEmptyLanguage(fsm)) {
+      minimizeEmptyFSMForEmptyLanguage(fsm);
+    }
+
+    automatas.push(fsm.clone());
   }
+
+  return automatas;
 }
 export function createNewSet(states, equivalent, state) {
   let findEquivalentSet = false;

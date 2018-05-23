@@ -1,6 +1,7 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
 import { EPSILON } from '../SymbolValidator';
+import { determinate } from './Determinator';
 
 /**
  * Check if the automata has any epsilon transitions
@@ -18,13 +19,20 @@ export function hasEpsilonTransitions(fsm) {
   );
 }
 
+export function removeEpsilonWithSteps(fsm) {
+  let automatas = [fsm.clone()];
+  eliminateEpsilonTransitions(fsm.clone(), automatas);
+  return automatas;
+}
+
 /**
  * Eliminate all epsilon transitions from the automata
  *
  * @param fsm FSM
- * @returns {void}
+ * @param automatas Array
+ * @returns {Array}
  */
-export function eliminateEpsilonTransitions(fsm) {
+export function eliminateEpsilonTransitions(fsm, automatas = []) {
   if (!fsm instanceof FSM)
     throw new Error(`Received ${fsm} instead of an FSM instance.`);
 
@@ -58,7 +66,13 @@ export function eliminateEpsilonTransitions(fsm) {
 
     // Remove the epsilon transactions
     fsm.transitions = R.reject(R.whereEq(transition))(fsm.transitions);
+
+    automatas.push(fsm.clone());
   }
 
   fsm.alphabet.splice(fsm.alphabet.indexOf(EPSILON), 1);
+
+  automatas.push(fsm.clone());
+
+  return automatas;
 }

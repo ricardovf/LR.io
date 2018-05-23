@@ -14,6 +14,10 @@ import {
   unionWithSteps,
 } from '../../logic/FSM/Operator';
 import TwoLanguagesOperationDialog from './TwoLanguagesOperationDialog';
+import FSM from '../../logic/FSM';
+import { determinateWithSteps } from '../../logic/FSM/Determinator';
+import { minimizeWithSteps } from '../../logic/FSM/Minimizer';
+import { removeEpsilonWithSteps } from '../../logic/FSM/Epsilon';
 
 class OperationsMenu extends React.Component {
   state = {
@@ -43,8 +47,40 @@ class OperationsMenu extends React.Component {
       return '';
     }
 
+    const fsm =
+      language.fsm instanceof FSM
+        ? language.fsm
+        : FSM.fromPlainObject(language.fsm);
+
     return (
       <div>
+        <SelfOperationDialog
+          title="Minimizar"
+          subtitle="Minimizando"
+          open={operation === 'minimize'}
+          operation={minimizeWithSteps}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
+        <SelfOperationDialog
+          title="Determinizar"
+          subtitle="Determinizando"
+          open={operation === 'determinate'}
+          operation={determinateWithSteps}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
+        <SelfOperationDialog
+          title="Remover epsilon"
+          subtitle="Removendo epsilon de "
+          open={operation === 'removeEpsilon'}
+          operation={removeEpsilonWithSteps}
+          handleCancel={this.handleClose}
+          handleSave={handleSave}
+          language={language}
+        />
         <SelfOperationDialog
           title="Complemento"
           subtitle="Complementando"
@@ -139,6 +175,39 @@ class OperationsMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
+          <MenuItem
+            disabled={fsm.hasEpsilonTransitions() ? false : true}
+            onClick={this.makeOperationHandler('removeEpsilon')}
+          >
+            Eliminar epsilon
+          </MenuItem>
+          <MenuItem
+            disabled={fsm.isDeterministic() ? true : false}
+            onClick={this.makeOperationHandler('determinate')}
+          >
+            Determinizar
+          </MenuItem>
+          <MenuItem
+            disabled={fsm.isMinimal() ? true : false}
+            onClick={this.makeOperationHandler('minimize')}
+          >
+            Minimizar
+          </MenuItem>
+
+          <Divider />
+
+          <MenuItem onClick={this.makeOperationHandler('negation')}>
+            Complemento
+          </MenuItem>
+          <MenuItem onClick={this.makeOperationHandler('reverse')}>
+            Reverso
+          </MenuItem>
+          <MenuItem onClick={this.makeOperationHandler('closure')}>
+            Fechamento
+          </MenuItem>
+
+          <Divider />
+
           <MenuItem onClick={this.makeOperationHandler('concatenation')}>
             Concatenar
           </MenuItem>
@@ -149,17 +218,9 @@ class OperationsMenu extends React.Component {
           <MenuItem onClick={this.makeOperationHandler('intersection')}>
             Interseção
           </MenuItem>
+
           <Divider />
-          <MenuItem onClick={this.makeOperationHandler('negation')}>
-            Complemento
-          </MenuItem>
-          <MenuItem onClick={this.makeOperationHandler('reverse')}>
-            Reverso
-          </MenuItem>
-          <MenuItem onClick={this.makeOperationHandler('closure')}>
-            Fechamento
-          </MenuItem>
-          <Divider />
+
           <MenuItem onClick={this.makeOperationHandler('clone')}>
             Clonar
           </MenuItem>
