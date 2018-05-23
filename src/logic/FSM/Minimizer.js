@@ -41,7 +41,7 @@ export function generatesTheEmptyLanguage(fsm) {
   detectReachableStates(fsm.initial, reachableStates, R.clone(fsm.transitions));
   return R.equals(
     R.uniq(getUnreachableStates(reachableStates, fsm)).sort(),
-    R.uniq(fsm.states).sort()
+    R.uniq(fsm.finals).sort()
   );
 }
 
@@ -195,7 +195,7 @@ export function isInSameSet(state, state_, equivalent) {
   return true;
 }
 
-export function minimizeEmptyFSMForEmptyLanguage(fsm) {
+export function makeEmptyFSMForEmptyLanguage(fsm) {
   let initial = 'Q0';
   let states = [initial];
   let transitions = [];
@@ -222,7 +222,7 @@ export function minimize(fsm, automatas = []) {
 
   if (!isMinimal(fsm)) {
     if (generatesTheEmptyLanguage(fsm)) {
-      minimizeEmptyFSMForEmptyLanguage(fsm);
+      makeEmptyFSMForEmptyLanguage(fsm);
       automatas.push(fsm.clone());
       return automatas;
     }
@@ -277,7 +277,7 @@ export function minimize(fsm, automatas = []) {
 
     // If we generated an empty fsm
     if (generatesTheEmptyLanguage(fsm)) {
-      minimizeEmptyFSMForEmptyLanguage(fsm);
+      makeEmptyFSMForEmptyLanguage(fsm);
     }
 
     automatas.push(fsm.clone());

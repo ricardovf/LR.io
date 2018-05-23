@@ -161,6 +161,7 @@ class SelfOperationDialog extends React.Component {
 
     return (
       <Dialog
+        disableBackdropClick
         classes={{ paper: classes.modal }}
         fullWidth
         maxWidth={'md'}

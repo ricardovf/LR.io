@@ -58,6 +58,7 @@ class LanguagesMenuList extends React.Component {
             fullWidth
             variant="raised"
             color="secondary"
+            size="medium"
             onClick={newLanguageOnClick}
           >
             Nova linguagem

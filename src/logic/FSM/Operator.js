@@ -1,6 +1,11 @@
 import FSM from '../FSM';
 import * as R from 'ramda';
-import { createPhiState } from './Minimizer';
+import {
+  createPhiState,
+  generatesTheEmptyLanguage,
+  makeEmptyFSMForEmptyLanguage,
+} from './Minimizer';
+import { EPSILON, makeNewUniqueStateName } from '../SymbolValidator';
 
 export function unionWithSteps(fsm, fsm_) {
   let automatas = [];
@@ -93,13 +98,22 @@ export function union(fsm, fsm_, automatas = []) {
     }
   }
 
-  return new FSM(
+  let last = new FSM(
     R.uniq(states),
     R.uniq(alphabet),
     R.uniq(transitions),
     initial,
     R.uniq(finals)
   );
+  last.minimize();
+
+  if (generatesTheEmptyLanguage(last)) {
+    makeEmptyFSMForEmptyLanguage(last);
+  }
+
+  automatas.push(last.clone());
+
+  return last;
 }
 
 export function concatenationWithSteps(fsm, fsm_) {
@@ -178,23 +192,22 @@ export function concatenation(fsm, fsm_, automatas = []) {
     }
   }
 
-  automatas.push(
-    new FSM(
-      R.uniq(states),
-      R.uniq(alphabet),
-      R.uniq(transitions),
-      initial,
-      R.uniq(finals)
-    )
-  );
-
-  return new FSM(
+  let last = new FSM(
     R.uniq(states.concat(fsm.states)),
     R.uniq(alphabet),
     R.uniq(transitions),
     fsm.initial,
     R.uniq(finals)
   );
+  last.minimize();
+
+  if (generatesTheEmptyLanguage(last)) {
+    makeEmptyFSMForEmptyLanguage(last);
+  }
+
+  automatas.push(last.clone());
+
+  return last;
 }
 
 export function intersectionWithSteps(fsm, fsm_) {
@@ -212,15 +225,6 @@ export function intersection(fsm, fsm_, automatas = []) {
 
   if (fsm.hasIndefinition()) createPhiState(fsm);
   if (fsm_.hasIndefinition()) createPhiState(fsm_);
-  automatas.push(
-    new FSM(
-      R.uniq(states),
-      R.uniq(alphabet),
-      R.uniq(transitions),
-      initial,
-      R.uniq(finals)
-    )
-  );
 
   for (let symbol of alphabet) {
     for (let state of fsm.states) {
@@ -253,6 +257,16 @@ export function intersection(fsm, fsm_, automatas = []) {
         states.push(state + state_);
       }
     }
+
+    automatas.push(
+      new FSM(
+        R.uniq(states),
+        alphabet,
+        R.uniq(transitions),
+        initial,
+        R.uniq(finals)
+      )
+    );
   }
 
   for (let final of fsm.finals) {
@@ -261,13 +275,23 @@ export function intersection(fsm, fsm_, automatas = []) {
     }
   }
 
-  return new FSM(
+  let finalFSM = new FSM(
     R.uniq(states),
     alphabet,
     R.uniq(transitions),
     initial,
     R.uniq(finals)
   );
+
+  finalFSM.minimize();
+
+  if (generatesTheEmptyLanguage(finalFSM)) {
+    makeEmptyFSMForEmptyLanguage(finalFSM);
+  }
+
+  automatas.push(finalFSM.clone());
+
+  return finalFSM;
 }
 
 export function differenceWithSteps(fsm, fsm_) {
@@ -278,7 +302,14 @@ export function differenceWithSteps(fsm, fsm_) {
 
 export function difference(fsm, fsm_, automatas = []) {
   negation(fsm_);
-  return intersection(fsm, fsm_, automatas);
+  let last = intersection(fsm, fsm_, automatas);
+
+  if (generatesTheEmptyLanguage(last)) {
+    makeEmptyFSMForEmptyLanguage(last);
+  }
+  automatas.push(last.clone());
+
+  return last;
 }
 
 export function closureWithSteps(fsm) {
@@ -288,6 +319,17 @@ export function closureWithSteps(fsm) {
 }
 
 export function closure(fsm, automatas = []) {
+  if (generatesTheEmptyLanguage(fsm)) {
+    makeEmptyFSMForEmptyLanguage(fsm);
+    fsm.alphabet.push(EPSILON);
+    let newState = makeNewUniqueStateName(fsm.states);
+    fsm.states.push(newState);
+    fsm.initial = newState;
+    fsm.finals = [newState];
+    automatas.push(fsm.clone());
+    return automatas;
+  }
+
   for (let final of fsm.finals) {
     for (let symbol of fsm.alphabet) {
       let paths = [
@@ -324,6 +366,9 @@ export function closure(fsm, automatas = []) {
       )
     );
   }
+
+  fsm.minimize();
+  automatas.push(fsm.clone());
 }
 
 export function reverseWithSteps(fsm) {
@@ -397,7 +442,10 @@ export function reverse(fsm, automatas = []) {
   fsm.finals = R.uniq(finals);
   fsm.initial = initial;
   fsm.states = states;
-  automatas.push(fsm);
+
+  fsm.minimize();
+
+  automatas.push(fsm.clone());
 }
 
 export function cloneFSMWithSteps(fsm) {
@@ -421,4 +469,7 @@ export function negation(fsm, automatas = []) {
     else fsm.finals.push(state);
     automatas.push(fsm);
   }
+
+  fsm.minimize();
+  automatas.push(fsm.clone());
 }

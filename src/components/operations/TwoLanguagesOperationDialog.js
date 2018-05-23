@@ -40,6 +40,7 @@ class TwoLanguagesOperationDialog extends React.Component {
     super(props);
 
     this.handleNext = this.handleNext.bind(this);
+    this.handleToEnd = this.handleToEnd.bind(this);
     this.handlePrevious = this.handlePrevious.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleSaveAndClose = this.handleSaveAndClose.bind(this);
@@ -73,6 +74,12 @@ class TwoLanguagesOperationDialog extends React.Component {
   handleNext() {
     if (Array.isArray(this.state.steps)) {
       this.setState({ step: this.state.step + 1 });
+    }
+  }
+
+  handleToEnd() {
+    if (Array.isArray(this.state.steps)) {
+      this.setState({ step: this.state.steps.length });
     }
   }
 
@@ -209,11 +216,11 @@ class TwoLanguagesOperationDialog extends React.Component {
         color="primary"
         autoFocus
       >
-        Próximo
+        →
       </Button>
     );
 
-    let saveButton, previousButton;
+    let saveButton, previousButton, toEndButton;
 
     if (Array.isArray(this.state.steps)) {
       if (this.state.step === this.state.steps.length)
@@ -228,9 +235,17 @@ class TwoLanguagesOperationDialog extends React.Component {
           </Button>
         );
       else if (this.state.steps.length > 1) {
+        if (this.state.steps.length > 4) {
+          toEndButton = (
+            <Button variant="raised" onClick={this.handleToEnd}>
+              Último
+            </Button>
+          );
+        }
+
         saveButton = (
           <Button onClick={this.handleSave} color="secondary">
-            Salvar intermediário
+            Salvar atual
           </Button>
         );
       }
@@ -238,7 +253,7 @@ class TwoLanguagesOperationDialog extends React.Component {
       if (this.state.steps.length > 1 && this.state.step !== 1) {
         previousButton = (
           <Button onClick={this.handlePrevious} color="primary">
-            Anterior
+            ←
           </Button>
         );
       }
@@ -279,6 +294,7 @@ class TwoLanguagesOperationDialog extends React.Component {
           {saveButton}
           {previousButton}
           {actionButton}
+          {toEndButton}
         </DialogActions>
       </React.Fragment>
     );
@@ -289,6 +305,7 @@ class TwoLanguagesOperationDialog extends React.Component {
 
     return (
       <Dialog
+        disableBackdropClick
         classes={{ paper: classes.modal }}
         fullWidth
         maxWidth={'md'}

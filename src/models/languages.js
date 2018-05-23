@@ -55,6 +55,8 @@ export default {
       state,
       { id, language, updateGrammar = true, updateExpression = true }
     ) {
+      updateExpression = false;
+
       if (updateGrammar) {
         if (language && language.fsm) {
           try {
@@ -116,6 +118,7 @@ export default {
 
         let newLanguage = _makeNewLanguage(name);
         newLanguage.fsm = fsm;
+        newLanguage.expression = language.expression;
         newLanguage.userSentences = language.userSentences;
         newLanguage.enumerationLength = language.enumerationLength;
 
@@ -519,7 +522,7 @@ export default {
           language = {
             ...language,
             valid: valid,
-            expression: undefined,
+            // expression: undefined,
             grammar: valid
               ? grammar.getFormattedText() || multiTrim(text, false)
               : multiTrim(text, false),
