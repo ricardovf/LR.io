@@ -21,6 +21,7 @@ const styles = theme => ({
       WebkitFontSmoothing: 'antialiased', // Antialiasing.
       MozOsxFontSmoothing: 'grayscale', // Antialiasing.
       boxSizing: 'border-box',
+      fontSize: '18px',
     },
   },
   root: {

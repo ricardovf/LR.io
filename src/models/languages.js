@@ -125,6 +125,14 @@ export default {
       }
     },
 
+    async createAndSelect(payload, rootState) {
+      const newLanguage = _makeNewLanguage(
+        `Nova linguagem #${rootState.languages.length}`
+      );
+      dispatch.languages.create({ language: newLanguage });
+      dispatch.selectedLanguage.select({ id: newLanguage.id });
+    },
+
     async addUserSentence({ id, sentence }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 

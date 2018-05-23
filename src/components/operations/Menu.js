@@ -143,7 +143,7 @@ class OperationsMenu extends React.Component {
             Concatenar
           </MenuItem>
           <MenuItem onClick={this.makeOperationHandler('difference')}>
-            Subtrair
+            Diferença
           </MenuItem>
           <MenuItem onClick={this.makeOperationHandler('union')}>Unir</MenuItem>
           <MenuItem onClick={this.makeOperationHandler('intersection')}>

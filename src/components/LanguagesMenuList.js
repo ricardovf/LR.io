@@ -8,9 +8,22 @@ import { withStyles } from 'material-ui';
 const isSelected = (item, language) =>
   language !== undefined && language.id === item.id;
 
+const styles = theme => ({
+  selected: {
+    background: theme.palette.secondary.main,
+    '& h3': {
+      color: theme.palette.secondary.contrastText,
+    },
+    '&:hover': {
+      background: theme.palette.secondary.main,
+    },
+  },
+});
+
 class LanguagesMenuList extends React.Component {
   render() {
     const {
+      classes,
       language,
       languages,
       selectLanguageOnClick,
@@ -19,20 +32,23 @@ class LanguagesMenuList extends React.Component {
 
     const listItems = languages.map(item => (
       <ListItem
+        className={isSelected(item, language) ? classes.selected : undefined}
         button
         key={item.id}
         onClick={selectLanguageOnClick.bind(this, item.id)}
       >
-        <ListItemText
-          primary={(isSelected(item, language) ? '→ ' : '') + item.name}
-        />
+        <ListItemText primary={item.name} />
       </ListItem>
     ));
 
     return (
       <List
         subheader={
-          <ListSubheader component="div">Linguagens regulares</ListSubheader>
+          languages && languages.length > 0 ? (
+            <ListSubheader component="div">Linguagens regulares</ListSubheader>
+          ) : (
+            undefined
+          )
         }
       >
         {listItems}
@@ -53,7 +69,5 @@ LanguagesMenuList.propTypes = {
   selectLanguageOnClick: PropTypes.func.isRequired,
   newLanguageOnClick: PropTypes.func.isRequired,
 };
-
-const styles = theme => ({});
 
 export default withStyles(styles, { withTheme: true })(LanguagesMenuList);

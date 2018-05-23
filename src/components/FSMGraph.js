@@ -54,11 +54,15 @@ class FSMGraph extends React.Component {
       <div>
         {showTitle && (
           <Typography gutterBottom variant="headline" component="h2">
-            Autômato
+            Grafo
           </Typography>
         )}
 
-        <div className={classes.graphContainer}>{this.renderDiagram(fsm)}</div>
+        {fsm && (
+          <div className={classes.graphContainer}>
+            {this.renderDiagram(fsm)}
+          </div>
+        )}
       </div>
     );
   }

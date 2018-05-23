@@ -9,7 +9,7 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  newLanguageOnClick: dispatch.languages.create,
+  newLanguageOnClick: dispatch.languages.createAndSelect,
   selectLanguageOnClick: id => dispatch.selectedLanguage.select({ id }),
 });
 

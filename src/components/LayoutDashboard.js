@@ -49,14 +49,14 @@ function LayoutDashboard(props) {
               spacing={24}
               style={{ height: 'calc(100% + 24px)' }}
             >
-              <Grid item xs={12}>
-                <TableOrGraphCardConnector />
+              <Grid item xs={12} sm={6}>
+                <ExpressionCardConnector />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <GrammarCardConnector />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <ExpressionCardConnector />
+              <Grid item xs={12}>
+                <TableOrGraphCardConnector />
               </Grid>
             </Grid>
           </Grid>

@@ -55,19 +55,18 @@ class TableOrGraphCard extends React.Component {
       <Card className={classes.card}>
         <CardContent>
           <div className={classes.icons}>
+            <IconButton
+              title="Alternar entre o grafo e a tabela de transições"
+              className={classes.icon}
+              aria-label="generate-code-for-fsm"
+              onClick={alternateView}
+            >
+              <Icon color={view === 'table' ? undefined : 'primary'}>
+                bubble_chart
+              </Icon>
+            </IconButton>
             {fsm && (
               <React.Fragment>
-                <Tooltip title="Alternar entre gráfico e tabela">
-                  <IconButton
-                    className={classes.icon}
-                    aria-label="generate-code-for-fsm"
-                    onClick={alternateView}
-                  >
-                    <Icon color={view === 'table' ? undefined : 'primary'}>
-                      bubble_chart
-                    </Icon>
-                  </IconButton>
-                </Tooltip>
                 {<CodeDialog fsm={fsm} />}
                 {renameStates}
               </React.Fragment>
