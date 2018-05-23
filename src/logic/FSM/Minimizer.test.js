@@ -393,5 +393,45 @@ describe('FSM', () => {
       expect(isMinimal(fsm)).toBe(true);
       expect(fsm.states.length).toBe(8);
     });
+
+    it('should return an automata with correct alphabet and no final states when language is empty', () => {
+      const states = ['S', 'C', 'Ã'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'S', to: 'S', when: 'a' },
+        { from: 'S', to: 'S', when: 'b' },
+        { from: 'S', to: 'C', when: 'c' },
+      ];
+      const initial = 'S';
+      const finals = ['Ã'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      fsm.minimize();
+      fsm.ensureStatesNamesAreStandard();
+      expect(fsm.states).toEqual(['A']);
+      expect(fsm.initial).toEqual('A');
+      expect(fsm.alphabet).toEqual(alphabet);
+      expect(fsm.transitions).toEqual([
+        { from: 'A', to: 'A', when: 'a' },
+        { from: 'A', to: 'A', when: 'b' },
+        { from: 'A', to: 'A', when: 'c' },
+      ]);
+      expect(fsm.finals).toEqual([]);
+    });
+
+    it('should return a minimal automata of ab*c?', () => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'B', to: 'B', when: 'b' },
+        { from: 'B', to: 'C', when: 'c' },
+      ];
+      const initial = 'A';
+      const finals = ['B', 'C'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      expect(fsm.isMinimal()).toBeTruthy();
+    });
   });
 });
