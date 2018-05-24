@@ -103,7 +103,7 @@ export function hasDeadStates(fsm) {
   let deadStates = [];
   do {
     let aliveStates = [];
-    for (let final of fsm.finals){
+    for (let final of fsm.finals) {
       detectAliveStates(final, aliveStates, fsm.transitions);
     }
     deadStates = getDeadStates(aliveStates, fsm);
@@ -370,6 +370,5 @@ export function findNewStateEquivalent(state, equivalents) {
 export function getEquivalentClass(state, equivalents) {
   for (let equivalent of equivalents)
     for (let states of equivalent)
-      for (let state_ of states)
-        if (state_ === state) return equivalent;
+      for (let state_ of states) if (state_ === state) return equivalent;
 }

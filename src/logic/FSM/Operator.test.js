@@ -602,5 +602,29 @@ describe('FSM', () => {
       expect(await fsm.recognize('a')).toBeTruthy();
       expect(await fsm.recognize('bcaba')).toBeTruthy();
     });
+
+    it('should obtain a closure for a(ba)*', async () => {
+      const states = ['A', 'B', 'C', 'D'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'B', to: 'C', when: 'b' },
+        { from: 'C', to: 'B', when: 'a' },
+      ];
+      const initial = 'A';
+      const finals = ['B'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+
+      expect(await fsm.recognize('a')).toBeTruthy();
+      expect(await fsm.recognize('aba')).toBeTruthy();
+      expect(await fsm.recognize('abab')).toBeFalsy();
+      expect(await fsm.recognize('ababa')).toBeTruthy();
+      closure(fsm);
+      fsm.minimize();
+      expect(await fsm.recognize('')).toBeTruthy();
+      expect(await fsm.recognize('aaaab')).toBeFalsy();
+      expect(await fsm.recognize('aaaaaba')).toBeTruthy();
+      expect(await fsm.recognize('aabababaaa')).toBeTruthy();
+    });
   });
 });

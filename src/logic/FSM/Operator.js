@@ -329,7 +329,10 @@ export function closure(fsm, automatas = []) {
     automatas.push(fsm.clone());
     return automatas;
   }
-
+  let initial = 'Q0';
+  do {
+    initial += '`';
+  } while (fsm.states.includes(initial));
   for (let final of fsm.finals) {
     for (let symbol of fsm.alphabet) {
       let paths = [
@@ -353,19 +356,28 @@ export function closure(fsm, automatas = []) {
     }
   }
 
-  if (!fsm.finals.includes(fsm.initial)) {
-    fsm.finals.push(fsm.initial);
-
-    automatas.push(
-      new FSM(
-        R.uniq(fsm.states),
-        R.uniq(fsm.alphabet),
-        R.uniq(fsm.transitions),
-        fsm.initial,
-        R.uniq(fsm.finals)
-      )
-    );
+  for (let symbol of fsm.alphabet) {
+    let paths = [
+      ...R.filter(R.whereEq({ from: fsm.initial, when: symbol }))(
+        fsm.transitions
+      ),
+    ];
+    for (let path of paths) {
+      fsm.transitions.push({ from: initial, to: path.to, when: symbol });
+    }
   }
+  automatas.push(
+    new FSM(
+      R.uniq(fsm.states),
+      R.uniq(fsm.alphabet),
+      R.uniq(fsm.transitions),
+      fsm.initial,
+      R.uniq(fsm.finals)
+    )
+  );
+  fsm.finals.push(initial);
+  fsm.states.push(initial);
+  fsm.initial = initial;
 
   fsm.minimize();
   automatas.push(fsm.clone());
