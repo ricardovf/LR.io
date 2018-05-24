@@ -424,8 +424,8 @@ export function reverse(fsm, automatas = []) {
         to: transition.from,
         when: transition.when,
       });
-      states.push(transition.when);
       states.push(transition.to);
+      states.push(transition.from);
     }
     automatas.push(
       new FSM(
@@ -441,7 +441,7 @@ export function reverse(fsm, automatas = []) {
   fsm.transitions = R.uniq(transitions);
   fsm.finals = R.uniq(finals);
   fsm.initial = initial;
-  fsm.states = states;
+  fsm.states = R.uniq(states);
 
   fsm.minimize();
 
