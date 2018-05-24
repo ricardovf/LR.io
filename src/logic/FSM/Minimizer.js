@@ -68,9 +68,9 @@ export function detectAliveStates(state, aliveStates, transitions) {
   for (let path of paths) {
     if (aliveStates.includes(path.from)) continue;
     aliveStates.push(path.from);
-    if (!aliveStates.includes(state)) aliveStates.push(state);
     detectAliveStates(path.from, aliveStates, transitions);
   }
+  if (!aliveStates.includes(state)) aliveStates.push(state);
 }
 
 export function getDeadStates(aliveStates, fsm) {
@@ -103,12 +103,11 @@ export function hasDeadStates(fsm) {
   let deadStates = [];
   do {
     let aliveStates = [];
-    for (let final of fsm.finals)
+    for (let final of fsm.finals){
       detectAliveStates(final, aliveStates, fsm.transitions);
-    deadStates = getDeadStates(aliveStates, fsm);
-    if (deadStates.length > 0) {
-      return true;
     }
+    deadStates = getDeadStates(aliveStates, fsm);
+    if (deadStates.length > 0) return true;
     for (let state of deadStates) {
       let paths = R.filter(R.whereEq({ to: state }))(fsm.transitions);
       for (let path of paths)

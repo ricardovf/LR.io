@@ -430,7 +430,6 @@ describe('FSM', () => {
       const initial = 'A';
       const finals = ['B', 'C'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
-
       expect(fsm.isMinimal()).toBeTruthy();
     });
   });
