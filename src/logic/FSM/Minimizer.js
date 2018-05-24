@@ -166,7 +166,8 @@ export function isMinimal(fsm) {
             ).pop();
 
             if (s !== undefined && s_ !== undefined) {
-              if (!isInSameSet(s.to, s_.to, equivalent)) {
+              let equivalentClass = getEquivalentClass(s.to, equivalents);
+              if (!isInSameSet(s.to, s_.to, equivalentClass)) {
                 createNewSet(states, equivalent, s_.from);
                 break;
               }
@@ -254,7 +255,8 @@ export function minimize(fsm, automatas = []) {
                 fsm.transitions
               ).pop();
               if (s !== undefined && s_ !== undefined) {
-                if (!isInSameSet(s.to, s_.to, equivalent)) {
+                let equivalentClass = getEquivalentClass(s.to, equivalents);
+                if (!isInSameSet(s.to, s_.to, equivalentClass)) {
                   createNewSet(states, equivalent, s_.from);
                   break;
                 }
@@ -363,4 +365,11 @@ export function findNewStateEquivalent(state, equivalents) {
       ++k;
     }
   }
+}
+
+export function getEquivalentClass(state, equivalents) {
+  for (let equivalent of equivalents)
+    for (let states of equivalent)
+      for (let state_ of states)
+        if (state_ === state) return equivalent;
 }

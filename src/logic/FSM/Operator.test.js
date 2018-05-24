@@ -458,6 +458,7 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       expect(await fsm.recognize('bcb')).toBeTruthy();
       reverse(fsm);
+      expect(await fsm.recognize('bcb')).toBeTruthy();
       reverse(fsm);
       expect(await fsm.recognize('bcb')).toBeTruthy();
     });
