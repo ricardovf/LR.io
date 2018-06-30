@@ -10,6 +10,23 @@ import {
   isMinimal,
   minimize,
 } from './Minimizer';
+import Parser, {
+  buildFSMFromTree,
+  buildTree,
+  convertFromExpressionToFSM,
+  LAMBDA,
+  toExplicit,
+  toPostfix,
+} from '../Expression/Parser';
+import {
+  concatenation,
+  difference,
+  intersection,
+  negation,
+  reverse,
+  union,
+  closure,
+} from './Operator';
 
 describe('FSM', () => {
   describe('isMinimal', () => {
@@ -431,6 +448,21 @@ describe('FSM', () => {
       const finals = ['B', 'C'];
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       expect(fsm.isMinimal()).toBeTruthy();
+    });
+
+    it('should return a minimal automata of ab*c?', async () => {
+      let tree = buildTree(toPostfix(toExplicit('(b)*a?(ba?)*')));
+      const nonConsecutiveA = buildFSMFromTree(tree);
+
+      tree = buildTree(toPostfix(toExplicit('(a)*b?(ab?)*')));
+      const nonConsecutiveB = buildFSMFromTree(tree);
+
+      const newFsm = intersection(nonConsecutiveA, nonConsecutiveB);
+
+      expect(await newFsm.recognize('aa')).toBeFalsy();
+      expect(await newFsm.recognize('aba')).toBeTruthy();
+      expect(await newFsm.recognize('ababaa')).toBeFalsy();
+      expect(await newFsm.recognize('baba')).toBeTruthy();
     });
   });
 });

@@ -44,3 +44,35 @@ export function makeNewUniqueStateName(states = []) {
     nextName = `Q${++index}`;
   }
 }
+
+export function createDifferentNames(fsm, fsm_) {
+  for (let state of fsm.states) {
+    if (fsm_.states.includes(state)) {
+      fixReferences(fsm_, state, fsm.states.concat(fsm_.states));
+    }
+  }
+}
+
+export function fixReferences(fsm_, state, states) {
+  let i = fsm_.states.indexOf(state);
+  let oldName = fsm_.states[i];
+  let newName = makeNewUniqueStateName(states);
+  fsm_.states[i] = newName;
+
+  if (oldName === fsm_.initial) fsm_.initial = newName;
+
+  if (fsm_.finals.includes(oldName)) {
+    let i_ = fsm_.finals.indexOf(oldName);
+    fsm_.finals[i_] = newName;
+  }
+
+  for (let symbol of fsm_.alphabet) {
+    let paths = [
+      ...R.filter(R.whereEq({ when: symbol }))(fsm_.transitions),
+    ];
+    for (let path of paths) {
+      if (path.from === oldName) path.from = newName;
+      if (path.to === oldName) path.to = newName;
+    }
+  }
+}

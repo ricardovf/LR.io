@@ -5,7 +5,12 @@ import {
   generatesTheEmptyLanguage,
   makeEmptyFSMForEmptyLanguage,
 } from './Minimizer';
-import { EPSILON, makeNewUniqueStateName } from '../SymbolValidator';
+import {
+  EPSILON,
+  makeNewUniqueStateName,
+  createDifferentNames,
+  fixReferences,
+} from '../SymbolValidator';
 
 export function unionWithSteps(fsm, fsm_) {
   let automatas = [];
@@ -14,7 +19,8 @@ export function unionWithSteps(fsm, fsm_) {
 }
 
 export function union(fsm, fsm_, automatas = []) {
-  let initial = 'S';
+  createDifferentNames(fsm, fsm_);
+  let initial = makeNewUniqueStateName(fsm.states.concat(fsm_.states));
   let states = [initial];
   let transitions = [];
   let finals = [];
@@ -123,72 +129,35 @@ export function concatenationWithSteps(fsm, fsm_) {
 }
 
 export function concatenation(fsm, fsm_, automatas = []) {
-  let initial = fsm.initial;
-  let states = fsm.states;
-  let transitions = fsm.transitions;
+  createDifferentNames(fsm, fsm_);
+  let initial = makeNewUniqueStateName(fsm.states.concat(fsm_.states));
+  let states = fsm.states.concat(fsm_.states);
+  let transitions = fsm.transitions.concat(fsm_.transitions);
   let alphabet = fsm.alphabet.concat(fsm_.alphabet);
-  let finals = [];
+  let finals = fsm_.finals;
 
-  automatas.push(
-    new FSM(
-      R.uniq(states),
-      R.uniq(alphabet),
-      R.uniq(transitions),
-      initial,
-      R.uniq(finals)
-    )
-  );
-  if (fsm_.finals.includes(fsm_.initial)) finals = fsm.finals;
+  if (fsm_.finals.includes(fsm_.initial))
+    for (let final of fsm.finals) finals.push(final);
 
-  automatas.push(
-    new FSM(
-      R.uniq(states),
-      R.uniq(alphabet),
-      R.uniq(transitions),
-      initial,
-      R.uniq(finals)
-    )
-  );
-
-  for (let symbol of fsm_.alphabet) {
-    for (let state of fsm_.states) {
-      let newState = state + '`';
+  for (let final of fsm.finals) {
+    automatas.push(
+      new FSM(
+        R.uniq(states),
+        R.uniq(alphabet),
+        R.uniq(transitions),
+        initial,
+        R.uniq(finals)
+      )
+    );
+    for (let symbol of fsm_.alphabet) {
       let paths = [
-        ...R.filter(R.whereEq({ from: state, when: symbol }))(fsm_.transitions),
+        ...R.filter(R.whereEq({ from: fsm_.initial, when: symbol }))(
+          fsm_.transitions
+        ),
       ];
       for (let path of paths) {
-        for (let final of fsm.finals) {
-          if (path.from == fsm_.initial && path.to == fsm_.initial) {
-            transitions.push({ from: final, to: final, when: symbol });
-          } else if (path.from == fsm_.initial) {
-            transitions.push({ from: final, to: path.to + '`', when: symbol });
-          } else if (path.to == fsm_.initial) {
-            transitions.push({
-              from: path.from + '`',
-              to: final,
-              when: symbol,
-            });
-          } else {
-            transitions.push({
-              from: path.from + '`',
-              to: path.to + '`',
-              when: symbol,
-            });
-          }
-        }
-        automatas.push(
-          new FSM(
-            R.uniq(states),
-            R.uniq(alphabet),
-            R.uniq(transitions),
-            initial,
-            R.uniq(finals)
-          )
-        );
+        transitions.push({ from: final, to: path.to, when: symbol });
       }
-      if (state != fsm_.initial) states.push(newState);
-      if (fsm_.finals.includes(state) && state != fsm_.initial)
-        finals.push(newState);
     }
   }
 
@@ -199,8 +168,8 @@ export function concatenation(fsm, fsm_, automatas = []) {
     fsm.initial,
     R.uniq(finals)
   );
-  last.minimize();
 
+  last.minimize();
   if (generatesTheEmptyLanguage(last)) {
     makeEmptyFSMForEmptyLanguage(last);
   }
@@ -217,12 +186,12 @@ export function intersectionWithSteps(fsm, fsm_) {
 }
 
 export function intersection(fsm, fsm_, automatas = []) {
+  createDifferentNames(fsm, fsm_);
   let initial = fsm.initial + fsm_.initial;
   let states = [];
   let alphabet = R.uniq(fsm.alphabet.concat(fsm_.alphabet));
   let transitions = [];
   let finals = [];
-
   if (fsm.hasIndefinition()) createPhiState(fsm);
   if (fsm_.hasIndefinition()) createPhiState(fsm_);
 
@@ -284,7 +253,6 @@ export function intersection(fsm, fsm_, automatas = []) {
   );
 
   finalFSM.minimize();
-
   if (generatesTheEmptyLanguage(finalFSM)) {
     makeEmptyFSMForEmptyLanguage(finalFSM);
   }
@@ -300,6 +268,7 @@ export function differenceWithSteps(fsm, fsm_) {
   return automatas;
 }
 
+// testar a diferença com (abc)*r e 0 par 1 par
 export function difference(fsm, fsm_, automatas = []) {
   negation(fsm_);
   let last = intersection(fsm, fsm_, automatas);

@@ -86,7 +86,6 @@ describe('FSM', () => {
       const initial_ = 'A';
       const finals_ = ['B'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
-
       const newFsm = union(fsm, fsm_);
       expect(await newFsm.recognize('11')).toBeTruthy();
       expect(await newFsm.recognize('0')).toBeTruthy();
@@ -110,9 +109,10 @@ describe('FSM', () => {
       const initial_ = 'Q0';
       const finals_ = ['Q0'];
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
-
       const newFsm = concatenation(fsm, fsm_);
       expect(await newFsm.recognize('01a')).toBeTruthy();
+      expect(await newFsm.recognize('01aaaa')).toBeTruthy();
+      expect(await newFsm.recognize('01aaaa1')).toBeFalsy();
     });
 
     it('should concat two FSM #2', async () => {
@@ -278,7 +278,7 @@ describe('FSM', () => {
       const fsm_ = new FSM(states_, alphabet_, transitions_, initial_, finals_);
 
       const newFsm = intersection(fsm, fsm_);
-      expect(await newFsm.recognize('abc')).toBeTruthy();
+      expect(await newFsm.recognize('abc')).toBeFalsy();
       expect(await newFsm.recognize('abcd')).toBeFalsy();
     });
 
@@ -625,6 +625,43 @@ describe('FSM', () => {
       expect(await fsm.recognize('aaaab')).toBeFalsy();
       expect(await fsm.recognize('aaaaaba')).toBeTruthy();
       expect(await fsm.recognize('aabababaaa')).toBeTruthy();
+    });
+
+    it('should obtain a concatenation for (abc)*r and (abc)*', async () => {
+      const states = ['A', 'B', 'C'];
+      const alphabet = ['a', 'b', 'c'];
+      const transitions = [
+        { from: 'A', to: 'B', when: 'a' },
+        { from: 'B', to: 'C', when: 'b' },
+        { from: 'C', to: 'A', when: 'c' },
+      ];
+      const initial = 'A';
+      const finals = ['A'];
+      const fsm = new FSM(states, alphabet, transitions, initial, finals);
+      const fsm_reverse = fsm.clone();
+
+
+      expect(await fsm_reverse.recognize('')).toBeTruthy();
+      expect(await fsm_reverse.recognize('abc')).toBeTruthy();
+
+      reverse(fsm_reverse)
+
+      expect(await fsm_reverse.recognize('')).toBeTruthy();
+      expect(await fsm_reverse.recognize('cba')).toBeTruthy();
+      expect(await fsm_reverse.recognize('')).toBeTruthy();
+      expect(await fsm_reverse.recognize('abc')).toBeFalsy();
+      expect(await fsm_reverse.recognize('cab')).toBeFalsy();
+
+      const newFsm = concatenation(fsm_reverse, fsm);
+
+      expect(await newFsm.recognize('')).toBeTruthy();
+      expect(await newFsm.recognize('ca')).toBeFalsy();
+      expect(await newFsm.recognize('cab')).toBeFalsy();
+      expect(await newFsm.recognize('cba')).toBeTruthy();
+      expect(await newFsm.recognize('abc')).toBeTruthy();
+      expect(await newFsm.recognize('cbacba')).toBeTruthy();
+      expect(await newFsm.recognize('cbaabc')).toBeTruthy();
+      expect(await newFsm.recognize('cbaabccba')).toBeFalsy();
     });
   });
 });

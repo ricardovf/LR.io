@@ -254,12 +254,10 @@ export function minimize(fsm, automatas = []) {
               let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
                 fsm.transitions
               ).pop();
-              if (s !== undefined && s_ !== undefined) {
-                let equivalentClass = getEquivalentClass(s.to, equivalents);
-                if (!isInSameSet(s.to, s_.to, equivalentClass)) {
-                  createNewSet(states, equivalent, s_.from);
-                  break;
-                }
+              let equivalentClass = getEquivalentClass(s.to, equivalents);
+              if (!(equivalentClass.includes(s.to) &&  equivalentClass.includes(s_.to))) {
+                createNewSet(states, equivalent, s_.from);
+                break;
               }
             }
           }
@@ -304,7 +302,7 @@ export function createNewSet(states, equivalent, state) {
   }
   if (!findEquivalentSet) equivalent.push([state]);
 
-  if (findEquivalentSet && equivalent.length == oldLength)
+  if (findEquivalentSet && equivalent.length === oldLength)
     equivalent.push([state]);
 }
 
@@ -319,7 +317,7 @@ export function createMinimalAutomata(fsm, equivalents) {
       if (equivalents[i][j].length > 0) {
         let newState = 'Q' + k.toString();
         newStates.push(newState);
-        if (i == 0) newFinals.push(newState);
+        if (i === 0) newFinals.push(newState);
         for (let state of equivalents[i][j])
           if (state == fsm.initial) newInitial = newState;
         ++k;
@@ -370,5 +368,5 @@ export function findNewStateEquivalent(state, equivalents) {
 export function getEquivalentClass(state, equivalents) {
   for (let equivalent of equivalents)
     for (let states of equivalent)
-      for (let state_ of states) if (state_ === state) return equivalent;
+      for (let state_ of states) if (state_ === state) return states;
 }
