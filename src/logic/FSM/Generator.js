@@ -21,11 +21,11 @@ export function generate(
 
   if (
     typeof maxLength !== 'number' ||
-    maxLength < 1 ||
+    maxLength < 0 ||
     maxLength > GENERATE_MAX_SIZE
   )
     throw new RangeError(
-      `Size must be an integer between 1 and ${GENERATE_MAX_SIZE}. The value passed was: ${maxLength}`
+      `Size must be an integer between 0 and ${GENERATE_MAX_SIZE}. The value passed was: ${maxLength}`
     );
 
   if (fsm.hasEpsilonTransitions()) {

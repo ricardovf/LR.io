@@ -4,6 +4,8 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
 import ListSubheader from 'material-ui/List/ListSubheader';
 import { withStyles } from 'material-ui';
+import GitCommit from '../_git_commit';
+import NewLanguageDialog from './NewLanguageDialog';
 
 const isSelected = (item, language) =>
   language !== undefined && language.id === item.id;
@@ -18,20 +20,35 @@ const styles = theme => ({
       background: theme.palette.primary.light,
     },
   },
+  version: {
+    color: '#999',
+    fontSize: '12px',
+  },
 });
 
 class LanguagesMenuList extends React.Component {
+  state = {
+    newGrammarDialogOpened: false,
+  };
+
+  handleClose = () => {
+    this.setState({ newGrammarDialogOpened: false });
+  };
+
   render() {
     const {
       classes,
       language,
       languages,
       selectLanguageOnClick,
-      newLanguageOnClick,
+      saveNewLanguage,
     } = this.props;
+
+    const { newGrammarDialogOpened } = this.state;
 
     const listItems = languages.map(item => (
       <ListItem
+        dense
         className={isSelected(item, language) ? classes.selected : undefined}
         button
         key={item.id}
@@ -42,15 +59,7 @@ class LanguagesMenuList extends React.Component {
     ));
 
     return (
-      <List
-        subheader={
-          languages && languages.length > 0 ? (
-            <ListSubheader component="div">Linguagens regulares</ListSubheader>
-          ) : (
-            undefined
-          )
-        }
-      >
+      <List>
         {listItems}
 
         <ListItem>
@@ -59,10 +68,26 @@ class LanguagesMenuList extends React.Component {
             variant="raised"
             color="secondary"
             size="medium"
-            onClick={newLanguageOnClick}
+            onClick={event => {
+              this.setState({ newGrammarDialogOpened: true });
+            }}
           >
             Nova linguagem
           </Button>
+
+          <NewLanguageDialog
+            open={newGrammarDialogOpened}
+            handleCancel={this.handleClose}
+            handleSave={saveNewLanguage}
+          />
+        </ListItem>
+
+        <ListItem className={classes.version}>
+          Versão:{' '}
+          {GitCommit.logMessage
+            .split(' ')
+            .slice(1, 4)
+            .join(', ')}
         </ListItem>
       </List>
     );

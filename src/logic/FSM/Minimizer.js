@@ -313,7 +313,7 @@ export function createNewSet(states, equivalent, state, fsm, equivalents) {
           break;
       }
       if (allStatesEquivalents)
-        return
+        return;
       allStatesEquivalents = true
     } else {
       if (equivalentStates.join() === states_) {
