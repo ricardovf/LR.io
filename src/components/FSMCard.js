@@ -79,39 +79,23 @@ class FSMCard extends React.Component {
         </List>
         <Divider />
         <List dense className={classes.lastList}>
-          <ListItem disableGutters>
-            <ListItemIcon>
-              {fsm
-                ? fsm.acceptsEmptySentence()
-                  ? yesIcon
-                  : noIcon
-                : dontKnowIcon}
-            </ListItemIcon>
-            <ListItemText primary="Aceita sentença vazia" />
-          </ListItem>
-          <ListItem disableGutters>
-            <ListItemIcon>
-              {fsm
-                ? fsm.hasEpsilonTransitions()
-                  ? noIcon
-                  : yesIcon
-                : dontKnowIcon}
-            </ListItemIcon>
-            <ListItemText primary="Sem transições por epsilon" />
-          </ListItem>
-          <ListItem disableGutters>
-            <ListItemIcon>
-              {fsm ? (fsm.isDeterministic() ? yesIcon : noIcon) : dontKnowIcon}
-            </ListItemIcon>
-            <ListItemText primary="Determinístico" />
-          </ListItem>
+          {fsm && fsm.hasEpsilonTransitions() ? (
+            <ListItem disableGutters>
+              <ListItemText primary=" - Contém transições por epsilon (&)" />
+            </ListItem>
+          ) : null}
 
-          <ListItem disableGutters>
-            <ListItemIcon>
-              {fsm ? (fsm.isMinimal() ? yesIcon : noIcon) : dontKnowIcon}
-            </ListItemIcon>
-            <ListItemText primary="Mínimo" />
-          </ListItem>
+          {fsm && !fsm.isDeterministic() ? (
+            <ListItem disableGutters>
+              <ListItemText primary=" - Não é determinístico" />
+            </ListItem>
+          ) : null}
+
+          {fsm && !fsm.isMinimal() ? (
+            <ListItem disableGutters>
+              <ListItemText primary=" - Não é mínimo" />
+            </ListItem>
+          ) : null}
         </List>
       </React.Fragment>
     );

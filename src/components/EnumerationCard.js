@@ -7,6 +7,7 @@ import FSM from '../logic/FSM';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import * as R from 'ramda';
+import Tooltip from 'material-ui/Tooltip';
 
 const styles = () => ({
   card: {
@@ -38,7 +39,9 @@ class EnumerationCard extends React.Component {
         const fsm = FSM.fromPlainObject(language.fsm);
 
         if (fsm) {
-          sentences = R.sortBy(s => s.length, fsm.generate(length).sort());
+          sentences = R.filter(s => {
+            return s.length === length;
+          }, fsm.generate(length)).sort();
         }
       }
 
@@ -55,25 +58,42 @@ class EnumerationCard extends React.Component {
   render() {
     const { classes, language, length, onLengthChange } = this.props;
 
-    const Sentences = '{ ' + this.state.sentences.join(', ') + ' }';
+    let Sentences = this.state.sentences.join(', ');
+
+    /** @type {FSM} */
+    let fsm = null;
+
+    if (language && language.fsm) {
+      fsm = FSM.fromPlainObject(language.fsm);
+    }
+
+    if (length === 0) {
+      Sentences = fsm
+        ? fsm.acceptsEmptySentence()
+          ? 'Aceita a sentença vazia.'
+          : 'Não aceita a sentença vazia.'
+        : '';
+    }
 
     return (
       <Card className={classes.card}>
         <CardContent>
           <FormControl className={classes.form}>
-            <Select
-              native
-              onChange={event =>
-                onLengthChange(language.id, event.target.value)
-              }
-              value={length}
-            >
-              {R.range(1, 101).map(n => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </Select>
+            <Tooltip title="Sentenças com tamanho exato" placement="left-start">
+              <Select
+                native
+                onChange={event =>
+                  onLengthChange(language.id, event.target.value)
+                }
+                value={length}
+              >
+                {R.range(0, 101).map(n => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </Select>
+            </Tooltip>
           </FormControl>
           <Typography gutterBottom variant="headline" component="h2">
             Enumeração

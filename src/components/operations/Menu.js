@@ -175,22 +175,13 @@ class OperationsMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem
-            disabled={fsm.hasEpsilonTransitions() ? false : true}
-            onClick={this.makeOperationHandler('removeEpsilon')}
-          >
+          <MenuItem onClick={this.makeOperationHandler('removeEpsilon')}>
             Eliminar epsilon
           </MenuItem>
-          <MenuItem
-            disabled={fsm.isDeterministic() ? true : false}
-            onClick={this.makeOperationHandler('determinate')}
-          >
+          <MenuItem onClick={this.makeOperationHandler('determinate')}>
             Determinizar
           </MenuItem>
-          <MenuItem
-            disabled={fsm.isMinimal() ? true : false}
-            onClick={this.makeOperationHandler('minimize')}
-          >
+          <MenuItem onClick={this.makeOperationHandler('minimize')}>
             Minimizar
           </MenuItem>
 

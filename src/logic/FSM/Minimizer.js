@@ -254,7 +254,12 @@ export function minimize(fsm, automatas = []) {
                 fsm.transitions
               ).pop();
               let equivalentClass = getEquivalentClass(s.to, equivalents);
-              if (!(equivalentClass.includes(s.to) &&  equivalentClass.includes(s_.to))) {
+              if (
+                !(
+                  equivalentClass.includes(s.to) &&
+                  equivalentClass.includes(s_.to)
+                )
+              ) {
                 createNewSet(states, equivalent, s_.from, fsm.alphabet);
                 break;
               }
@@ -293,7 +298,6 @@ export function createNewSet(states, equivalent, state, alphabet) {
       equivalentStates.push(state);
       for (let state_ of equivalentStates) {
         for (let symbol of alphabet) {
-
         }
       }
       return;

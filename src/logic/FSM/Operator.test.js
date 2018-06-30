@@ -640,11 +640,10 @@ describe('FSM', () => {
       const fsm = new FSM(states, alphabet, transitions, initial, finals);
       const fsm_reverse = fsm.clone();
 
-
       expect(await fsm_reverse.recognize('')).toBeTruthy();
       expect(await fsm_reverse.recognize('abc')).toBeTruthy();
 
-      reverse(fsm_reverse)
+      reverse(fsm_reverse);
 
       expect(await fsm_reverse.recognize('')).toBeTruthy();
       expect(await fsm_reverse.recognize('cba')).toBeTruthy();

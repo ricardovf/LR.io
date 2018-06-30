@@ -116,21 +116,34 @@ export default {
       if (language) {
         if (fsm instanceof FSM) fsm = fsm.toPlainObject();
 
-        let newLanguage = _makeNewLanguage(name);
+        // If the name is not equal, we create a new grammar, otherwise, replace.
+        let newLanguage = language;
+        let isNew = false;
+        if (language.name !== name) {
+          newLanguage = _makeNewLanguage(name);
+          isNew = true;
+        }
+
         newLanguage.fsm = fsm;
         newLanguage.expression = language.expression;
         newLanguage.userSentences = language.userSentences;
         newLanguage.enumerationLength = language.enumerationLength;
 
-        dispatch.languages.create({ language: newLanguage });
-
-        if (select) dispatch.selectedLanguage.select({ id: newLanguage.id });
+        if (isNew) {
+          dispatch.languages.create({ language: newLanguage });
+          if (select) dispatch.selectedLanguage.select({ id: newLanguage.id });
+        } else {
+          dispatch.languages._updateLanguage({
+            id,
+            language: newLanguage,
+          });
+        }
       }
     },
 
-    async createAndSelect(payload, rootState) {
+    async createAndSelect({ name }, rootState) {
       const newLanguage = _makeNewLanguage(
-        `Nova linguagem #${rootState.languages.length}`
+        name ? name : `Nova linguagem #${rootState.languages.length}`
       );
       dispatch.languages.create({ language: newLanguage });
       dispatch.selectedLanguage.select({ id: newLanguage.id });
@@ -213,7 +226,7 @@ export default {
     changeEnumerationLength({ id, length }, rootState) {
       let language = find(propEq('id', id))(rootState.languages);
 
-      if (language && length >= 1 && length <= GENERATE_MAX_SIZE) {
+      if (language && length >= 0 && length <= GENERATE_MAX_SIZE) {
         language = {
           ...language,
           enumerationLength: length,

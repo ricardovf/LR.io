@@ -12,6 +12,7 @@ import FSM from '../../logic/FSM';
 import FSMGraph from '../FSMGraph';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
+import SaveLanguageDialog from './SaveLanguageDialog';
 
 const styles = () => ({
   graphContainer: {
@@ -34,6 +35,8 @@ class TwoLanguagesOperationDialog extends React.Component {
     step: undefined,
     selectedLanguage: undefined,
     confirmed: undefined,
+    saveGrammarDialogOpened: false,
+    closeAfterSave: true,
   };
 
   constructor(props) {
@@ -46,6 +49,11 @@ class TwoLanguagesOperationDialog extends React.Component {
     this.handleSaveAndClose = this.handleSaveAndClose.bind(this);
     this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
     this.handleConfirmSelection = this.handleConfirmSelection.bind(this);
+
+    this.handleSaveButtonClick = this.handleSaveButtonClick.bind(this);
+    this.handleSaveAndCloseButtonClick = this.handleSaveAndCloseButtonClick.bind(
+      this
+    );
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -66,6 +74,8 @@ class TwoLanguagesOperationDialog extends React.Component {
         step: undefined,
         selectedLanguage: undefined,
         confirmed: undefined,
+        saveGrammarDialogOpened: false,
+        closeAfterSave: true,
       };
 
     return null;
@@ -137,17 +147,40 @@ class TwoLanguagesOperationDialog extends React.Component {
     if (handleCancel) handleCancel();
   }
 
-  handleSave() {
-    const { language, title, handleSave } = this.props;
+  handleSaveAndCloseButtonClick() {
+    const { language, handleSave } = this.props;
 
-    if (handleSave && language && Array.isArray(this.state.steps))
+    if (handleSave && language && Array.isArray(this.state.steps)) {
+      this.setState({ saveGrammarDialogOpened: true, closeAfterSave: true });
+    }
+  }
+
+  handleSaveButtonClick() {
+    const { language, handleSave } = this.props;
+
+    if (handleSave && language && Array.isArray(this.state.steps)) {
+      this.setState({ saveGrammarDialogOpened: true, closeAfterSave: true });
+    }
+  }
+
+  handleSave(saveName) {
+    const { language, handleSave, handleCancel } = this.props;
+
+    if (handleSave && language && Array.isArray(this.state.steps)) {
       handleSave(
         language.id,
-        language.name + ` (${title} - Passo ${this.state.step})`,
+        saveName,
         this.state.steps[this.state.step - 1],
-        false
+        this.state.closeAfterSave
       );
+    }
+
+    if (this.state.closeAfterSave && handleCancel) handleCancel();
   }
+
+  handleSaveDialogClose = () => {
+    this.setState({ saveGrammarDialogOpened: false, closeAfterSave: true });
+  };
 
   _makeSelectorDialogContent() {
     const {
@@ -227,7 +260,7 @@ class TwoLanguagesOperationDialog extends React.Component {
         actionButton = (
           <Button
             variant="raised"
-            onClick={this.handleSaveAndClose}
+            onClick={this.handleSaveAndCloseButtonClick}
             color="primary"
             autoFocus
           >
@@ -244,8 +277,8 @@ class TwoLanguagesOperationDialog extends React.Component {
         }
 
         saveButton = (
-          <Button onClick={this.handleSave} color="secondary">
-            Salvar atual
+          <Button onClick={this.handleSaveButtonClick} color="secondary">
+            Salvar intermediário
           </Button>
         );
       }
@@ -295,6 +328,12 @@ class TwoLanguagesOperationDialog extends React.Component {
           {previousButton}
           {actionButton}
           {toEndButton}
+          <SaveLanguageDialog
+            open={this.state.saveGrammarDialogOpened}
+            defaultName={language.name}
+            handleCancel={this.handleSaveDialogClose}
+            handleSave={this.handleSave}
+          />
         </DialogActions>
       </React.Fragment>
     );
@@ -305,7 +344,6 @@ class TwoLanguagesOperationDialog extends React.Component {
 
     return (
       <Dialog
-        disableBackdropClick
         classes={{ paper: classes.modal }}
         fullWidth
         maxWidth={'md'}
