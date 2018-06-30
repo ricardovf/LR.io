@@ -168,7 +168,7 @@ export function isMinimal(fsm) {
             if (s !== undefined && s_ !== undefined) {
               let equivalentClass = getEquivalentClass(s.to, equivalents);
               if (!isInSameSet(s.to, s_.to, equivalentClass)) {
-                createNewSet(states, equivalent, s_.from);
+                createNewSet(states, equivalent, s_.from, fsm, equivalents);
                 break;
               }
             }
@@ -255,7 +255,7 @@ export function minimize(fsm, automatas = []) {
               ).pop();
               let equivalentClass = getEquivalentClass(s.to, equivalents);
               if (!(equivalentClass.includes(s.to) &&  equivalentClass.includes(s_.to))) {
-                createNewSet(states, equivalent, s_.from, fsm.alphabet);
+                createNewSet(states, equivalent, s_.from, fsm, equivalents);
                 break;
               }
             }
@@ -283,7 +283,9 @@ export function minimize(fsm, automatas = []) {
 
   return automatas;
 }
-export function createNewSet(states, equivalent, state, alphabet) {
+export function createNewSet(states, equivalent, state, fsm, equivalents) {
+  let breaked = true;
+  let allStatesEquivalents = true;
   let findEquivalentSet = false;
   let states_ = states.join();
   let oldLength = equivalent.length;
@@ -292,11 +294,27 @@ export function createNewSet(states, equivalent, state, alphabet) {
     if (findEquivalentSet) {
       equivalentStates.push(state);
       for (let state_ of equivalentStates) {
-        for (let symbol of alphabet) {
-
+        for (let symbol of fsm.alphabet) {
+          let s = R.filter(R.whereEq({ from: state_, when: symbol }))(
+            fsm.transitions
+          ).pop();
+          let s_ = R.filter(R.whereEq({ from: state, when: symbol }))(
+            fsm.transitions
+          ).pop();
+          let equivalentClass = getEquivalentClass(s.to, equivalents);
+          if (!(equivalentClass.includes(s.to) &&  equivalentClass.includes(s_.to))) {
+            allStatesEquivalents = false;
+            equivalentStates.splice(equivalentStates.indexOf(state), 1);
+            breaked = true;
+            break;
+          }
         }
+        if (breaked)
+          break;
       }
-      return;
+      if (allStatesEquivalents)
+        return
+      allStatesEquivalents = true
     } else {
       if (equivalentStates.join() === states_) {
         findEquivalentSet = true;

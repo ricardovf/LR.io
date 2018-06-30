@@ -268,7 +268,6 @@ export function differenceWithSteps(fsm, fsm_) {
   return automatas;
 }
 
-// testar a diferença com (abc)*r e 0 par 1 par
 export function difference(fsm, fsm_, automatas = []) {
   negation(fsm_);
   let last = intersection(fsm, fsm_, automatas);

@@ -653,7 +653,7 @@ describe('FSM', () => {
       expect(await fsm_reverse.recognize('cab')).toBeFalsy();
 
       const newFsm = concatenation(fsm_reverse, fsm);
-
+      console.log(newFsm);
       expect(await newFsm.recognize('')).toBeTruthy();
       expect(await newFsm.recognize('ca')).toBeFalsy();
       expect(await newFsm.recognize('cab')).toBeFalsy();

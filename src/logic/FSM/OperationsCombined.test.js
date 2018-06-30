@@ -80,7 +80,6 @@ describe('FSM', () => {
       expect(await nonConsecutiveB.recognize('aaaba')).toBeTruthy();
       expect(await nonConsecutiveB.recognize('ababb')).toBeFalsy();
 
-      // bug na MINIMIZAÇÃO CARAIIII
       const newFsm = intersection(nonConsecutiveA, nonConsecutiveB);
 
       expect(await newFsm.recognize('aa')).toBeFalsy();
