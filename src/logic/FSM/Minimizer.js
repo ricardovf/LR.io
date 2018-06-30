@@ -233,7 +233,6 @@ export function minimize(fsm, automatas = []) {
     if (fsm.hasIndefinition()) createPhiState(fsm);
 
     automatas.push(fsm.clone());
-
     let f = [fsm.finals];
     let fk = [fsm.nonFinalStates()];
     let equivalents = [f, fk];
@@ -256,7 +255,7 @@ export function minimize(fsm, automatas = []) {
               ).pop();
               let equivalentClass = getEquivalentClass(s.to, equivalents);
               if (!(equivalentClass.includes(s.to) &&  equivalentClass.includes(s_.to))) {
-                createNewSet(states, equivalent, s_.from);
+                createNewSet(states, equivalent, s_.from, fsm.alphabet);
                 break;
               }
             }
@@ -284,7 +283,7 @@ export function minimize(fsm, automatas = []) {
 
   return automatas;
 }
-export function createNewSet(states, equivalent, state) {
+export function createNewSet(states, equivalent, state, alphabet) {
   let findEquivalentSet = false;
   let states_ = states.join();
   let oldLength = equivalent.length;
@@ -292,6 +291,11 @@ export function createNewSet(states, equivalent, state) {
   for (let equivalentStates of equivalent) {
     if (findEquivalentSet) {
       equivalentStates.push(state);
+      for (let state_ of equivalentStates) {
+        for (let symbol of alphabet) {
+
+        }
+      }
       return;
     } else {
       if (equivalentStates.join() === states_) {
