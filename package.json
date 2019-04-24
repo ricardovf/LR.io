@@ -8,8 +8,8 @@
     "@rematch/persist": "^0.2.1",
     "@rematch/updated": "^0.1.5",
     "lodash": "^4.17.10",
-    "material-ui": "^1.0.0-beta.47",
-    "material-ui-chip-input": "^1.0.0-beta.4",
+    "material-ui": "1.0.0-beta.47",
+    "material-ui-chip-input": "1.0.0-beta.4",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
     "react": "^16.3.2",
@@ -30,7 +30,8 @@
     "xregexp": "^4.1.1"
   },
   "scripts": {
-    "git-info": "echo export default \"{\\\"logMessage\\\": \\\"$(git log -1 --format=%cd)\\\"}\"  > src/_git_commit.js",
+    "git-info":
+      "echo export default \"{\\\"logMessage\\\": \\\"$(git log -1 --format=%cd)\\\"}\"  > src/_git_commit.js",
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build",
     "analyze": "source-map-explorer gh-pages/static/js/main.*",
